@@ -1,0 +1,327 @@
+.main {
+    min-height: 100vh;
+    background: #ffffff;
+    color: #0f172a;
+    padding-top: 100px;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    padding: 0 5rem;
+    z-index: 100;
+}
+
+.backLink {
+    color: #0f172a;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    opacity: 0.6;
+}
+
+.backLink:hover {
+    transform: translateX(-8px);
+    opacity: 1;
+    color: var(--accent);
+}
+
+.content {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 5rem 5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 6rem;
+    margin-bottom: 8rem;
+}
+
+/* Hero & Units */
+.heroSection {
+    margin-bottom: 6rem;
+}
+
+.title {
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    font-weight: 900;
+    margin-bottom: 2rem;
+    letter-spacing: -0.05em;
+    color: #0f172a;
+}
+
+.courseDescMain {
+    font-size: 1.5rem;
+    opacity: 0.7;
+    line-height: 1.6;
+    margin-bottom: 4rem;
+    max-width: 900px;
+    font-weight: 450;
+}
+
+.unitList {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 2.5rem;
+    padding: 3.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+}
+
+.subTitle {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: #0f172a;
+}
+
+.unitList ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.2rem;
+    list-style: none;
+}
+
+.unitList li {
+    padding: 1.2rem 1.8rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.8;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.unitList li:hover {
+    background: #ffffff;
+    border-color: var(--accent);
+    transform: translateX(10px);
+    box-shadow: 0 10px 25px rgba(236, 72, 153, 0.1);
+    opacity: 1;
+}
+
+/* Resources Section */
+.resourcesSection {
+    margin-top: 6rem;
+}
+
+.sectionTitle {
+    font-size: 2.8rem;
+    font-weight: 900;
+    margin-bottom: 3.5rem;
+    letter-spacing: -0.02em;
+}
+
+.resourceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+}
+
+.resourceCard {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 2rem;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.resourceCard:hover {
+    transform: translateY(-12px);
+    border-color: var(--primary);
+    box-shadow: 0 40px 80px -20px rgba(79, 70, 229, 0.15);
+}
+
+.resourceIcon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.resourceCard h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.resourceCard p {
+    font-size: 1.1rem;
+    opacity: 0.5;
+    line-height: 1.6;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+}
+
+.sidebarCard {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 2.5rem;
+    padding: 3.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02);
+}
+
+.sidebarTitle {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.wisdomCard {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.03), rgba(79, 70, 229, 0.03));
+    border-color: rgba(236, 72, 153, 0.1);
+}
+
+.wisdomText {
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.7;
+    font-weight: 500;
+    color: #0f172a;
+    opacity: 0.9;
+}
+
+/* Calendar */
+.calendarList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+}
+
+.calendarItem {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.calendarItem:last-child {
+    border-bottom: none;
+}
+
+.calendarDate {
+    font-weight: 900;
+    color: var(--primary);
+    min-width: 80px;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.calendarEvent {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+/* Instructors */
+.instructorsSection {
+    margin-top: 6rem;
+    padding-top: 6rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.instructorGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+}
+
+.instructorCard {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 2.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.4s ease;
+}
+
+.instructorCard:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    border-color: var(--secondary);
+}
+
+.instructorAvatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 2.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    color: white;
+}
+
+.instructorInfo h3 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.instructorInfo p {
+    font-size: 1.1rem;
+    opacity: 0.5;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding: 5rem 2rem;
+    }
+
+    .nav {
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav {
+        padding: 0 1.5rem;
+        height: 80px;
+    }
+
+    .main {
+        padding-top: 80px;
+    }
+
+    .title {
+        font-size: 3.5rem;
+    }
+
+    .instructorCard {
+        flex-direction: column;
+        text-align: center;
+        gap: 2rem;
+    }
+}

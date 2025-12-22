@@ -1,0 +1,90 @@
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    background: rgba(5, 5, 10, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1000;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo {
+    font-weight: 900;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    color: white;
+    text-decoration: none;
+}
+
+.breadcrumb {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb:hover {
+    color: var(--accent);
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.links a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.links a:hover {
+    opacity: 1;
+}
+
+.aiBtn {
+    background: white;
+    color: black;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+}
+
+.aiBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+}

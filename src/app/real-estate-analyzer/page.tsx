@@ -54,11 +54,11 @@ export default function RealEstateAnalyzer() {
                 body: JSON.stringify({ address }),
             });
 
-            if (!response.ok) {
-                throw new Error('Analysis failed');
-            }
-
             const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.details || 'Analysis failed');
+            }
 
             // Simulate "processing" time for better UX if it was too fast (e.g. mock data)
             if (result.isMock) {

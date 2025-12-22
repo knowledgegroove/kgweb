@@ -48,7 +48,7 @@ export default function Overlay() {
                     <p style={{ marginBottom: '1.5rem', lineHeight: '1.6' }}>
                         Workshops, tutoring, and confidence building.
                     </p>
-                    <a href="#academy" style={{ pointerEvents: 'auto', color: '#ec4899', fontWeight: 'bold', textDecoration: 'none' }}>Visit the Academy →</a>
+                    <a href="/academy" style={{ pointerEvents: 'auto', color: '#ec4899', fontWeight: 'bold', textDecoration: 'none' }}>Visit the Academy →</a>
                 </div>
             </section>
 
@@ -59,7 +59,7 @@ export default function Overlay() {
                     <p style={{ fontSize: '1.2rem', opacity: 0.9, marginBottom: '2rem' }}>
                         I help people learn, create, and innovate.
                     </p>
-                    <a href="#about" style={{ pointerEvents: 'auto', display: 'inline-block', padding: '1rem 2rem', background: 'white', color: 'black', borderRadius: '50px', fontWeight: 'bold', textDecoration: 'none' }}>Learn more →</a>
+                    <a href="/info" style={{ pointerEvents: 'auto', display: 'inline-block', padding: '1rem 2rem', background: 'white', color: 'black', borderRadius: '50px', fontWeight: 'bold', textDecoration: 'none' }}>Learn more →</a>
                 </div>
             </section>
         </Scroll>

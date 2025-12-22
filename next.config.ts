@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   transpilePackages: ['three'],
 
-  
-  // 👇 ADD THIS SECTION 👇
+
+  /* 👇 COMMENTED OUT TO USE LOCAL FOLDER 👇
   async rewrites() {
     return [
       {
@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // 👆 END OF NEW SECTION 👆
-  
+  👆 END OF COMMENTED SECTION 👆 */
+
 };
 
 export default nextConfig;

@@ -1,0 +1,694 @@
+.main {
+    min-height: 100vh;
+    background: #030014;
+    color: white;
+    padding-top: 80px;
+}
+
+.nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: rgba(3, 0, 20, 0.82);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    padding: 0 4rem;
+    z-index: 100;
+}
+
+.backLink {
+    color: var(--accent);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.backLink:hover {
+    transform: translateX(-5px);
+    text-shadow: 0 0 10px var(--accent);
+}
+
+.content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 4rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 5rem;
+    margin-bottom: 6rem;
+}
+
+/* Hero & Units */
+.heroSection {
+    margin-bottom: 5rem;
+}
+
+.title {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 850;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.6));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.courseDescMain {
+    font-size: 1.3rem;
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    max-width: 800px;
+}
+
+.unitList {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 2rem;
+    padding: 2.5rem;
+}
+
+.subTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+
+.unitList ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    list-style: none;
+}
+
+.unitList li {
+    padding: 0.8rem 1.2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0.8rem;
+    font-size: 1rem;
+    opacity: 0.85;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.unitList li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.heroActionRow {
+    display: flex;
+    gap: 1.5rem;
+    margin: 2.5rem 0 3.5rem;
+}
+
+.secondaryHeroBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.8rem 1.8rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondaryHeroBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+}
+
+.unitsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.unitCard {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.unitCard:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--accent);
+}
+
+.unitHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.unitNum {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.unitName {
+    font-size: 1.25rem;
+    font-weight: 700;
+    flex-grow: 1;
+}
+
+.priorityTag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.high {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.medium {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+}
+
+.low {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.unitPurpose {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+}
+
+.unitPurpose strong {
+    color: white;
+    font-weight: 600;
+}
+
+.unitDetails {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.detailCol h5 {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    opacity: 0.4;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.8rem;
+}
+
+.detailCol ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detailCol li {
+    font-size: 0.85rem;
+    opacity: 0.6;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.detailCol li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+}
+
+.unitAiBtn {
+    width: 100%;
+    background: white;
+    color: black;
+    border: none;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.unitAiBtn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Resources Section */
+.resourcesSection {
+    margin-top: 4rem;
+}
+
+.sectionTitle {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+}
+
+.resourceGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+}
+
+.resourceCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.resourceCard:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--primary);
+    box-shadow: 0 15px 30px -10px rgba(79, 70, 229, 0.3);
+}
+
+.resourceIcon {
+    font-size: 2.5rem;
+    margin-bottom: 1.2rem;
+}
+
+.resourceCard h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+}
+
+.resourceCard p {
+    font-size: 0.95rem;
+    opacity: 0.6;
+    line-height: 1.5;
+}
+
+/* Sidebar */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.sidebarCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2rem;
+    padding: 2.5rem;
+}
+
+.sidebarTitle {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--accent);
+}
+
+.wisdomCard {
+    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(79, 70, 229, 0.1));
+    border-color: rgba(236, 72, 153, 0.2);
+}
+
+.wisdomText {
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Calendar */
+.calendarList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.calendarItem {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.calendarItem:last-child {
+    border-bottom: none;
+}
+
+.calendarDate {
+    font-weight: 800;
+    color: var(--primary);
+    min-width: 60px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.calendarEvent {
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+/* Instructors */
+.instructorsSection {
+    margin-top: 4rem;
+    padding-top: 4rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.instructorGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2.5rem;
+}
+
+.instructorCard {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border-radius: 2rem;
+    transition: all 0.3s ease;
+}
+
+.instructorCard:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: scale(1.02);
+}
+
+.instructorAvatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 1.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.instructorInfo h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.3rem;
+}
+
+.instructorInfo p {
+    font-size: 0.9rem;
+    opacity: 0.6;
+}
+
+/* Modal & Targeted Practice */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 2rem;
+}
+
+.modalContent,
+.pdfModalContent {
+    background: #111;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 3rem;
+    border-radius: 2rem;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.pdfModalContent {
+    width: 95%;
+    max-width: 1200px;
+    padding: 2rem;
+}
+
+.inlinePdfViewer {
+    width: 100%;
+    height: 85vh;
+    border: none;
+    border-radius: 1.5rem;
+    background: white;
+}
+
+.textbookSection {
+    margin: 4rem 0;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2.5rem;
+}
+
+.textbookHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.closeTextbookBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.closeTextbookBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+}
+
+.closeBtn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.closeBtn:hover {
+    opacity: 1;
+}
+
+.modalTitle {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #fff, var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.formGroup {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.formGroup label {
+    font-weight: 600;
+    opacity: 0.7;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.formGroup select,
+.formGroup input[type="range"] {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.difficultyToggle {
+    display: flex;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.3rem;
+    border-radius: 1.2rem;
+}
+
+.difficultyToggle button {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    background: none;
+    color: white;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+    opacity: 0.6;
+}
+
+.difficultyToggle button.activeDiff {
+    background: var(--primary);
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.generateBtn {
+    width: 100%;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+/* Loading State */
+.loadingStep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    gap: 2rem;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Results State */
+.problemsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.problemItem {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 1.2rem;
+}
+
+.problemNum {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.problemText {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.problemAnswer summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.answerBox {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(79, 70, 229, 0.1);
+    border-radius: 0.8rem;
+    font-weight: 500;
+    border-left: 3px solid var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content {
+        padding: 4rem 2rem;
+    }
+
+    .nav {
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav {
+        padding: 0 1.5rem;
+    }
+
+    .title {
+        font-size: 2.8rem;
+    }
+
+    .instructorCard {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .modalContent {
+        padding: 2rem;
+    }
+}

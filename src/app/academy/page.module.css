@@ -1,0 +1,219 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+    background: #ffffff;
+    color: #0f172a;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.05), transparent 50%);
+}
+
+.heroContent {
+    max-width: 1000px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.title {
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+    margin-bottom: 0.5rem;
+    color: #0f172a;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.05));
+}
+
+.subtitle {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: #0f172a;
+    opacity: 0.7;
+    max-width: 700px;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+.heroButtons {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+/* Section Styling */
+.section {
+    width: 100%;
+    max-width: 1400px;
+    padding: 8rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.categoryGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-bottom: 6rem;
+}
+
+.categoryHeader {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+}
+
+.categoryNumber {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--accent);
+    opacity: 0.3;
+    font-family: var(--font-geist-mono), monospace;
+}
+
+.categoryTitle {
+    font-size: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #0f172a;
+}
+
+.categoryLine {
+    flex-grow: 1;
+    height: 2px;
+    background: linear-gradient(to right, rgba(236, 72, 153, 0.2), transparent);
+}
+
+/* Course Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 2.5rem;
+    width: 100%;
+}
+
+.courseCardLink {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.courseCardLink:hover {
+    transform: translateY(-12px);
+}
+
+.courseCard {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: all 0.4s ease;
+}
+
+.courseCardLink:hover .courseCard {
+    border-color: var(--accent);
+    box-shadow: 0 30px 60px -12px rgba(236, 72, 153, 0.15);
+}
+
+.courseTag {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    opacity: 0.8;
+}
+
+.courseTitle {
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1.1;
+    color: #0f172a;
+}
+
+.courseDesc {
+    font-size: 1.1rem;
+    opacity: 0.6;
+    line-height: 1.6;
+    flex-grow: 1;
+}
+
+.courseLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+    transition: all 0.3s ease;
+}
+
+.courseCardLink:hover .courseLink {
+    gap: 1.2rem;
+}
+
+/* Footer CTA */
+.footerCta {
+    width: 100%;
+    padding: 10rem 2rem;
+    text-align: center;
+    background: linear-gradient(to bottom, transparent, rgba(79, 70, 229, 0.03));
+}
+
+.ctaContent {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.ctaTitle {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .section {
+        padding: 5rem 1.5rem;
+    }
+
+    .heroButtons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .title {
+        font-size: 4.5rem;
+    }
+
+    .ctaTitle {
+        font-size: 3rem;
+    }
+}

@@ -81,6 +81,11 @@ export default function InfoPage() {
                             <p className={styles.cardDesc}>
                                 Educational resources and courses designed to master the skills of the modern digital economy.
                             </p>
+                            <div className={styles.cardActions}>
+                                <Link href="/academy" className="btn">
+                                    Visit Academy
+                                </Link>
+                            </div>
                         </div>
                     </div>
                 </div>
