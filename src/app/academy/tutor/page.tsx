@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
 import Link from 'next/link';
@@ -15,25 +15,89 @@ interface Message {
     };
 }
 
-const Typewriter = ({ text, speed = 15 }: { text: string; speed?: number }) => {
-    const [displayedText, setDisplayedText] = useState('');
+import { InlineMath, BlockMath } from 'react-katex';
+
+const Typewriter = ({ text, speed = 8 }: { text: string; speed?: number }) => {
     const [index, setIndex] = useState(0);
 
+    // CLEANUP & REFORMAT: Force spacing between sections if AI forgets
+    const formattedText = useMemo(() => {
+        let clean = text.replace(/^\((OpenRouter|Gemini|Claude|AIService)\)\s*/, '');
+        // Force double newlines before numbered sections (1. THE FOCUS, etc)
+        const sections = ['1. THE FOCUS', '2. THE LOGIC', '3. THE GUIDE', '4. THE GOTCHA', '5. NEXT STEP'];
+        sections.forEach(s => {
+            const regex = new RegExp(`\\s*${s.replace('.', '\\.')}`, 'g');
+            clean = clean.replace(regex, `\n\n${s}`);
+        });
+        return clean.trim();
+    }, [text]);
+
     useEffect(() => {
-        if (text && index < text.length) {
+        setIndex(0); // Reset when text changes
+    }, [formattedText]);
+
+    useEffect(() => {
+        if (formattedText && index < formattedText.length) {
             const timeout = setTimeout(() => {
-                setDisplayedText((prev) => prev + text.charAt(index));
                 setIndex((prev) => prev + 1);
             }, speed);
             return () => clearTimeout(timeout);
         }
-    }, [index, text, speed]);
+    }, [index, formattedText, speed]);
+
+    const renderContent = () => {
+        // Split into paragraphs first to maintain vertical structure
+        const paragraphs = formattedText.split(/\n\n+/);
+        let absolutePos = 0;
+
+        return paragraphs.map((para: string, pIdx: number) => {
+            const paraStart = absolutePos;
+            const paraEnd = absolutePos + para.length;
+
+            // If we haven't reached this paragraph at all, don't render it
+            if (index <= paraStart) return null;
+
+            // Increment absolutePos for next paragraph (accounting for the \n\n we split by)
+            const gapMatch = formattedText.slice(paraEnd).match(/^\n\n+/);
+            const gap = gapMatch ? gapMatch[0].length : 0;
+            absolutePos = paraEnd + gap;
+
+            // Render inner segments (math vs text) for this paragraph
+            const segments = para.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
+            let paraPos = paraStart;
+
+            return (
+                <div key={pIdx} style={{ marginBottom: '1.5rem', lineHeight: '1.8' }}>
+                    {segments.map((seg: string, sIdx: number) => {
+                        const segStart = paraPos;
+                        const segEnd = paraPos + seg.length;
+                        paraPos = segEnd;
+
+                        if (index <= segStart) return null;
+
+                        // If typing has reached the end of this segment, render it properly
+                        if (index >= segEnd) {
+                            if (seg.startsWith('$$') && seg.endsWith('$$')) {
+                                return <BlockMath key={sIdx}>{seg.slice(2, -2)}</BlockMath>;
+                            }
+                            if (seg.startsWith('$') && seg.endsWith('$')) {
+                                return <InlineMath key={sIdx}>{seg.slice(1, -1)}</InlineMath>;
+                            }
+                            return <span key={sIdx}>{seg}</span>;
+                        }
+
+                        // Still typing this segment - render as plain text to avoid "reflow jumps"
+                        const typingVisible = seg.slice(0, index - segStart);
+                        return <span key={sIdx} style={{ opacity: 0.9 }}>{typingVisible}</span>;
+                    })}
+                </div>
+            );
+        });
+    };
 
     return (
         <div className={styles.messageContent}>
-            {displayedText.split('\n').map((line, j) => (
-                <p key={j} style={{ marginBottom: line.trim() ? '0.5rem' : '1rem' }}>{line}</p>
-            ))}
+            {renderContent()}
         </div>
     );
 };

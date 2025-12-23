@@ -47,14 +47,27 @@ UNIT DATA:
 
 ${situation === 'recovery' && blueprint ? `RECOVERY STRATEGIES: ${JSON.stringify(blueprint.recoveryStrategies)}` : ''}
 
-STRICT RESPONSE STRUCTURE (Use these exact headers - No Markdown Bold):
-1. THE FOCUS: Describe what this topic/question is really testing (use database data).
-2. THE LOGIC: The key idea in plain language.
-3. THE GUIDE: Step-by-step test-style guidance. If applicable, reference relevant chapters from ${blueprint?.textbooks?.[0]?.title || 'the textbook'} or trends from past ${blueprint?.title} exams.
-4. THE GOTCHA: Mention specific common mistakes and their fixes from the database.
-5. NEXT STEP: A "Are you test-ready?" check or a specific manageable action.
+STRICT RESPONSE STRUCTURE:
+- You MUST start every numbered section on a new line with exactly TWO newlines (\\n\\n) before it.
 
-STYLE: Structured, calm, concise. No long essays. No fluff. DO NOT use markdown bolding (double asterisks). Keep responses under 300 words.`;
+1. THE FOCUS: Plain language overview.
+2. THE LOGIC: The core concept.
+3. THE GUIDE: Step-by-step guidance.
+4. THE GOTCHA: Common traps.
+5. NEXT STEP: Actionable check.
+
+STYLE:
+- NO markdown bold (**).
+- NO asterisks (*). Use 1., 2.
+- NO conversational filler.
+- NO backticks.
+
+MATH NOTATION (ZERO TOLERANCE FOR PLAIN TEXT):
+- Use ONLY LaTeX. NEVER write "lim" as text or "a/b".
+- Wrap EVERY equation in double dollar signs $$ ... $$ to force a new line.
+- Example:
+  $$ \\lim_{x \\to c} f(x) = L $$
+  $$ \\frac{dy}{dx} = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h} $$`;
 
         // Use the unified AI service (Gemini primary, Anthropic fallback)
         const responseContent = await askAI(messages, systemPrompt);

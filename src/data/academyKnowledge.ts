@@ -26,6 +26,10 @@ export interface CourseBlueprint {
     }[];
     teacherTips: string[];
     recoveryStrategies: Record<string, string>; // "What to do after a bad score"
+    resourceLinks?: {
+        category: string;
+        links: { title: string; url: string; focus?: string }[];
+    }[];
 }
 
 export const academyKnowledge: Record<string, CourseBlueprint> = {
@@ -93,7 +97,110 @@ export const academyKnowledge: Record<string, CourseBlueprint> = {
         recoveryStrategies: {
             'low-test-score': "Review your 'conceptual errors' vs 'calculation errors'. If you knew WHAT to do but messed up the numbers, you are doing better than you think. If you didn't know WHERE to start, go back to the Unit Overview.",
             'feeling-lost': "Restart from the last unit you felt 100% confident in. Calculus is a ladder; you can't skip a rung."
-        }
+        },
+        resourceLinks: [
+            {
+                category: 'Unit 1: Limits and Continuity',
+                links: [
+                    { title: 'Khan Academy – Unit 1 (Limits & Continuity)', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-limits-new' },
+                    { title: 'Paul’s Online Math Notes – Limits & Continuity (Calc I)', url: 'https://tutorial.math.lamar.edu/classes/calci/limitsintro.aspx' },
+                    { title: 'College Board – Past FRQs (Limits & Continuity)', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: '3Blue1Brown – Essence of Calculus (Limits Intuition)', url: 'https://www.youtube.com/watch?v=riXcZT2ICjA' },
+                    { title: 'PatrickJMT – Limit Practice Problems', url: 'https://www.youtube.com/playlist?list=PLDAA5D23D46B21257' },
+                    { title: 'MIT OpenCourseWare – Limits (Single Variable Calc)', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax Calculus Vol. 1 – Limits Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/2-introduction' },
+                    { title: 'Desmos Graphing Calculator (Visual Exploration)', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 2: Differentiation: Definition & Fundamental Properties',
+                links: [
+                    { title: 'Khan Academy – Unit 2 (Derivative Definition)', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-differentiation-1-new' },
+                    { title: 'Paul’s Notes – Definition of the Derivative', url: 'https://tutorial.math.lamar.edu/Classes/CalcI/DerivativeIntro.aspx' },
+                    { title: 'College Board – Derivative FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'PatrickJMT – Derivative from Definition', url: 'https://www.youtube.com/playlist?list=PLDE077A2EC488104D' },
+                    { title: 'Professor Leonard – Intro to Derivatives', url: 'https://www.youtube.com/watch?v=962lLfW-8Jo' },
+                    { title: 'MIT OCW – Derivatives', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Derivatives Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/3-introduction' },
+                    { title: 'Desmos – Tangent Line Visualization', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 3: Differentiation: Composite, Implicit, Inverse',
+                links: [
+                    { title: 'Khan Academy – Unit 3', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-differentiation-2-new' },
+                    { title: 'Paul’s Notes – Chain Rule & Implicit Diff', url: 'https://tutorial.math.lamar.edu/classes/calci/chainrule.aspx' },
+                    { title: 'PatrickJMT – Chain Rule Practice', url: 'https://www.youtube.com/watch?v=6kScLENCXLg' },
+                    { title: 'Professor Leonard – Chain Rule', url: 'https://www.youtube.com/watch?v=8dr1dZjfhmc' },
+                    { title: 'College Board – Differentiation FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Advanced Differentiation', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Chain Rule, Implicit Diff, Inverse trig', url: 'https://openstax.org/details/books/calculus-volume-1' },
+                    { title: 'Symbolab (Step-by-Step Checking)', url: 'https://www.symbolab.com' }
+                ]
+            },
+            {
+                category: 'Unit 4: Contextual Applications of Differentiation',
+                links: [
+                    { title: 'Khan Academy – Unit 4', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-diff-contextual-applications-new' },
+                    { title: 'Paul’s Notes – Related Rates, Motion, L’Hôpital’s rule', url: 'https://tutorial.math.lamar.edu/classes/calci/relatedrates.aspx' },
+                    { title: 'PatrickJMT – Related Rates Practice', url: 'https://www.youtube.com/playlist?list=PLDC0E2E78840869A5' },
+                    { title: 'Professor Leonard – Applied Derivatives', url: 'https://www.youtube.com/watch?v=qr1WXiq3S3k' },
+                    { title: 'College Board – Motion FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Applications of Derivatives', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Applications Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/4-introduction' },
+                    { title: 'Desmos – Motion Graphs', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 5: Analytical Applications of Differentiation',
+                links: [
+                    { title: 'Khan Academy – Unit 5', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-diff-analytical-applications-new' },
+                    { title: 'Paul’s Notes – Optimization, MVT, Extrema', url: 'https://tutorial.math.lamar.edu/classes/calci/optimization.aspx' },
+                    { title: 'PatrickJMT – Optimization Problems', url: 'https://www.youtube.com/playlist?list=PLF1E94C1948483103' },
+                    { title: 'Professor Leonard – Curve Sketching', url: 'https://www.youtube.com/watch?v=8u6woY05aL0' },
+                    { title: 'College Board – Optimization FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Mean Value Theorem', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Optimization Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/4-7-applied-optimization-problems' },
+                    { title: 'Desmos – First & Second Derivative Graphs', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 6: Integration & Accumulation of Change',
+                links: [
+                    { title: 'Khan Academy – Unit 6', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-integration-new' },
+                    { title: 'Paul’s Notes – Integrals, Riemann Sums, FTC', url: 'https://tutorial.math.lamar.edu/classes/calci/integralsintro.aspx' },
+                    { title: '3Blue1Brown – Visualizing Integrals/FTC', url: 'https://www.youtube.com/watch?v=rfG8ce4nNh0' },
+                    { title: 'PatrickJMT – Riemann Sums Practice', url: 'https://www.youtube.com/watch?v=gFpHHTxsDkI' },
+                    { title: 'Professor Leonard – FTC & Definite Integrals', url: 'https://www.youtube.com/watch?v=xjtEfS0vY2o' },
+                    { title: 'College Board – Integration FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Integrals', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Integration Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/5-introduction' },
+                    { title: 'Desmos – Area Under Curve', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 7: Differential Equations',
+                links: [
+                    { title: 'Khan Academy – Unit 7', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-differential-equations-new' },
+                    { title: 'PatrickJMT - Solving Differential Equations', url: 'https://www.youtube.com/playlist?list=PL8gnhgRJl1x62eH2TuglLxNmHWxZ0JZ3z' },
+                    { title: 'Professor Leonard – Exact Differential Equations', url: 'https://www.youtube.com/watch?v=7zOMnC-BAFY' },
+                    { title: 'College Board – DE FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Differential Equations Intro', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'Slope Field Generator', url: 'https://www.desmos.com/calculator' }
+                ]
+            },
+            {
+                category: 'Unit 8: Applications of Integration',
+                links: [
+                    { title: 'Khan Academy – Unit 8', url: 'https://www.khanacademy.org/math/ap-calculus-ab/ab-applications-integration-new' },
+                    { title: 'Paul’s Notes – Applications of Integrals', url: 'https://tutorial.math.lamar.edu/Classes/CalcI/IntAppsIntro.aspx' },
+                    { title: 'College Board – Area/Volume FRQs', url: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/exam/past-exam-questions' },
+                    { title: 'MIT OCW – Applications of Integration', url: 'https://ocw.mit.edu/courses/18-01-single-variable-calculus-fall-2006/' },
+                    { title: 'OpenStax – Applications Chapter', url: 'https://openstax.org/books/calculus-volume-1/pages/6-introduction' },
+                    { title: 'Desmos – Volume Visualization', url: 'https://www.desmos.com/calculator' }
+                ]
+            }
+        ]
     },
     'ap-chemistry': {
         id: 'ap-chemistry',

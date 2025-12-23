@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { generateInitialAdvice } from '@/utils/mentorLogic';
@@ -15,26 +15,81 @@ interface Message {
     };
 }
 
+import { InlineMath, BlockMath } from 'react-katex';
+
 const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) => {
-    const [displayedText, setDisplayedText] = useState('');
     const [index, setIndex] = useState(0);
 
+    const formattedText = useMemo(() => {
+        let clean = text.replace(/^\((OpenRouter|Gemini|Claude|AIService)\)\s*/, '');
+        const sections = ['1. THE FOCUS', '2. THE LOGIC', '3. THE GUIDE', '4. THE GOTCHA', '5. NEXT STEP'];
+        sections.forEach(s => {
+            const regex = new RegExp(`\\s*${s.replace('.', '\\.')}`, 'g');
+            clean = clean.replace(regex, `\n\n${s}`);
+        });
+        return clean.trim();
+    }, [text]);
+
     useEffect(() => {
-        if (text && index < text.length) {
+        setIndex(0);
+    }, [formattedText]);
+
+    useEffect(() => {
+        if (formattedText && index < formattedText.length) {
             const timeout = setTimeout(() => {
-                setDisplayedText(prev => prev + text.charAt(index));
                 setIndex(prev => prev + 1);
             }, speed);
             return () => clearTimeout(timeout);
         }
-    }, [index, text, speed]);
+    }, [index, formattedText, speed]);
+
+    const renderContent = () => {
+        const paragraphs = formattedText.split(/\n\n+/);
+        let absolutePos = 0;
+
+        return paragraphs.map((para: string, pIdx: number) => {
+            const paraStart = absolutePos;
+            const paraEnd = absolutePos + para.length;
+
+            if (index <= paraStart) return null;
+
+            const gapMatch = formattedText.slice(paraEnd).match(/^\n\n+/);
+            const gap = gapMatch ? gapMatch[0].length : 0;
+            absolutePos = paraEnd + gap;
+
+            const segments = para.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
+            let paraPos = paraStart;
+
+            return (
+                <div key={pIdx} style={{ marginBottom: '1rem', lineHeight: '1.6' }}>
+                    {segments.map((seg: string, sIdx: number) => {
+                        const segStart = paraPos;
+                        const segEnd = paraPos + seg.length;
+                        paraPos = segEnd;
+
+                        if (index <= segStart) return null;
+
+                        if (index >= segEnd) {
+                            if (seg.startsWith('$$') && seg.endsWith('$$')) {
+                                return <BlockMath key={sIdx}>{seg.slice(2, -2)}</BlockMath>;
+                            }
+                            if (seg.startsWith('$') && seg.endsWith('$')) {
+                                return <InlineMath key={sIdx}>{seg.slice(1, -1)}</InlineMath>;
+                            }
+                            return <span key={sIdx}>{seg}</span>;
+                        }
+
+                        return <span key={sIdx} style={{ opacity: 0.9 }}>{seg.slice(0, index - segStart)}</span>;
+                    })}
+                </div>
+            );
+        });
+    };
 
     return (
-        <>
-            {displayedText.split('\n').map((line, j) => (
-                <p key={j}>{line || '\u00A0'}</p>
-            ))}
-        </>
+        <div className={styles.messageContent}>
+            {renderContent()}
+        </div>
     );
 };
 

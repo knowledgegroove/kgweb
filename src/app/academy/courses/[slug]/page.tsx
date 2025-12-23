@@ -28,8 +28,11 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     const { slug } = use(params);
     const { openTutor } = useTutor();
     const textbookRef = useRef<HTMLDivElement>(null);
+    const resourcesRef = useRef<HTMLDivElement>(null);
     const [showPractice, setShowPractice] = useState(false);
     const [showTextbook, setShowTextbook] = useState(false);
+    const [showResources, setShowResources] = useState(false);
+    const [activeResourceUnit, setActiveResourceUnit] = useState<number | null>(null);
     const [step, setStep] = useState(1); // 1: settings, 2: generating, 3: results
     const [selectedUnit, setSelectedUnit] = useState('');
     const [numProblems, setNumProblems] = useState(5);
@@ -61,6 +64,12 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
             textbookRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [showTextbook]);
+
+    useEffect(() => {
+        if (showResources && resourcesRef.current) {
+            resourcesRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [showResources]);
 
     const handleGenerate = async () => {
         setStep(2);
@@ -254,6 +263,13 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                     <h3>Strategy Guides</h3>
                                     <p>Step-by-step breakdowns for every unit.</p>
                                 </div>
+                                {data.resourceLinks && (
+                                    <div className={styles.resourceCard} onClick={() => setShowResources(true)} style={{ cursor: 'pointer' }}>
+                                        <div className={styles.resourceIcon}>🔗</div>
+                                        <h3>General Resources</h3>
+                                        <p>Curated list of external labs and tools.</p>
+                                    </div>
+                                )}
                                 {data.textbook && (
                                     <div className={styles.resourceCard} onClick={() => setShowTextbook(true)} style={{ cursor: 'pointer' }}>
                                         <div className={styles.resourceIcon}>📖</div>
@@ -315,6 +331,65 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                 className={styles.inlinePdfViewer}
                                 title="Textbook Viewer"
                             />
+                        </motion.section>
+                    )}
+                </AnimatePresence>
+
+                {/* General Resources Section */}
+                <AnimatePresence>
+                    {showResources && data.resourceLinks && (
+                        <motion.section
+                            ref={resourcesRef}
+                            className={styles.resourcesContentSection}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                        >
+                            <div className={styles.textbookHeader}>
+                                <h2 className={styles.sectionTitle}>General Resources: {data.title}</h2>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    {activeResourceUnit !== null && (
+                                        <button className={styles.closeTextbookBtn} onClick={() => setActiveResourceUnit(null)}>← All Units</button>
+                                    )}
+                                    <button className={styles.closeTextbookBtn} onClick={() => { setShowResources(false); setActiveResourceUnit(null); }}>Close ×</button>
+                                </div>
+                            </div>
+
+                            <div className={styles.resourceLinksContent}>
+                                {activeResourceUnit === null ? (
+                                    <div className={styles.unitResourceGrid}>
+                                        {data.resourceLinks.map((cat: any, idx: number) => (
+                                            <button
+                                                key={idx}
+                                                className={styles.unitResourceCard}
+                                                onClick={() => setActiveResourceUnit(idx)}
+                                            >
+                                                <span className={styles.unitResourceNum}>Unit {idx + 1}</span>
+                                                <h4 className={styles.unitResourceTitle}>{cat.category.split(': ')[1] || cat.category}</h4>
+                                                <p className={styles.unitResourceLinksCount}>{cat.links.length} Resources</p>
+                                            </button>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.resourceCategory}>
+                                        <h3 className={styles.categoryTitle}>{data.resourceLinks[activeResourceUnit].category}</h3>
+                                        <div className={styles.linksList}>
+                                            {data.resourceLinks[activeResourceUnit].links.map((link: any, lIdx: number) => (
+                                                <a
+                                                    key={lIdx}
+                                                    href={link.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className={styles.resourceLinkItem}
+                                                >
+                                                    <span className={styles.linkTitle}>{link.title}</span>
+                                                    <span className={styles.linkUrl}>{link.url}</span>
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </motion.section>
                     )}
                 </AnimatePresence>
