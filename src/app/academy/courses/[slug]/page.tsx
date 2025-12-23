@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { academyKnowledge } from '@/data/academyKnowledge';
+import { InlineMath, BlockMath } from 'react-katex';
 import styles from './page.module.css';
 
 // Add secondary UI-only data here
@@ -29,15 +30,14 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     const { openTutor } = useTutor();
     const textbookRef = useRef<HTMLDivElement>(null);
     const resourcesRef = useRef<HTMLDivElement>(null);
-    const [showPractice, setShowPractice] = useState(false);
+    const guidesRef = useRef<HTMLDivElement>(null);
+
     const [showTextbook, setShowTextbook] = useState(false);
     const [showResources, setShowResources] = useState(false);
+    const [showGuides, setShowGuides] = useState(false);
     const [activeResourceUnit, setActiveResourceUnit] = useState<number | null>(null);
-    const [step, setStep] = useState(1); // 1: settings, 2: generating, 3: results
-    const [selectedUnit, setSelectedUnit] = useState('');
-    const [numProblems, setNumProblems] = useState(5);
-    const [difficulty, setDifficulty] = useState('Medium');
-    const [generatedProblems, setGeneratedProblems] = useState<any[]>([]);
+    const [activeGuideUnit, setActiveGuideUnit] = useState<number | null>(null);
+    const [expandedUnit, setExpandedUnit] = useState<number | null>(null);
 
     const blueprint = academyKnowledge[slug];
     const extras = courseExtras[slug] || { calendar: [], instructors: [] };
@@ -54,129 +54,74 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     };
 
     useEffect(() => {
-        if (data.units.length > 0 && !selectedUnit) {
-            setSelectedUnit(data.units[0].title);
-        }
-    }, [data.units]);
-
-    useEffect(() => {
         if (showTextbook && textbookRef.current) {
-            textbookRef.current.scrollIntoView({ behavior: 'smooth' });
+            const timer = setTimeout(() => {
+                textbookRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+            return () => clearTimeout(timer);
         }
     }, [showTextbook]);
 
     useEffect(() => {
         if (showResources && resourcesRef.current) {
-            resourcesRef.current.scrollIntoView({ behavior: 'smooth' });
+            const timer = setTimeout(() => {
+                resourcesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+            return () => clearTimeout(timer);
         }
-    }, [showResources]);
+    }, [showResources, activeResourceUnit]);
 
-    const handleGenerate = async () => {
-        setStep(2);
-        try {
-            const response = await fetch('/api/practice', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    courseId: slug,
-                    unit: selectedUnit,
-                    numProblems,
-                    difficulty
-                })
-            });
-            const result = await response.json();
-            setGeneratedProblems(result.problems || [
-                { q: "Evaluate the limit as x approaches 2 for (x^2-4)/(x-2)", a: "4" },
-                { q: "Is the function f(x)=1/x continuous at x=0?", a: "No, vertical asymptote." }
-            ]);
-            setStep(3);
-        } catch (e) {
-            setGeneratedProblems([
-                { q: "Sample Question 1: What is the derivative of x^2?", a: "2x" },
-                { q: "Sample Question 2: Why is the limit important?", a: "It defines continuity and derivatives." }
-            ]);
-            setStep(3);
+    useEffect(() => {
+        if (showGuides && guidesRef.current) {
+            const timer = setTimeout(() => {
+                guidesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [showGuides, activeGuideUnit]);
+
+    const MathRenderer = ({ text }: { text: string }) => {
+        const lines = text.split('\n');
+        return (
+            <div className={styles.mathContent}>
+                {lines.map((line, lIdx) => {
+                    const segments = line.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
+                    return (
+                        <div key={lIdx} style={{ marginBottom: line.trim() === '' ? '1.5rem' : '0.5rem', minHeight: '1em' }}>
+                            {segments.map((seg, sIdx) => {
+                                if (seg.startsWith('$$') && seg.endsWith('$$')) {
+                                    return <BlockMath key={sIdx}>{seg.slice(2, -2)}</BlockMath>;
+                                }
+                                if (seg.startsWith('$') && seg.endsWith('$')) {
+                                    return <InlineMath key={sIdx}>{seg.slice(1, -1)}</InlineMath>;
+                                }
+                                return <span key={sIdx}>{seg}</span>;
+                            })}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    const toggleResourceSection = (section: 'textbook' | 'resources' | 'guides') => {
+        if (section === 'textbook') {
+            setShowTextbook(!showTextbook);
+            setShowResources(false);
+            setShowGuides(false);
+        } else if (section === 'resources') {
+            setShowResources(!showResources);
+            setShowTextbook(false);
+            setShowGuides(false);
+        } else if (section === 'guides') {
+            setShowGuides(!showGuides);
+            setShowTextbook(false);
+            setShowResources(false);
         }
     };
 
     return (
-        <main className={`${styles.main} academy-course-page`}>
-            <AnimatePresence>
-                {showPractice && (
-                    <motion.div
-                        className={styles.modalOverlay}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setShowPractice(false)}
-                    >
-                        <motion.div
-                            className={styles.modalContent}
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <button className={styles.closeBtn} onClick={() => setShowPractice(false)}>×</button>
-
-                            {step === 1 && (
-                                <div className={styles.practiceSettings}>
-                                    <h2 className={styles.modalTitle}>Targeted Practice</h2>
-                                    <div className={styles.settingGroup}>
-                                        <label>Select Unit</label>
-                                        <select value={selectedUnit} onChange={(e) => setSelectedUnit(e.target.value)}>
-                                            {data.units.map((u: any) => (
-                                                <option key={u.title} value={u.title}>{u.title}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className={styles.settingGroup}>
-                                        <label>Difficulty</label>
-                                        <div className={styles.btnGroup}>
-                                            {['Easy', 'Medium', 'Hard'].map(d => (
-                                                <button
-                                                    key={d}
-                                                    className={difficulty === d ? styles.activeBtn : ''}
-                                                    onClick={() => setDifficulty(d)}
-                                                >
-                                                    {d}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <button className={styles.generateBtn} onClick={handleGenerate}>
-                                        Generate Problems
-                                    </button>
-                                </div>
-                            )}
-
-                            {step === 2 && (
-                                <div className={styles.generatingState}>
-                                    <div className={styles.loader}></div>
-                                    <h2>Crafting your practice set...</h2>
-                                    <p>Our AI is selecting problems that match the AP exam style.</p>
-                                </div>
-                            )}
-
-                            {step === 3 && (
-                                <div className={styles.practiceResults}>
-                                    <h2 className={styles.modalTitle}>Your Practice Set</h2>
-                                    <div className={styles.problemList}>
-                                        {generatedProblems.map((p, i) => (
-                                            <div key={i} className={styles.problemItem}>
-                                                <p className={styles.question}><strong>Q:</strong> {p.q}</p>
-                                                <p className={styles.answer}><strong>A:</strong> {p.a}</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button className={styles.generateBtn} onClick={() => setStep(1)}>New Session</button>
-                                </div>
-                            )}
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
+        <main className={styles.main}>
             <div className={styles.content}>
                 <div className={styles.grid}>
                     {/* Left Column (Main Content) */}
@@ -193,7 +138,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             <div className={styles.heroActionRow}>
                                 <button
                                     className="btn"
-                                    onClick={() => { setShowPractice(true); setStep(1); }}
+                                    onClick={() => openTutor(slug, undefined, undefined, 'practice')}
                                 >
                                     Make Targeted Practice
                                 </button>
@@ -206,13 +151,19 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             </div>
 
                             <div className={styles.unitList}>
-                                <h3 className={styles.subTitle}>Units of Study</h3>
+                                <h2 className={styles.sectionTitle} style={{ color: 'white' }}>Units of Study</h2>
                                 <div className={styles.unitsGrid}>
                                     {data.units.map((unit: any, i: number) => (
                                         <div key={i} className={styles.unitCard}>
                                             <div className={styles.unitHeader}>
                                                 <span className={styles.unitNum}>Unit {unit.number}</span>
                                                 <h4 className={styles.unitName}>{unit.title}</h4>
+                                                <button
+                                                    className={styles.learnMoreBtn}
+                                                    onClick={() => setExpandedUnit(expandedUnit === unit.number ? null : unit.number)}
+                                                >
+                                                    {expandedUnit === unit.number ? 'Show Less' : 'Learn More'}
+                                                </button>
                                                 <span className={`${styles.priorityTag} ${styles[unit.priority.toLowerCase()]}`}>
                                                     {unit.priority}
                                                 </span>
@@ -223,31 +174,80 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                     <strong>The Focus:</strong> {unit.whatMatters}
                                                 </p>
 
-                                                <div className={styles.unitDetails}>
-                                                    <div className={styles.detailCol}>
-                                                        <h5>Test Traps</h5>
-                                                        <ul>
-                                                            {unit.commonMistakes.slice(0, 2).map((m: any, idx: number) => (
-                                                                <li key={idx}>{m.mistake}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                    <div className={styles.detailCol}>
-                                                        <h5>Readiness</h5>
-                                                        <ul>
-                                                            {unit.readinessChecklist.slice(0, 2).map((r: any, idx: number) => (
-                                                                <li key={idx}>{r}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                </div>
+                                                <AnimatePresence>
+                                                    {expandedUnit === unit.number && (
+                                                        <motion.div
+                                                            className={styles.unitDetails}
+                                                            initial={{ height: 0, opacity: 0 }}
+                                                            animate={{ height: 'auto', opacity: 1 }}
+                                                            exit={{ height: 0, opacity: 0 }}
+                                                            transition={{ duration: 0.3 }}
+                                                        >
+                                                            <motion.div
+                                                                className={styles.detailCol}
+                                                                initial="hidden"
+                                                                animate="visible"
+                                                                variants={{
+                                                                    hidden: { opacity: 0 },
+                                                                    visible: {
+                                                                        opacity: 1,
+                                                                        transition: { staggerChildren: 0.1 }
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <h5>Test Traps</h5>
+                                                                <ul>
+                                                                    {unit.commonMistakes.slice(0, 2).map((m: any, idx: number) => (
+                                                                        <motion.li
+                                                                            key={idx}
+                                                                            variants={{
+                                                                                hidden: { opacity: 0, x: -10 },
+                                                                                visible: { opacity: 0.6, x: 0 }
+                                                                            }}
+                                                                        >
+                                                                            {m.mistake}
+                                                                        </motion.li>
+                                                                    ))}
+                                                                </ul>
+                                                            </motion.div>
+                                                            <motion.div
+                                                                className={styles.detailCol}
+                                                                initial="hidden"
+                                                                animate="visible"
+                                                                variants={{
+                                                                    hidden: { opacity: 0 },
+                                                                    visible: {
+                                                                        opacity: 1,
+                                                                        transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+                                                                    }
+                                                                }}
+                                                            >
+                                                                <h5>Readiness</h5>
+                                                                <ul>
+                                                                    {unit.readinessChecklist.slice(0, 2).map((r: any, idx: number) => (
+                                                                        <motion.li
+                                                                            key={idx}
+                                                                            variants={{
+                                                                                hidden: { opacity: 0, x: -10 },
+                                                                                visible: { opacity: 0.6, x: 0 }
+                                                                            }}
+                                                                        >
+                                                                            {r}
+                                                                        </motion.li>
+                                                                    ))}
+                                                                </ul>
+                                                            </motion.div>
 
-                                                <button
-                                                    className={styles.unitAiBtn}
-                                                    onClick={() => openTutor(slug, unit.number, `Unit ${unit.number}: ${unit.title}. Focus: ${unit.whatMatters}`)}
-                                                >
-                                                    ✨ Strategize with AI
-                                                </button>
+                                                            <button
+                                                                className={styles.unitAiBtn}
+                                                                style={{ marginTop: '2rem' }}
+                                                                onClick={() => openTutor(slug, unit.number, `Unit ${unit.number}: ${unit.title}. Focus: ${unit.whatMatters}`)}
+                                                            >
+                                                                ✨ Strategize with AI
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                             </div>
                                         </div>
                                     ))}
@@ -258,20 +258,20 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                         <section className={styles.resourcesSection}>
                             <h2 className={styles.sectionTitle}>Course Resources</h2>
                             <div className={styles.resourceGrid}>
-                                <div className={styles.resourceCard} onClick={() => openTutor(slug)} style={{ cursor: 'pointer' }}>
+                                <div className={styles.resourceCard} onClick={() => toggleResourceSection('guides')} style={{ cursor: 'pointer' }}>
                                     <div className={styles.resourceIcon}>📚</div>
                                     <h3>Strategy Guides</h3>
                                     <p>Step-by-step breakdowns for every unit.</p>
                                 </div>
                                 {data.resourceLinks && (
-                                    <div className={styles.resourceCard} onClick={() => setShowResources(true)} style={{ cursor: 'pointer' }}>
+                                    <div className={styles.resourceCard} onClick={() => toggleResourceSection('resources')} style={{ cursor: 'pointer' }}>
                                         <div className={styles.resourceIcon}>🔗</div>
                                         <h3>General Resources</h3>
                                         <p>Curated list of external labs and tools.</p>
                                     </div>
                                 )}
                                 {data.textbook && (
-                                    <div className={styles.resourceCard} onClick={() => setShowTextbook(true)} style={{ cursor: 'pointer' }}>
+                                    <div className={styles.resourceCard} onClick={() => toggleResourceSection('textbook')} style={{ cursor: 'pointer' }}>
                                         <div className={styles.resourceIcon}>📖</div>
                                         <h3>Online Textbook</h3>
                                         <p>Full digital access to your course materials.</p>
@@ -317,19 +317,19 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                     {showTextbook && data.textbook && (
                         <motion.section
                             ref={textbookRef}
-                            className={styles.textbookSection}
+                            className={styles.resourcesContentSection}
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                         >
                             <div className={styles.textbookHeader}>
-                                <h2 className={styles.sectionTitle}>Full Textbook: {data.title}</h2>
-                                <button className={styles.closeTextbookBtn} onClick={() => setShowTextbook(false)}>Close Textbook ×</button>
+                                <h2 className={styles.sectionTitle}>Online Textbook: {data.title}</h2>
+                                <button className={styles.closeTextbookBtn} onClick={() => setShowTextbook(false)}>Close ×</button>
                             </div>
                             <iframe
-                                src={`${data.textbook}#toolbar=0`}
-                                className={styles.inlinePdfViewer}
-                                title="Textbook Viewer"
+                                src={data.textbook}
+                                className={styles.textbookFrame}
+                                title="Course Textbook"
                             />
                         </motion.section>
                     )}
@@ -364,29 +364,84 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                 className={styles.unitResourceCard}
                                                 onClick={() => setActiveResourceUnit(idx)}
                                             >
-                                                <span className={styles.unitResourceNum}>Unit {idx + 1}</span>
+                                                <span className={styles.unitResourceNum}>Module {idx + 1}</span>
                                                 <h4 className={styles.unitResourceTitle}>{cat.category.split(': ')[1] || cat.category}</h4>
                                                 <p className={styles.unitResourceLinksCount}>{cat.links.length} Resources</p>
                                             </button>
                                         ))}
                                     </div>
                                 ) : (
-                                    <div className={styles.resourceCategory}>
-                                        <h3 className={styles.categoryTitle}>{data.resourceLinks[activeResourceUnit].category}</h3>
-                                        <div className={styles.linksList}>
+                                    <div className={styles.linksGridWrapper}>
+                                        <h3 className={styles.unitPathTitle}>
+                                            {data.resourceLinks[activeResourceUnit].category}
+                                        </h3>
+                                        <div className={styles.linksGrid}>
                                             {data.resourceLinks[activeResourceUnit].links.map((link: any, lIdx: number) => (
                                                 <a
                                                     key={lIdx}
                                                     href={link.url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className={styles.resourceLinkItem}
+                                                    className={styles.resourceLinkCard}
                                                 >
                                                     <span className={styles.linkTitle}>{link.title}</span>
                                                     <span className={styles.linkUrl}>{link.url}</span>
                                                 </a>
                                             ))}
                                         </div>
+                                    </div>
+                                )}
+                            </div>
+                        </motion.section>
+                    )}
+                </AnimatePresence>
+
+                {/* Strategy Guides Section */}
+                <AnimatePresence>
+                    {showGuides && (
+                        <motion.section
+                            ref={guidesRef}
+                            className={styles.resourcesContentSection}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                        >
+                            <div className={styles.textbookHeader}>
+                                <h2 className={styles.sectionTitle}>Strategy Guides: {data.title}</h2>
+                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                    {activeGuideUnit !== null && (
+                                        <button className={styles.closeTextbookBtn} onClick={() => setActiveGuideUnit(null)}>← All Units</button>
+                                    )}
+                                    <button className={styles.closeTextbookBtn} onClick={() => { setShowGuides(false); setActiveGuideUnit(null); }}>Close ×</button>
+                                </div>
+                            </div>
+
+                            <div className={styles.resourceLinksContent}>
+                                {activeGuideUnit === null ? (
+                                    <div className={styles.unitResourceGrid}>
+                                        {data.units.map((unit: any, idx: number) => {
+                                            const hasGuide = data.strategyGuides?.some((g: any) => g.unitNumber === unit.number);
+                                            return (
+                                                <button
+                                                    key={idx}
+                                                    className={`${styles.unitResourceCard} ${!hasGuide ? styles.disabledCard : ''}`}
+                                                    onClick={() => hasGuide && setActiveGuideUnit(unit.number)}
+                                                    disabled={!hasGuide}
+                                                >
+                                                    <span className={styles.unitResourceNum}>Unit {unit.number}</span>
+                                                    <h4 className={styles.unitResourceTitle}>{unit.title}</h4>
+                                                    <p className={styles.unitResourceLinksCount}>{hasGuide ? 'View Guide' : 'Coming Soon'}</p>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className={styles.guideWrapper}>
+                                        {data.strategyGuides?.filter((g: any) => g.unitNumber === activeGuideUnit).map((guide: any, gIdx: number) => (
+                                            <div key={gIdx} className={styles.guideContentBody}>
+                                                <MathRenderer text={guide.content} />
+                                            </div>
+                                        ))}
                                     </div>
                                 )}
                             </div>

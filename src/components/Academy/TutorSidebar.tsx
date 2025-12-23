@@ -4,6 +4,9 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { generateInitialAdvice } from '@/utils/mentorLogic';
+import { academyKnowledge } from '@/data/academyKnowledge';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 import styles from './TutorSidebar.module.css';
 
 interface Message {
@@ -15,19 +18,36 @@ interface Message {
     };
 }
 
-import { InlineMath, BlockMath } from 'react-katex';
+const MathRenderer = ({ text }: { text: string }) => {
+    if (!text) return null;
+    const lines = text.split('\n');
+    return (
+        <div className={styles.mathWrapper}>
+            {lines.map((line, lIdx) => {
+                const segments = line.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
+                return (
+                    <div key={lIdx} style={{ marginBottom: line.trim() === '' ? '1.5rem' : '0.5rem', minHeight: '1.2em' }}>
+                        {segments.map((seg, sIdx) => {
+                            if (seg.startsWith('$$') && seg.endsWith('$$')) {
+                                return <BlockMath key={sIdx}>{seg.slice(2, -2)}</BlockMath>;
+                            }
+                            if (seg.startsWith('$') && seg.endsWith('$')) {
+                                return <InlineMath key={sIdx}>{seg.slice(1, -1)}</InlineMath>;
+                            }
+                            return <span key={sIdx}>{seg}</span>;
+                        })}
+                    </div>
+                );
+            })}
+        </div>
+    );
+};
 
 const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) => {
     const [index, setIndex] = useState(0);
 
     const formattedText = useMemo(() => {
-        let clean = text.replace(/^\((OpenRouter|Gemini|Claude|AIService)\)\s*/, '');
-        const sections = ['1. THE FOCUS', '2. THE LOGIC', '3. THE GUIDE', '4. THE GOTCHA', '5. NEXT STEP'];
-        sections.forEach(s => {
-            const regex = new RegExp(`\\s*${s.replace('.', '\\.')}`, 'g');
-            clean = clean.replace(regex, `\n\n${s}`);
-        });
-        return clean.trim();
+        return text.replace(/^\((OpenRouter|Gemini|Claude|Local Logic|AIService|Fallback \(Gemini\))\)\s*/, '').trim();
     }, [text]);
 
     useEffect(() => {
@@ -44,6 +64,10 @@ const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) =
     }, [index, formattedText, speed]);
 
     const renderContent = () => {
+        // Find provider if present at start: (Provider) text
+        const providerMatch = text.match(/^\((OpenRouter|Gemini|Claude|Local Logic|AIService|Fallback \(Gemini\))\)/);
+        const provider = providerMatch ? providerMatch[1] : null;
+
         const paragraphs = formattedText.split(/\n\n+/);
         let absolutePos = 0;
 
@@ -61,7 +85,19 @@ const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) =
             let paraPos = paraStart;
 
             return (
-                <div key={pIdx} style={{ marginBottom: '1rem', lineHeight: '1.6' }}>
+                <div key={pIdx} style={{ marginBottom: '1rem', lineHeight: '1.6', position: 'relative' }}>
+                    {pIdx === 0 && provider && (
+                        <div style={{
+                            fontSize: '0.6rem',
+                            opacity: 0.4,
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            marginBottom: '0.4rem',
+                            letterSpacing: '0.05em'
+                        }}>
+                            Response via {provider === 'Fallback (Gemini)' ? 'Gemini' : provider}
+                        </div>
+                    )}
                     {segments.map((seg: string, sIdx: number) => {
                         const segStart = paraPos;
                         const segEnd = paraPos + seg.length;
@@ -94,35 +130,104 @@ const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) =
 };
 
 export default function TutorSidebar() {
-    const { isOpen, closeTutor, initialCourseId, initialUnitNumber, initialPageContext } = useTutor();
+    const { isOpen, closeTutor, initialCourseId, initialUnitNumber, initialPageContext, initialMode } = useTutor();
     const [step, setStep] = useState(1);
     const [course, setCourse] = useState('');
     const [unit, setUnit] = useState<number | null>(null);
+    const [activeMode, setActiveMode] = useState<'chat' | 'practice' | null>(null);
     const [situation, setSituation] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const chatEndRef = useRef<HTMLDivElement>(null);
 
+    // Practice specific state
+    const [practiceQuestions, setPracticeQuestions] = useState<any[]>([]);
+    const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
+    const [selectedOption, setSelectedOption] = useState<number | null>(null);
+    const [showExplanation, setShowExplanation] = useState(false);
+    const [practiceScore, setPracticeScore] = useState(0);
+
+    // Sync context to local state once upon opening
     useEffect(() => {
         if (isOpen) {
+            const mode = initialMode || 'chat';
+            setActiveMode(mode);
+
             if (initialCourseId) {
                 setCourse(initialCourseId);
-                setMessages([]); // Clear previous context
-                setStep(2);
+                setMessages([]);
                 if (initialUnitNumber) {
                     setUnit(initialUnitNumber);
-                    setStep(3);
+                    if (mode === 'practice') {
+                        startPractice(initialCourseId, initialUnitNumber);
+                    } else {
+                        setStep(3); // Options step
+                    }
+                } else {
+                    setStep(2); // Unit selection
                 }
             } else {
-                setStep(0); // 0: General Greeting
+                setStep(0); // General Greeting
                 setCourse('');
                 setUnit(null);
                 setSituation('');
                 setMessages([]);
             }
         }
-    }, [isOpen, initialCourseId, initialUnitNumber]);
+    }, [isOpen]); // Only run when sidebar opens
+
+    const startPractice = async (courseId: string, unitNum: number) => {
+        setStep(5); // 5: Loading Practice
+        setLoading(true);
+        setPracticeScore(0);
+        setCurrentQuestionIdx(0);
+        setSelectedOption(null);
+        setShowExplanation(false);
+        try {
+            const response = await fetch('/api/academy-practice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, unitNumber: unitNum })
+            });
+            const data = await response.json();
+            if (data.questions && data.questions.length > 0) {
+                setPracticeQuestions(data.questions);
+                setStep(6); // 6: Active Practice
+            } else {
+                setMessages(prev => [...prev, {
+                    role: 'bot',
+                    content: `(System) I had trouble generating practice questions: ${data.error || 'Unknown API error'}. Please try again or pick a different unit.`
+                }]);
+                setStep(3); // Options step
+            }
+        } catch (e: any) {
+            console.error('Practice Fetch Error:', e);
+            setMessages(prev => [...prev, { role: 'bot', content: `(System) I had trouble connecting to the practice engine: ${e.message}.` }]);
+            setStep(3); // Options step
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleOptionSelect = (idx: number) => {
+        if (showExplanation) return;
+        setSelectedOption(idx);
+        setShowExplanation(true);
+        if (idx === practiceQuestions[currentQuestionIdx].answer) {
+            setPracticeScore(prev => prev + 1);
+        }
+    };
+
+    const nextQuestion = () => {
+        if (currentQuestionIdx < practiceQuestions.length - 1) {
+            setCurrentQuestionIdx(prev => prev + 1);
+            setSelectedOption(null);
+            setShowExplanation(false);
+        } else {
+            setStep(7); // 7: Practice Summary
+        }
+    };
 
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -132,13 +237,22 @@ export default function TutorSidebar() {
         scrollToBottom();
     }, [messages]);
 
-    const handleNext = () => setStep(step + 1);
+    const handleNext = () => {
+        if (step === 2 && activeMode === 'practice') {
+            startPractice(course, unit || 1);
+            return;
+        }
+        setStep(step + 1);
+    };
 
     const startChat = async (s: string) => {
+        if (s === 'practice') {
+            startPractice(course, unit || 1);
+            return;
+        }
         setSituation(s);
         setStep(4);
 
-        // QUOTA BYPASS: Generate the first response locally
         const userPrompt = "Help me understand what to focus on.";
         const localAdvice = generateInitialAdvice(course, unit || 1, s);
 
@@ -173,17 +287,17 @@ export default function TutorSidebar() {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.details || errorData.error || 'Failed to get response');
+                throw new Error('Failed to fetch AI response');
             }
 
             const data = await response.json();
-            // Sanitize: strip markdown bolding for a premium plain-text look
-            const cleanContent = (data.content || 'Error: No response from AI').replace(/\*\*/g, '');
-            setMessages([...newMessages, { role: 'bot', content: cleanContent, grounded: data.grounding }]);
-        } catch (error: any) {
-            console.error('Error:', error);
-            setMessages([...newMessages, { role: 'bot', content: `Sorry, I encountered an error: ${error.message}. Please check your connection or try again.` }]);
+            setMessages(prev => [...prev, {
+                role: 'bot',
+                content: data.content // Use 'content' as returned by the API
+            }]);
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setMessages(prev => [...prev, { role: 'bot', content: "I'm sorry, I'm having trouble connecting to my brain. Please try again in a moment." }]);
         } finally {
             setLoading(false);
         }
@@ -218,33 +332,22 @@ export default function TutorSidebar() {
                                     <motion.div key="step0" className={styles.stepContainer} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
                                         <div className={styles.generalGreeting}>
                                             <h2 className={styles.greetingTitle}>Welcome back.</h2>
-                                            <p className={styles.greetingText}>
-                                                How may I help you today? <br /><br />
-                                                Are you lost, looking for practice, or have any questions? Just let me know.
-                                            </p>
+                                            <p className={styles.greetingText}>Ready to master your AP course? I have the full course blueprint loaded.</p>
                                             <div className={styles.greetingButtons}>
-                                                <button className={styles.primaryAction} onClick={() => setStep(1)}>
-                                                    Select a Course
-                                                </button>
-                                                <button className={styles.secondaryAction} onClick={() => startChat('confused')}>
-                                                    Just talk to me
-                                                </button>
+                                                <button className={styles.primaryAction} onClick={() => setStep(1)}>Let's start</button>
+                                                <button className={styles.secondaryAction} onClick={closeTutor}>Just browsing</button>
                                             </div>
                                         </div>
                                     </motion.div>
                                 )}
 
                                 {step === 1 && (
-                                    <motion.div key="step1" className={styles.stepContainer} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-                                        <h4 className={styles.label}>Which course?</h4>
+                                    <motion.div key="step1" className={styles.stepContainer} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+                                        <h4 className={styles.label}>Which course are you studying?</h4>
                                         <div className={styles.grid}>
-                                            {[
-                                                { id: 'ap-calculus-ab', name: 'AP Calculus', icon: '📐' },
-                                                { id: 'ap-chemistry', name: 'AP Chemistry', icon: '🧪' },
-                                                { id: 'ap-world-history', name: 'AP World', icon: '🌍' }
-                                            ].map(c => (
-                                                <button key={c.id} className={styles.choiceBtn} onClick={() => { setCourse(c.id); handleNext(); }}>
-                                                    <span>{c.icon}</span> {c.name}
+                                            {['ap-calculus-ab', 'ap-physics-1', 'ap-chem', 'ap-world'].map(id => (
+                                                <button key={id} className={styles.choiceBtn} onClick={() => { setCourse(id); handleNext(); }}>
+                                                    {id.replace('ap-', 'AP ').toUpperCase()}
                                                 </button>
                                             ))}
                                         </div>
@@ -255,11 +358,25 @@ export default function TutorSidebar() {
                                     <motion.div key="step2" className={styles.stepContainer} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                                         <h4 className={styles.label}>Which unit?</h4>
                                         <div className={styles.grid}>
-                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
-                                                <button key={num} className={styles.choiceBtn} onClick={() => { setUnit(num); handleNext(); }}>
-                                                    Unit {num}
-                                                </button>
-                                            ))}
+                                            {(academyKnowledge[course]?.units || [1, 2, 3, 4, 5, 6, 7, 8]).map((u: any) => {
+                                                const num = typeof u === 'number' ? u : u.number;
+                                                return (
+                                                    <button
+                                                        key={num}
+                                                        className={styles.choiceBtn}
+                                                        onClick={() => {
+                                                            setUnit(num);
+                                                            if (activeMode === 'practice') {
+                                                                startPractice(course, num);
+                                                            } else {
+                                                                setStep(3);
+                                                            }
+                                                        }}
+                                                    >
+                                                        Unit {num}
+                                                    </button>
+                                                );
+                                            })}
                                         </div>
                                     </motion.div>
                                 )}
@@ -283,36 +400,119 @@ export default function TutorSidebar() {
                                     </motion.div>
                                 )}
 
+                                {step === 5 && (
+                                    <motion.div key="step5" className={styles.stepContainer} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        <div className={styles.loadingStep}>
+                                            <div className={styles.spinner}></div>
+                                            <p>Generating targeted practice problems...</p>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {step === 6 && practiceQuestions.length > 0 && (
+                                    <motion.div key="step6" className={styles.practiceContainer} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        <div className={styles.progressBar}>
+                                            <div className={styles.progressFill} style={{ width: `${((currentQuestionIdx + 1) / practiceQuestions.length) * 100}%` }} />
+                                        </div>
+
+                                        <div className={styles.questionBox}>
+                                            <span className={styles.unitNum}>Question {currentQuestionIdx + 1} of {practiceQuestions.length}</span>
+                                            <div className={styles.questionText}>
+                                                <MathRenderer text={practiceQuestions[currentQuestionIdx].question} />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.optionsList}>
+                                            {practiceQuestions[currentQuestionIdx].options.map((opt: string, i: number) => {
+                                                let stateClass = '';
+                                                if (showExplanation) {
+                                                    if (i === practiceQuestions[currentQuestionIdx].answer) stateClass = styles.correct;
+                                                    else if (i === selectedOption) stateClass = styles.incorrect;
+                                                } else if (i === selectedOption) {
+                                                    stateClass = styles.selected;
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={i}
+                                                        disabled={showExplanation}
+                                                        className={`${styles.optionBtn} ${stateClass}`}
+                                                        onClick={() => handleOptionSelect(i)}
+                                                    >
+                                                        {opt}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        {showExplanation && (
+                                            <div className={styles.feedbackBox}>
+                                                <span className={`${styles.feedbackStatus} ${selectedOption === practiceQuestions[currentQuestionIdx].answer ? styles.correct : styles.incorrect}`}>
+                                                    {selectedOption === practiceQuestions[currentQuestionIdx].answer ? '✓ Correct' : '✗ Incorrect'}
+                                                </span>
+                                                <div className={styles.explanationText}>
+                                                    <MathRenderer text={practiceQuestions[currentQuestionIdx].explanation} />
+                                                </div>
+                                                <button className={styles.primaryAction} onClick={nextQuestion} style={{ marginTop: '1.5rem', width: '100%' }}>
+                                                    {currentQuestionIdx < practiceQuestions.length - 1 ? 'Next Question' : 'See Results'}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                )}
+
+                                {step === 7 && (
+                                    <motion.div key="step7" className={styles.stepContainer} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                                        <div className={styles.summaryCard}>
+                                            <h3>Practice Complete!</h3>
+                                            <div className={styles.scoreCircle}>
+                                                {practiceScore} / {practiceQuestions.length}
+                                            </div>
+                                            <p>Great work focusing on your weak spots. Consistent practice is the key to a 5.</p>
+                                            <div className={styles.greetingButtons}>
+                                                <button className={styles.primaryAction} onClick={() => startPractice(course, unit || 1)}>Try Another Set</button>
+                                                <button className={styles.secondaryAction} onClick={() => setStep(3)}>Back to Help Options</button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
                                 {step === 4 && (
-                                    <motion.div key="step4" className={styles.chatContainer}>
+                                    <motion.div key="step4" className={styles.chatContainer} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                                         <div className={styles.messages}>
-                                            {messages.length > 0 && (
-                                                <div className={`${styles.msg} ${messages[messages.length - 1].role === 'bot' ? styles.bot : styles.user}`}>
-                                                    {messages[messages.length - 1].grounded && (
-                                                        <div className={styles.grounding}>🛡️ Fully Grounded</div>
+                                            {messages.map((msg, i) => (
+                                                <div key={i} className={`${styles.msg} ${msg.role === 'bot' ? styles.bot : styles.user}`}>
+                                                    {msg.role === 'bot' && msg.grounded && (
+                                                        <div className={styles.grounding}>
+                                                            Grounded in {msg.grounded.course} {msg.grounded.unit ? `Unit ${msg.grounded.unit}` : ''}
+                                                        </div>
                                                     )}
                                                     <div className={styles.msgText}>
-                                                        {messages[messages.length - 1].role === 'bot' ? (
-                                                            <TypewriterText text={messages[messages.length - 1].content} />
+                                                        {msg.role === 'bot' ? (
+                                                            <TypewriterText text={msg.content} />
                                                         ) : (
-                                                            messages[messages.length - 1].content.split('\n').map((line, j) => (
-                                                                <p key={j}>{line || '\u00A0'}</p>
-                                                            ))
+                                                            <p>{msg.content}</p>
                                                         )}
                                                     </div>
                                                 </div>
+                                            ))}
+                                            {loading && (
+                                                <div className={`${styles.msg} ${styles.bot}`}>
+                                                    <div className={styles.loading}>Thinking...</div>
+                                                </div>
                                             )}
-                                            {loading && <div className={styles.loading}>Mentor is analyzing...</div>}
                                             <div ref={chatEndRef} />
                                         </div>
-                                        <form className={styles.inputArea} onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}>
+
+                                        <div className={styles.inputArea}>
                                             <input
                                                 value={input}
                                                 onChange={(e) => setInput(e.target.value)}
-                                                placeholder="Message the mentor..."
+                                                placeholder="Ask follow-up..."
+                                                onKeyDown={(e) => e.key === 'Enter' && sendMessage(input)}
                                             />
-                                            <button type="submit" disabled={loading}>Send</button>
-                                        </form>
+                                            <button onClick={() => sendMessage(input)}>Send</button>
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>

@@ -132,15 +132,15 @@
 .unitsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
 }
 
 .unitCard {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 1.5rem;
-    padding: 2rem;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
     transition: all 0.3s ease;
 }
 
@@ -152,8 +152,9 @@
 .unitHeader {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
 }
 
 .unitNum {
@@ -168,6 +169,27 @@
     font-size: 1.25rem;
     font-weight: 700;
     flex-grow: 1;
+    min-width: 150px;
+}
+
+.learnMoreBtn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--accent);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.learnMoreBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+    transform: translateY(-1px);
 }
 
 .priorityTag {
@@ -198,7 +220,7 @@
     font-size: 0.95rem;
     line-height: 1.6;
     opacity: 0.7;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .unitPurpose strong {
@@ -211,6 +233,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
     margin-bottom: 2rem;
+    overflow: hidden;
 }
 
 .detailCol h5 {
@@ -271,7 +294,7 @@
 .sectionTitle {
     font-size: 2.2rem;
     font-weight: 800;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .resourceGrid {
@@ -816,4 +839,44 @@
     opacity: 0.5;
     font-weight: 600;
     white-space: nowrap;
+}
+
+.disabledCard {
+    opacity: 0.4;
+    cursor: not-allowed;
+    filter: grayscale(1);
+}
+
+.disabledCard:hover {
+    transform: none;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.guideWrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.guideContentBody {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.mathContent p {
+    margin-bottom: 1.2rem;
+}
+
+.mathContent h3,
+.mathContent h2 {
+    color: white;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+}
+
+.mathContent strong {
+    color: white;
+    font-weight: 700;
 }

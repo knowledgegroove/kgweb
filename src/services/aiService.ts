@@ -148,7 +148,7 @@ function generateMockResponse(systemPrompt: string, userMessage: string, errorRe
     const courseLine = lines.find(l => l.includes('Course:'));
     const courseName = courseLine ? courseLine.split(':')[1].trim() : 'your course';
 
-    return `1. THE FOCUS: I'm in "Limited Connection Mode" because of an API issue (${errorReason.split(':')[0]}). We are looking at ${courseName}.
+    return `(Local Logic) 1. THE FOCUS: I'm in "Limited Connection Mode" because of an API issue (${errorReason.split(':')[0]}). We are looking at ${courseName}.
 2. THE LOGIC: The key to this unit is staying focused on the core skills and avoiding common distractions.
 3. THE GUIDE: Since I'm having trouble connecting to my full "brain", I recommend reviewing your textbook and focusing on the readiness checklist for this unit.
 4. THE GOTCHA: Remember the common mistakes we discussed earlier—those are the biggest traps in ${courseName}.
