@@ -17,6 +17,9 @@ export interface CourseBlueprint {
         commonMistakes: { mistake: string; fix: string }[];
     }[];
     examFormat: string;
+    curriculumLink?: string;
+    textbooks?: { title: string; chapters: string[] }[];
+    pastTests?: { year: string; focus: string; difficulty: string }[];
     alumniWisdom: {
         situation: string;
         advice: string;
@@ -33,7 +36,15 @@ export const academyKnowledge: Record<string, CourseBlueprint> = {
             testingFocus: "AP Calculus AB tests your ability to think about change. You need to move between graphical, numerical, and algebraic representations fluidly.",
             successBlueprint: "Master the 'Limit Definition' first. Most students struggle later because they view rules (like Chain Rule) as magic rather than derived logic."
         },
-        examFormat: 'Section I: 多项选择 (45 questions, 50% score). Section II: Free Response (6 questions, 50% score).',
+        examFormat: 'Section I: Multiple Choice (45 questions, 50% score). Section II: Free Response (6 questions, 50% score).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-calculus-ab/course-at-a-glance',
+        textbooks: [
+            { title: 'Calculus: Early Transcendentals (Stewart)', chapters: ['Limits', 'Derivatives', 'Applications of Differentiation'] }
+        ],
+        pastTests: [
+            { year: '2023', focus: 'Related Rates, Particle Motion', difficulty: 'High' },
+            { year: '2022', focus: 'Area/Volume, Differential Equations', difficulty: 'Medium' }
+        ],
         units: [
             {
                 number: 1,
@@ -92,6 +103,14 @@ export const academyKnowledge: Record<string, CourseBlueprint> = {
             successBlueprint: "Always ask 'What are the particles doing?' If you can visualize the ions or molecules, the math becomes secondary."
         },
         examFormat: 'Section I: Multiple Choice (60 questions, 50%). Section II: Free Response (7 questions, 50%).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-chemistry/course-at-a-glance',
+        textbooks: [
+            { title: 'Chemistry: The Central Science (Brown)', chapters: ['Atomic Structure', 'Stoichiometry', 'Thermochemistry'] }
+        ],
+        pastTests: [
+            { year: '2023', focus: 'Equilibrium, Kinetics', difficulty: 'High' },
+            { year: '2022', focus: 'Thermodynamics, Acid-Base', difficulty: 'High' }
+        ],
         units: [
             {
                 number: 1,
@@ -131,6 +150,14 @@ export const academyKnowledge: Record<string, CourseBlueprint> = {
             successBlueprint: "Learn to 'S.P.I.C.E-T' your units: Social, Political, Interaction, Cultural, Economic, Technology."
         },
         examFormat: 'Multiple Choice (40%), SAQ (20%), DBQ (25%), LEQ (15%).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-world-history/course-at-a-glance',
+        textbooks: [
+            { title: 'Ways of the World (Strayer)', chapters: ['The Global Tapestry', 'Networks of Exchange'] }
+        ],
+        pastTests: [
+            { year: '2023', focus: 'Silk Road, Mongol Empire', difficulty: 'Medium' },
+            { year: '2022', focus: 'Trade Networks, Maritime Expansion', difficulty: 'Medium' }
+        ],
         units: [
             {
                 number: 1,

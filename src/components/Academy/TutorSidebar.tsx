@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
+import { generateInitialAdvice } from '@/utils/mentorLogic';
 import styles from './TutorSidebar.module.css';
 
 interface Message {
@@ -19,9 +20,9 @@ const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) =
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
-        if (index < text.length) {
+        if (text && index < text.length) {
             const timeout = setTimeout(() => {
-                setDisplayedText(prev => prev + text[index]);
+                setDisplayedText(prev => prev + text.charAt(index));
                 setIndex(prev => prev + 1);
             }, speed);
             return () => clearTimeout(timeout);
@@ -81,7 +82,17 @@ export default function TutorSidebar() {
     const startChat = async (s: string) => {
         setSituation(s);
         setStep(4);
-        sendMessage("Help me understand what to focus on.", s);
+
+        // QUOTA BYPASS: Generate the first response locally
+        const userPrompt = "Help me understand what to focus on.";
+        const localAdvice = generateInitialAdvice(course, unit || 1, s);
+
+        const initialMessages: Message[] = [
+            { role: 'user', content: userPrompt },
+            { role: 'bot', content: localAdvice, grounded: { course: course, unit: unit?.toString() } }
+        ];
+
+        setMessages(initialMessages);
     };
 
     const sendMessage = async (text: string, overrideSituation?: string) => {
@@ -106,12 +117,18 @@ export default function TutorSidebar() {
                 })
             });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.details || errorData.error || 'Failed to get response');
+            }
+
             const data = await response.json();
             // Sanitize: strip markdown bolding for a premium plain-text look
             const cleanContent = (data.content || 'Error: No response from AI').replace(/\*\*/g, '');
             setMessages([...newMessages, { role: 'bot', content: cleanContent, grounded: data.grounding }]);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error:', error);
+            setMessages([...newMessages, { role: 'bot', content: `Sorry, I encountered an error: ${error.message}. Please check your connection or try again.` }]);
         } finally {
             setLoading(false);
         }

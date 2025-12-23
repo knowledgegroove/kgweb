@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
 import Link from 'next/link';
+import { generateInitialAdvice } from '@/utils/mentorLogic';
 
 interface Message {
     role: 'user' | 'bot';
@@ -13,6 +14,29 @@ interface Message {
         unit?: string;
     };
 }
+
+const Typewriter = ({ text, speed = 15 }: { text: string; speed?: number }) => {
+    const [displayedText, setDisplayedText] = useState('');
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        if (text && index < text.length) {
+            const timeout = setTimeout(() => {
+                setDisplayedText((prev) => prev + text.charAt(index));
+                setIndex((prev) => prev + 1);
+            }, speed);
+            return () => clearTimeout(timeout);
+        }
+    }, [index, text, speed]);
+
+    return (
+        <div className={styles.messageContent}>
+            {displayedText.split('\n').map((line, j) => (
+                <p key={j} style={{ marginBottom: line.trim() ? '0.5rem' : '1rem' }}>{line}</p>
+            ))}
+        </div>
+    );
+};
 
 export default function AITutorPage() {
     const [step, setStep] = useState(1); // 1: Course, 2: Unit, 3: Situation, 4: Chat
@@ -36,8 +60,18 @@ export default function AITutorPage() {
 
     const startChat = async () => {
         setStep(4);
-        const initialMessage = "Help me understand what to focus on.";
-        await sendMessage(initialMessage);
+
+        // QUOTA BYPASS: Generate first message locally
+        const userPrompt = "Help me understand what to focus on.";
+        const localAdvice = generateInitialAdvice(course, unit || 1, situation);
+
+        const initialMessages: Message[] = [
+            { role: 'user', content: userPrompt },
+            { role: 'bot', content: localAdvice, grounded: { course: course, unit: unit?.toString() } }
+        ];
+
+        setMessages(initialMessages);
+        setLoading(false);
     };
 
     const sendMessage = async (text: string) => {
@@ -60,10 +94,16 @@ export default function AITutorPage() {
                 })
             });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.details || errorData.error || 'Failed to get response');
+            }
+
             const data = await response.json();
             setMessages([...newMessages, { role: 'bot', content: data.content, grounded: data.grounding }]);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error:', error);
+            setMessages([...newMessages, { role: 'bot', content: `Error: ${error.message}. Please try again later.` }]);
         } finally {
             setLoading(false);
         }
@@ -72,8 +112,13 @@ export default function AITutorPage() {
     return (
         <main className={styles.main}>
             <div className={styles.container}>
-                <nav style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
+                <nav style={{ position: 'absolute', top: '2rem', left: '2rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <Link href="/academy" style={{ color: 'var(--accent)', fontWeight: 600 }}>← Back</Link>
+                    {step === 4 && (
+                        <div className={styles.contextBadge}>
+                            {course.replace(/-/g, ' ').toUpperCase()} • UNIT {unit}
+                        </div>
+                    )}
                 </nav>
 
                 <header className={styles.header}>
@@ -182,19 +227,24 @@ export default function AITutorPage() {
                                     <div key={i} className={`${styles.message} ${msg.role === 'bot' ? styles.botMessage : styles.userMessage}`}>
                                         {msg.grounded && (
                                             <div className={styles.groundingBadge}>
-                                                🛡️ Grounded in {msg.grounded.course} • {msg.grounded.unit}
+                                                🛡️ Verified {msg.grounded.course} Data • Unit {unit}
                                             </div>
                                         )}
-                                        <div className={styles.messageContent}>
-                                            {msg.content.split('\n').map((line, j) => (
-                                                <p key={j} style={{ marginBottom: line.trim() ? '0.5rem' : '1rem' }}>{line}</p>
-                                            ))}
-                                        </div>
+
+                                        {msg.role === 'bot' ? (
+                                            <Typewriter text={msg.content} />
+                                        ) : (
+                                            <div className={styles.messageContent}>
+                                                {msg.content.split('\n').map((line, j) => (
+                                                    <p key={j} style={{ marginBottom: line.trim() ? '0.5rem' : '1rem' }}>{line}</p>
+                                                ))}
+                                            </div>
+                                        )}
                                     </div>
                                 ))}
                                 {loading && (
                                     <div className={`${styles.message} ${styles.botMessage}`}>
-                                        <div className={styles.messageContent}>Mentor is thinking...</div>
+                                        <div className={styles.messageContent}>Mentor is analyzing course data...</div>
                                     </div>
                                 )}
                                 <div ref={chatEndRef} />
@@ -205,7 +255,7 @@ export default function AITutorPage() {
                                     className={styles.input}
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    placeholder="Type your question or state of mind..."
+                                    placeholder="Ask about textbooks, past tests, or concepts..."
                                 />
                                 <button className={styles.sendBtn} type="submit" disabled={loading}>
                                     Send

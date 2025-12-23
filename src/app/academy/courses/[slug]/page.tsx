@@ -326,7 +326,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                         {data.instructors.map((ins: any, i: number) => (
                             <div key={i} className={styles.instructorCard}>
                                 <div className={styles.instructorAvatar}>
-                                    {ins.name.split(' ').map((n: string) => n[0]).join('')}
+                                    {ins.name ? ins.name.split(' ').map((n: string) => n.charAt(0)).join('') : 'AI'}
                                 </div>
                                 <div>
                                     <h4 className={styles.instructorName}>{ins.name}</h4>

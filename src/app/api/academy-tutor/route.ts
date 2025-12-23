@@ -1,8 +1,6 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { academyKnowledge } from '@/data/academyKnowledge';
 import { NextResponse } from 'next/server';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+import { askAI } from '@/services/aiService';
 
 export async function POST(request: Request) {
     try {
@@ -32,6 +30,9 @@ ${blueprint ? `
 Course Overview: ${blueprint.overview.testingFocus}
 Success Blueprint: ${blueprint.overview.successBlueprint}
 Exam Format: ${blueprint.examFormat}
+Curriculum: ${blueprint.curriculumLink || 'N/A'}
+Textbooks: ${blueprint.textbooks?.map(t => `${t.title} (Chapters: ${t.chapters.join(', ')})`).join(' | ') || 'N/A'}
+Recent Past Tests: ${blueprint.pastTests?.map(p => `${p.year} (Focus: ${p.focus}, Difficulty: ${p.difficulty})`).join(' | ') || 'N/A'}
 Teacher Tips: ${blueprint.teacherTips.join(' | ')}
 ` : ''}
 
@@ -47,39 +48,16 @@ UNIT DATA:
 ${situation === 'recovery' && blueprint ? `RECOVERY STRATEGIES: ${JSON.stringify(blueprint.recoveryStrategies)}` : ''}
 
 STRICT RESPONSE STRUCTURE (Use these exact headers - No Markdown Bold):
-1. THE FOCUS: Describe what this topic/question is really testing (use data).
+1. THE FOCUS: Describe what this topic/question is really testing (use database data).
 2. THE LOGIC: The key idea in plain language.
-3. THE GUIDE: Step-by-step test-style guidance.
+3. THE GUIDE: Step-by-step test-style guidance. If applicable, reference relevant chapters from ${blueprint?.textbooks?.[0]?.title || 'the textbook'} or trends from past ${blueprint?.title} exams.
 4. THE GOTCHA: Mention specific common mistakes and their fixes from the database.
 5. NEXT STEP: A "Are you test-ready?" check or a specific manageable action.
 
 STYLE: Structured, calm, concise. No long essays. No fluff. DO NOT use markdown bolding (double asterisks). Keep responses under 300 words.`;
 
-        // Use Gemini AI for actual conversation
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-        // Convert message history to Gemini format
-        const chatHistory = messages.slice(0, -1).map((msg: any) => ({
-            role: msg.role === 'bot' ? 'model' : 'user',
-            parts: [{ text: msg.content }]
-        }));
-
-        const chat = model.startChat({
-            history: chatHistory,
-            generationConfig: {
-                maxOutputTokens: 500,
-                temperature: 0.7,
-            },
-        });
-
-        // Send the system prompt as the first message if it's a new conversation
-        const userMessage = messages[messages.length - 1].content;
-        const fullPrompt = chatHistory.length === 0
-            ? `${systemPrompt}\n\nStudent: ${userMessage}`
-            : userMessage;
-
-        const result = await chat.sendMessage(fullPrompt);
-        const responseContent = result.response.text();
+        // Use the unified AI service (Gemini primary, Anthropic fallback)
+        const responseContent = await askAI(messages, systemPrompt);
 
         return NextResponse.json({
             content: responseContent,
@@ -92,9 +70,11 @@ STYLE: Structured, calm, concise. No long essays. No fluff. DO NOT use markdown 
 
     } catch (error: any) {
         console.error('AI Tutor Error:', error);
+        const isQuotaError = error.message?.includes('429') || error.message?.includes('quota');
         return NextResponse.json({
-            error: 'Failed to generate response. Please try again.',
-            details: error.message
-        }, { status: 500 });
+            error: isQuotaError ? 'Rate Limit Exceeded' : 'Failed to generate response',
+            details: error.message,
+            isQuota: isQuotaError
+        }, { status: isQuotaError ? 429 : 500 });
     }
 }
