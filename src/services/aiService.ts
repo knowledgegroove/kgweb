@@ -8,12 +8,22 @@ export interface AIMessage {
 }
 
 export async function askAI(messages: AIMessage[], systemPrompt: string) {
-    const openRouterKey = process.env.OPENROUTER_API_KEY;
-    const cerebrasKey = process.env.CEREBRAS_API_KEY;
-    const chutesKey = process.env.CHUTES_API_KEY;
-    const cloudflareKey = process.env.CLOUDFLARE_API_KEY;
-    const geminiKey = process.env.GEMINI_API_KEY;
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const openRouterKey = process.env.OPENROUTER_API_KEY?.trim();
+    const cerebrasKey = process.env.CEREBRAS_API_KEY?.trim();
+    const chutesKey = process.env.CHUTES_API_KEY?.trim();
+    const cloudflareKey = process.env.CLOUDFLARE_API_KEY?.trim();
+    const geminiKey = process.env.GEMINI_API_KEY?.trim();
+    const anthropicKey = process.env.ANTHROPIC_API_KEY?.trim();
+    const cloudflareAccountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
+
+    console.log('[AIService] Key Status:', {
+        openRouter: !!openRouterKey,
+        cerebras: !!cerebrasKey,
+        chutes: !!chutesKey,
+        cloudflare: !!cloudflareKey && !!cloudflareAccountId,
+        gemini: !!geminiKey,
+        anthropic: !!anthropicKey
+    });
 
     let lastError = "";
 
@@ -51,16 +61,13 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
     }
 
     // 4. Try Cloudflare (Workers AI)
-    if (cloudflareKey) {
-        const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-        if (accountId) {
-            try {
-                const res = await tryCloudflare(messages, systemPrompt, cloudflareKey, accountId);
-                return `(Cloudflare) ${res}`;
-            } catch (err: any) {
-                lastError += ` | Cloudflare: ${err.message}`;
-                console.error('[AIService] Cloudflare Failed:', err.message);
-            }
+    if (cloudflareKey && cloudflareAccountId) {
+        try {
+            const res = await tryCloudflare(messages, systemPrompt, cloudflareKey, cloudflareAccountId);
+            return `(Cloudflare) ${res}`;
+        } catch (err: any) {
+            lastError += ` | Cloudflare: ${err.message}`;
+            console.error('[AIService] Cloudflare Failed:', err.message);
         }
     }
 
@@ -152,7 +159,7 @@ async function tryCerebras(messages: AIMessage[], systemPrompt: string, apiKey: 
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            "model": "llama3.1-70b",
+            "model": "llama-3.3-70b",
             "messages": [
                 { "role": "system", "content": systemPrompt },
                 ...messages.map(msg => ({
@@ -177,16 +184,16 @@ async function tryChutes(messages: AIMessage[], systemPrompt: string, apiKey: st
     console.log('[AIService] Attempting Chutes (huggingface/meta-llama/Meta-Llama-3-70B-Instruct)...');
 
     // Chutes usually requires specific endpoint for specific models
-    // Using standard OpenAI compatible endpoint
-    const response = await fetch("https://api.chutes.ai/v1/chat/completions", {
+    // Using the official LLM endpoint which is OpenAI compatible
+    const response = await fetch("https://llm.chutes.ai/v1/chat/completions", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            // Assuming standard Llama 3 70B Instruct
-            "model": "huggingface/meta-llama/Meta-Llama-3-70B-Instruct",
+            // Using the current standard Llama 3.1 70B Instruct ID on Chutes
+            "model": "meta-llama/Llama-3.1-70B-Instruct",
             "messages": [
                 { "role": "system", "content": systemPrompt },
                 ...messages.map(msg => ({
