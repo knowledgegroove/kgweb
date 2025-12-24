@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+
 import { useTutor } from '@/context/TutorContext';
 import styles from './page.module.css';
 
@@ -64,41 +66,48 @@ export default function AcademyLanding() {
                 >
                     <h1 className={styles.title}>
                         Welcome to <br />
-                        <span className="gradient-text-primary">Knowledge Groove Academy</span>
+                        <span className="gradient-text-blue">Knowledge Groove Academy</span>
                     </h1>
+
+
                     <p className={styles.subtitle}>
                         A premium learning platform for high school mastery. <br />
                         Curriculum-aligned learning. Targeted practice. Clear understanding.
                     </p>
-                    <div className={styles.heroButtons}>
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="#courses" className="btn">
-                                Explore Courses
-                            </Link>
-                        </motion.div>
+
+                    <div className={styles.heroActionRow}>
+                        <Link href="#courses" className="btn">
+                            Explore Courses
+                        </Link>
+                        <button className={styles.secondaryBtn} onClick={() => openTutor()}>
+                            Talk to AI Mentor
+                        </button>
                     </div>
                 </motion.div>
             </section>
 
-            {/* Courses Section */}
+
+
+            {/* Course Catalog */}
             <section id="courses" className={styles.section}>
-                {courses.map((cat, catIdx) => (
+                {courses.map((category, idx) => (
                     <motion.div
-                        key={cat.category}
+                        key={category.category}
                         className={styles.categoryGroup}
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: "-100px" }}
-                        transition={{ duration: 0.8, delay: catIdx * 0.1 }}
+                        transition={{ duration: 0.8, delay: idx * 0.1 }}
                     >
                         <div className={styles.categoryHeader}>
-                            <span className={styles.categoryNumber}>{cat.id}</span>
-                            <h2 className={styles.categoryTitle}>{cat.category}</h2>
+                            <span className={styles.categoryNumber}>{category.id}</span>
+                            <h2 className={styles.categoryTitle}>{category.category}</h2>
                             <div className={styles.categoryLine} />
                         </div>
 
                         <div className={styles.grid}>
-                            {cat.items.map((course, idx) => (
+                            {category.items.map((course, idx) => (
+
                                 <Link
                                     key={course.title}
                                     href={`/academy/courses/${course.title.toLowerCase().replace(/ /g, '-')}`}
@@ -109,7 +118,7 @@ export default function AcademyLanding() {
                                         whileHover={{
                                             y: -15,
                                             boxShadow: '0 40px 80px -20px rgba(0,0,0,0.1)',
-                                            borderColor: 'var(--accent)'
+                                            borderColor: '#3b82f6'
                                         }}
                                         whileTap={{ scale: 0.98 }}
                                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -143,19 +152,28 @@ export default function AcademyLanding() {
                             whileTap={{ scale: 0.95 }}
                             className="btn"
                             style={{ width: '100%', maxWidth: '280px' }}
+                            onClick={() => {
+                                const coursesSection = document.getElementById('courses');
+                                if (coursesSection) {
+                                    coursesSection.scrollIntoView({ behavior: 'smooth' });
+                                }
+                            }}
                         >
-                            Enroll Now
+                            Start Path
                         </motion.button>
+
                     </div>
 
                     <div className={styles.ctaCard}>
-                        <h2 className={styles.ctaTitle}>Already completed a course?</h2>
+                        <h2 className={styles.ctaTitle} style={{ fontSize: '2rem' }}>Already completed a course?</h2>
                         <motion.button
+
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="btn"
-                            onClick={openModal}
+                            onClick={() => openModal()}
                             style={{
+
                                 background: 'white',
                                 color: 'black',
                                 border: '1px solid rgba(0,0,0,0.1)',
@@ -169,6 +187,18 @@ export default function AcademyLanding() {
                     </div>
                 </motion.div>
             </section>
+
+            <footer style={{
+                textAlign: 'center',
+                padding: '2rem',
+                fontSize: '0.75rem',
+                opacity: 0.5,
+                maxWidth: '800px',
+                margin: '0 auto'
+            }}>
+                <p>AP® is a registered trademark of the College Board, which was not involved in the production of, and does not endorse, this product.</p>
+            </footer>
+
         </motion.main>
     );
 }

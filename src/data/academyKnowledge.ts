@@ -9,7 +9,6 @@ export interface CourseBlueprint {
         number: number;
         title: string;
         weight: string;
-        priority: 'High' | 'Medium' | 'Low';
         whatMatters: string; // "What this unit is really testing"
         skills: string[]; // "Test-relevant skills"
         keyConcepts: string[];
@@ -19,7 +18,8 @@ export interface CourseBlueprint {
     examFormat: string;
     curriculumLink?: string;
     textbooks?: { title: string; chapters: string[] }[];
-    pastTests?: { year: string; focus: string; difficulty: string }[];
+    pastTests?: { year: string; focus: string }[];
+
     alumniWisdom: {
         situation: string;
         advice: string;
@@ -50,8 +50,8 @@ export const academyKnowledge: Record<string, CourseBlueprint> = {
             { title: 'Calculus: Early Transcendentals (Stewart)', chapters: ['Limits', 'Derivatives', 'Applications of Differentiation'] }
         ],
         pastTests: [
-            { year: '2023', focus: 'Related Rates, Particle Motion', difficulty: 'High' },
-            { year: '2022', focus: 'Area/Volume, Differential Equations', difficulty: 'Medium' }
+            { year: '2023', focus: 'Related Rates, Particle Motion'},
+            { year: '2022', focus: 'Area/Volume, Differential Equations'}
         ],
         strategyGuides: [
             {
@@ -454,7 +454,7 @@ You’re ready if you can:
                 number: 1,
                 title: 'Limits and Continuity',
                 weight: '10-12%',
-                priority: 'Medium',
+
                 whatMatters: "The College Board is testing if you understand 'closeness' and 'boundary behavior' without relying on the y-value at the point.",
                 skills: ['Rationalizing', 'L\'Hopital\'s Introduction', 'Squeeze Theorem', 'Limit Notation'],
                 keyConcepts: ['Definition of a limit', 'Continuity at a point', 'Intermediate Value Theorem', 'Asymptotes'],
@@ -472,7 +472,7 @@ You’re ready if you can:
                 number: 2,
                 title: 'Differentiation - Definition and Basic Derivative Rules',
                 weight: '10-12%',
-                priority: 'High',
+
                 whatMatters: "This is about the 'Instantaneous Rate of Change'. Every problem is essentially asking: 'How fast is it moving right now?'",
                 skills: ['Power Rule', 'Product Rule', 'Quotient Rule', 'The Chain Rule'],
                 keyConcepts: ['Definition of the Derivative', 'Differentiability vs Continuity'],
@@ -489,7 +489,7 @@ You’re ready if you can:
                 number: 3,
                 title: 'Differentiation - Composite, Implicit, and Inverse Functions',
                 weight: '9-13%',
-                priority: 'High',
+
                 whatMatters: "Layered functions. If you can't see the 'layers', you'll miss the Chain Rule every time.",
                 skills: ['Chain Rule', 'Implicit Differentiation', 'Inverse Function Derivatives'],
                 keyConcepts: ['Chain Rule', 'Implicit Differentiation', 'Inverse Functions'],
@@ -500,7 +500,7 @@ You’re ready if you can:
                 number: 4,
                 title: 'Contextual Applications of Differentiation',
                 weight: '10-15%',
-                priority: 'Medium',
+
                 whatMatters: "Real-world meaning. Units of measure are your best friend here.",
                 skills: ['Related Rates', 'Motion Along a Line', 'Interpreting Rates'],
                 keyConcepts: ['Velocity and Acceleration', 'Related Rates'],
@@ -511,7 +511,7 @@ You’re ready if you can:
                 number: 5,
                 title: 'Analytical Applications of Differentiation',
                 weight: '15-18%',
-                priority: 'High',
+
                 whatMatters: "Function behavior. Why does the curve look like that?",
                 skills: ['Mean Value Theorem', 'Extreme Value Theorem', 'Optimization', 'Concavity'],
                 keyConcepts: ['Critical Points', 'Inflection Points', 'Sign Charts'],
@@ -522,7 +522,7 @@ You’re ready if you can:
                 number: 6,
                 title: 'Integration and Accumulation of Change',
                 weight: '17-20%',
-                priority: 'High',
+
                 whatMatters: "Accumulation. This is the biggest unit on the exam.",
                 skills: ['Riemann Sums', 'Fundamental Theorem of Calculus', 'U-Substitution'],
                 keyConcepts: ['Antiderivatives', 'Definite Integrals', 'Accumulation Functions'],
@@ -533,7 +533,7 @@ You’re ready if you can:
                 number: 7,
                 title: 'Differential Equations',
                 weight: '6-12%',
-                priority: 'Medium',
+
                 whatMatters: "Solving for the original function given its rate of change.",
                 skills: ['Separable Equations', 'Slope Fields', 'Exponential Models'],
                 keyConcepts: ['Slope Fields', 'Separation of Variables'],
@@ -544,7 +544,7 @@ You’re ready if you can:
                 number: 8,
                 title: 'Applications of Integration',
                 weight: '10-15%',
-                priority: 'Medium',
+
                 whatMatters: "Turning integrals into physical quantities like area and volume.",
                 skills: ['Area Between Curves', 'Volume (Discs/Washers)', 'Average Value'],
                 keyConcepts: ['Area', 'Volume', 'Average Value'],
@@ -681,15 +681,15 @@ You’re ready if you can:
             { title: 'Chemistry: The Central Science (Brown)', chapters: ['Atomic Structure', 'Stoichiometry', 'Thermochemistry'] }
         ],
         pastTests: [
-            { year: '2023', focus: 'Equilibrium, Kinetics', difficulty: 'High' },
-            { year: '2022', focus: 'Thermodynamics, Acid-Base', difficulty: 'High' }
+            { year: '2023', focus: 'Equilibrium, Kinetics'},
+            { year: '2022', focus: 'Thermodynamics, Acid-Base'}
         ],
         units: [
             {
                 number: 1,
                 title: 'Atomic Structure and Properties',
                 weight: '7-9%',
-                priority: 'Medium',
+
                 whatMatters: "Testing your understanding of Coulombic attraction. Every trend (radius, IE, electronegativity) is just a balance of protons vs distance.",
                 skills: ['Stoichiometry', 'Coulombic Logic', 'PES Analysis'],
                 keyConcepts: ['Moles', 'Electron Configuration', 'Periodic Trends', 'Mass Spectrometry'],
@@ -728,15 +728,15 @@ You’re ready if you can:
             { title: 'Ways of the World (Strayer)', chapters: ['The Global Tapestry', 'Networks of Exchange'] }
         ],
         pastTests: [
-            { year: '2023', focus: 'Silk Road, Mongol Empire', difficulty: 'Medium' },
-            { year: '2022', focus: 'Trade Networks, Maritime Expansion', difficulty: 'Medium' }
+            { year: '2023', focus: 'Silk Road, Mongol Empire'},
+            { year: '2022', focus: 'Trade Networks, Maritime Expansion'}
         ],
         units: [
             {
                 number: 1,
                 title: 'The Global Tapestry',
                 weight: '8-10%',
-                priority: 'Low',
+
                 whatMatters: "This unit is setting the stage. How do religions, trade, and state-building allow civilizations to grow in the 1200-1450 period?",
                 skills: ['Sourcing Documents', 'Historical Contextualization', 'Claim Construction'],
                 keyConcepts: ['State Building', 'Confucianism', 'Dar al-Islam', 'Inca/Aztec structures'],
@@ -760,5 +760,134 @@ You’re ready if you can:
             'bad-essay-score': "Focus on your 'Analysis' vs 'Evidence'. Most students have evidence but fail to explain how it proves their thesis.",
             'overwhelmed-by-dates': "Stop memorizing specific years. Memorize 'eras' and 'sequencing'. Knowing what happened first is more important than knowing it happened in 1258."
         }
+    },
+    'ap-physics-1': {
+        id: 'ap-physics-1',
+        title: 'AP Physics 1',
+        overview: {
+            testingFocus: "AP Physics 1 is a conceptual course. It's not about the math; it's about explaining WHY things move the way they do using fundamental laws.",
+            successBlueprint: "Master Free Body Diagrams (FBDs). If your FBD is wrong, your equation will be wrong."
+        },
+        examFormat: 'Section I: MCQs (50 items, 50%). Section II: FRQs (5 items, 50%).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-physics-1/course-at-a-glance',
+        units: [
+            {
+                number: 1,
+                title: 'Kinematics',
+                weight: '10-15%',
+
+                whatMatters: "Motion in one and two dimensions. Understanding the relationship between position, velocity, and acceleration.",
+                skills: ['Graph Analysis', 'Vector Addition', 'Projectile Motion'],
+                keyConcepts: ['Displacement', 'Velocity', 'Acceleration'],
+                readinessChecklist: ['I can interpret x-t, v-t, and a-t graphs.', 'I can solve 2D projectile problems.'],
+                commonMistakes: [{ mistake: 'Confusing velocity with acceleration.', fix: 'Velocity is where you are going; acceleration is how that going is changing.' }]
+            }
+        ],
+        alumniWisdom: [{ situation: 'Stuck on FRQs', advice: 'Explain your reasoning in words. Even if the calculation is wrong, the physics logic can earn points.' }],
+        teacherTips: ["Draw a diagram for every single problem.", "Units are mandatory for every final answer."],
+        recoveryStrategies: { 'test-anxiety': "Physics is logical. If you get stuck, go back to Newton's Laws." }
+    },
+    'honors-physics': {
+        id: 'honors-physics',
+        title: 'Honors Physics',
+        overview: {
+            testingFocus: "Foundation of classical mechanics. Focus on problem-solving and mathematical application of physical laws.",
+            successBlueprint: "Practice word problems. The hardest part is often translating the words into a set of given variables."
+        },
+        examFormat: 'Varies by school, usually includes multiple choice and open-ended problems.',
+        units: [
+            {
+                number: 1,
+                title: 'Introduction to Motion',
+                weight: '15%',
+
+                whatMatters: "The basics of tracking object movement accurately.",
+                skills: ['Unit Conversion', 'Scientific Notation', 'Linear Motion'],
+                keyConcepts: ['Scalars vs Vectors', 'Speed vs Velocity'],
+                readinessChecklist: ['I can convert between units.', 'I understand the difference between distance and displacement.'],
+                commonMistakes: [{ mistake: 'Sign errors in acceleration.', fix: 'Define your positive direction at the start of every problem.' }]
+            }
+        ],
+        alumniWisdom: [{ situation: 'Algebra issues', advice: 'Physics uses algebra as a tool. If the math is hard, simplify the physics scenario first.' }],
+        teacherTips: ["Always show your work, even the simple algebra steps."],
+        recoveryStrategies: { 'low-quiz-scores': "Re-do the homework problems without looking at the solutions." }
+    },
+    'honors-chemistry': {
+        id: 'honors-chemistry',
+        title: 'Honors Chemistry',
+        overview: {
+            testingFocus: "Introductory chemical principles. Focus on stoichiometry, bonding, and reactions.",
+            successBlueprint: "Master the periodic table. It's your ultimate cheat sheet if you know how to read it."
+        },
+        examFormat: 'Varies by school, typically focuses on stoichiometry and conceptual understanding.',
+        units: [
+            {
+                number: 1,
+                title: 'Matter and Measurement',
+                weight: '10%',
+
+                whatMatters: "Precise measurement and understanding states of matter.",
+                skills: ['Significant Figures', 'Density Calculations', 'Phase Changes'],
+                keyConcepts: ['Chemical vs Physical Changes', 'Classification of Matter'],
+                readinessChecklist: ['I can identify sig figs.', 'I know the difference between an element and a compound.'],
+                commonMistakes: [{ mistake: 'Incorrect unit conversions.', fix: 'Use dimensional analysis for every conversion.' }]
+            }
+        ],
+        alumniWisdom: [{ situation: 'Naming compounds', advice: 'Flashcards are key for polyatomic ions.' }],
+        teacherTips: ["Don't memorize trends—understand the 'why' behind them."],
+        recoveryStrategies: { 'lab-confusion': "Re-read the procedure before starting the lab." }
+    },
+    'ap-us-history': {
+        id: 'ap-us-history',
+        title: 'AP US History',
+        overview: {
+            testingFocus: "Analysis of historical evidence and development of historical arguments.",
+            successBlueprint: "Connect the dots. How did the Civil War lead to Reconstruction and the Gilded Age?"
+        },
+        examFormat: 'MCQs (40%), SAQ (20%), DBQ (25%), LEQ (15%).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-united-states-history/course-at-a-glance',
+        units: [
+            {
+                number: 1,
+                title: 'Period 1: 1491-1607',
+                weight: '4-6%',
+
+                whatMatters: "Contact between Europeans, Native Americans, and Africans.",
+                skills: ['Comparison', 'Contextualization'],
+                keyConcepts: ['Columbian Exchange', 'Spanish Empire', 'Casta System'],
+                readinessChecklist: ['I can explain the impact of the Columbian Exchange.'],
+                commonMistakes: [{ mistake: 'Generalizing all Native groups.', fix: 'Use specific examples like the Pueblo or Iroquois.' }]
+            }
+        ],
+        alumniWisdom: [{ situation: 'Writing essays', advice: 'Thesis, thesis, thesis. A strong thesis makes the rest of the essay follow.' }],
+        teacherTips: ["Specific evidence counts more than vague descriptions."],
+        recoveryStrategies: { 'low-mcq-score': "Focus on reading the stimulus carefully before looking at the options." }
+    },
+    'ap-computer-science-a': {
+        id: 'ap-computer-science-a',
+        title: 'AP Computer Science A',
+        overview: {
+            testingFocus: "Object-oriented programming using Java. Focus on problem-solving and algorithm development.",
+            successBlueprint: "Trace your code. Don't just guess what it does; step through it line by line."
+        },
+        examFormat: 'Section I: MCQs (40 questions, 50%). Section II: FRQs (4 questions, 50%).',
+        curriculumLink: 'https://apcentral.collegeboard.org/courses/ap-computer-science-a/course-at-a-glance',
+        units: [
+            {
+                number: 1,
+                title: 'Primitive Types',
+                weight: '2.5-5%',
+
+                whatMatters: "The building blocks of Java programs.",
+                skills: ['Variable Declaration', 'Arithmetic Expressions', 'Casting'],
+                keyConcepts: ['int, double, boolean', 'Compound Assignment'],
+                readinessChecklist: ['I understand how integer division works.'],
+                commonMistakes: [{ mistake: 'Forgetting to cast doubles to ints.', fix: 'Use (int) when you need to truncate decimals.' }]
+            }
+        ],
+        alumniWisdom: [{ situation: 'FRQ tracing', advice: 'Write down variable values as you loop. It prevents simple logic errors.' }],
+        teacherTips: ["Comments are not graded, but they help you stay organized."],
+        recoveryStrategies: { 'logic-errors': "Walk away for 10 minutes, then come back and explain your code to a rubber duck." }
     }
+
 };

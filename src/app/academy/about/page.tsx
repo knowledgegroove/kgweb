@@ -21,7 +21,10 @@ export default function AboutPage() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h1 className={styles.title}>About Us</h1>
+                    <h1 className={styles.title}>
+                        <span className="gradient-text-blue">About Us</span>
+                    </h1>
+
                     <h2 className={styles.subtitle}>
                         What is Knowledge Groove Academy?
                     </h2>
@@ -188,25 +191,40 @@ export default function AboutPage() {
                 </motion.div>
 
                 <motion.div
-                    style={{ marginTop: '4rem', display: 'flex', gap: '2rem', justifyContent: 'flex-start', alignItems: 'flex-end' }}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
+                    className={styles.footerGrid}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 1 }}
+                    transition={{ delay: 0.8 }}
                 >
-                    <button className="btn">Start Your Path</button>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.9rem', opacity: 0.6, fontWeight: 600 }}>Already completed a course?</span>
+                    <div className={styles.ctaCard}>
+                        <h2 className={styles.ctaTitle}>Ready to start?</h2>
                         <button
                             className="btn"
-                            onClick={openModal}
-                            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)' }}
+                            onClick={() => window.location.href = '/academy#courses'}
+                            style={{ width: '100%', maxWidth: '280px' }}
                         >
-                            Share Your Experience
+                            Start Path
+                        </button>
+                    </div>
+
+                    <div className={styles.ctaCard}>
+                        <h2 className={styles.ctaTitle} style={{ fontSize: '1.8rem' }}>Already taken a course?</h2>
+                        <button
+                            className="btn"
+                            onClick={() => openModal()}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                width: '100%',
+                                maxWidth: '280px'
+                            }}
+                        >
+                            Share your experience
                         </button>
                     </div>
                 </motion.div>
+
             </section>
         </motion.main>
     );

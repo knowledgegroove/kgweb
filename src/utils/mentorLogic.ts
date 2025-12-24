@@ -28,7 +28,8 @@ export function generateInitialAdvice(courseId: string, unitNumber: number, situ
     } else if (situation === 'readiness') {
         focus = `Let's gauge your confidence for ${unit.title}.`;
         logic = `To be 'Test Ready', you should be able to check off: ${unit.readinessChecklist.slice(0, 3).join(', ')}.`;
-        guide = `This unit is ${unit.priority} priority. Mastery here often correlates with a 4 or 5 on the full exam.`;
+        guide = `Mastery here often correlates with a 4 or 5 on the full exam.`;
+
         gotcha = `Don't let ${unit.commonMistakes[1]?.mistake || 'the complexity'} trip you up. ${blueprint.teacherTips[1] || 'Watch your units!'}`;
         nextStep = `Which of those checklist items feels the shakiest right now?`;
     } else if (situation === 'recovery') {

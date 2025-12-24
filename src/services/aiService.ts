@@ -8,28 +8,83 @@ export interface AIMessage {
 }
 
 export async function askAI(messages: AIMessage[], systemPrompt: string) {
-    // HARDCODED KEYS FOR VERIFICATION (Temporary)
     const openRouterKey = process.env.OPENROUTER_API_KEY;
+    const cerebrasKey = process.env.CEREBRAS_API_KEY;
+    const chutesKey = process.env.CHUTES_API_KEY;
+    const cloudflareKey = process.env.CLOUDFLARE_API_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
     const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
     let lastError = "";
 
-    // 1. Try OpenRouter (New Primary)
+    // 1. Try OpenRouter (Primary)
     if (openRouterKey && openRouterKey.startsWith('sk-or')) {
         try {
             const res = await tryOpenRouter(messages, systemPrompt, openRouterKey);
             return `(OpenRouter) ${res}`;
-        } catch (orError: any) {
-            lastError = `OpenRouter: ${orError.message}`;
-            console.error('[AIService] OpenRouter Failed:', orError.message);
+        } catch (err: any) {
+            lastError = `OpenRouter: ${err.message}`;
+            console.error('[AIService] OpenRouter Failed:', err.message);
         }
     }
 
-    // 2. Try Gemini (Secondary)
+    // 2. Try Cerebras (Fast Inference)
+    if (cerebrasKey && cerebrasKey.startsWith('csk-')) {
+        try {
+            const res = await tryCerebras(messages, systemPrompt, cerebrasKey);
+            return `(Cerebras) ${res}`;
+        } catch (err: any) {
+            lastError += ` | Cerebras: ${err.message}`;
+            console.error('[AIService] Cerebras Failed:', err.message);
+        }
+    }
+
+    // 3. Try Chutes (Alternative)
+    if (chutesKey && chutesKey.startsWith('cpk_')) {
+        try {
+            const res = await tryChutes(messages, systemPrompt, chutesKey);
+            return `(Chutes) ${res}`;
+        } catch (err: any) {
+            lastError += ` | Chutes: ${err.message}`;
+            console.error('[AIService] Chutes Failed:', err.message);
+        }
+    }
+
+    // 4. Try Cloudflare (Workers AI)
+    if (cloudflareKey) {
+        // Cloudflare usually requires Account ID. We'll try to infer or use standard endpoint if possible,
+        // but typically it's https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/meta/llama-3-8b-instruct
+        // Since we only have the key, we might need the account ID.
+        // HOWEVER, often the key is enough if we use a specific gateway or if the user provided Account ID in env.
+        // Let's assume for now we skip complex implementation unless we have ACCOUNT ID.
+        // But since the user provided it, we should try.
+        // Let's check if process.env.CLOUDFLARE_ACCOUNT_ID exists, or try to decode.
+        const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+        if (accountId) {
+            try {
+                const res = await tryCloudflare(messages, systemPrompt, cloudflareKey, accountId);
+                return `(Cloudflare) ${res}`;
+            } catch (err: any) {
+                lastError += ` | Cloudflare: ${err.message}`;
+                console.error('[AIService] Cloudflare Failed:', err.message);
+            }
+        }
+    }
+
+    // 5. Try Anthropic (Fallback)
+    if (anthropicKey) {
+        try {
+            const res = await tryAnthropic(messages, systemPrompt, anthropicKey);
+            return `(Claude) ${res}`;
+        } catch (err: any) {
+            lastError += ` | Anthropic: ${err.message}`;
+        }
+    }
+
+    // 6. Try Gemini (Last Priority)
     if (geminiKey && geminiKey.startsWith('AIza')) {
         try {
-            console.log('[AIService] Attempting Gemini (gemini-2.0-flash) with key ending in:', geminiKey.slice(-4));
+            console.log('[AIService] Attempting Gemini (gemini-2.0-flash)...');
             const genAI = new GoogleGenerativeAI(geminiKey);
             const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
@@ -46,7 +101,6 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
                 },
             });
 
-            // For Gemini, we include the system prompt in the final instruction to ensure adherence
             const userMessage = messages[messages.length - 1].content;
             const promptWithInstructions = `INSTRUCTIONS:\n${systemPrompt}\n\nSTUDENT MESSAGE:\n${userMessage}`;
 
@@ -56,29 +110,10 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
         } catch (geminiError: any) {
             lastError += ` | Gemini: ${geminiError.message}`;
             console.error('[AIService] Gemini Failed:', geminiError.message);
-
-            if (anthropicKey) {
-                try {
-                    const res = await tryAnthropic(messages, systemPrompt, anthropicKey);
-                    return `(Claude) ${res}`;
-                } catch (anthropicError: any) {
-                    lastError += ` | Anthropic: ${anthropicError.message}`;
-                    return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError);
-                }
-            }
-            return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError);
         }
-    } else if (anthropicKey) {
-        try {
-            const res = await tryAnthropic(messages, systemPrompt, anthropicKey);
-            return `(Claude) ${res}`;
-        } catch (err: any) {
-            lastError += ` | Anthropic: ${err.message}`;
-            return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError);
-        }
-    } else {
-        return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError || "No API Keys Provided");
     }
+
+    return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError || "No Working API Keys Found");
 }
 
 async function tryOpenRouter(messages: AIMessage[], systemPrompt: string, apiKey: string) {
@@ -112,8 +147,104 @@ async function tryOpenRouter(messages: AIMessage[], systemPrompt: string, apiKey
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    return data?.choices?.[0]?.message?.content || "";
 }
+
+async function tryCerebras(messages: AIMessage[], systemPrompt: string, apiKey: string) {
+    console.log('[AIService] Attempting Cerebras (llama3.1-70b)...');
+
+    const response = await fetch("https://api.cerebras.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "model": "llama3.1-70b",
+            "messages": [
+                { "role": "system", "content": systemPrompt },
+                ...messages.map(msg => ({
+                    role: msg.role === 'bot' ? 'assistant' : 'user',
+                    content: msg.content
+                }))
+            ],
+            "max_tokens": 1000
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+        throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content || "";
+}
+
+async function tryChutes(messages: AIMessage[], systemPrompt: string, apiKey: string) {
+    console.log('[AIService] Attempting Chutes (huggingface/meta-llama/Meta-Llama-3-70B-Instruct)...');
+
+    // Chutes usually requires specific endpoint for specific models
+    // Using standard OpenAI compatible endpoint
+    const response = await fetch("https://api.chutes.ai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            // Assuming standard Llama 3 70B Instruct
+            "model": "huggingface/meta-llama/Meta-Llama-3-70B-Instruct",
+            "messages": [
+                { "role": "system", "content": systemPrompt },
+                ...messages.map(msg => ({
+                    role: msg.role === 'bot' ? 'assistant' : 'user',
+                    content: msg.content
+                }))
+            ],
+            "max_tokens": 1000,
+            "temperature": 0.7
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+        throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data?.choices?.[0]?.message?.content || "";
+}
+
+async function tryCloudflare(messages: AIMessage[], systemPrompt: string, apiKey: string, accountId: string) {
+    console.log('[AIService] Attempting Cloudflare (@cf/meta/llama-3-8b-instruct)...');
+
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/meta/llama-3-8b-instruct`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            messages: [
+                { "role": "system", "content": systemPrompt },
+                ...messages.map(msg => ({
+                    role: msg.role === 'bot' ? 'assistant' : 'user',
+                    content: msg.content
+                }))
+            ]
+        })
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: { message: response.statusText } }));
+        throw new Error(errorData.errors?.[0]?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data?.result?.response || "";
+}
+
 
 async function tryAnthropic(messages: AIMessage[], systemPrompt: string, apiKey: string) {
     console.log('[AIService] Attempting Anthropic (claude-3-5-sonnet-20240620)...');

@@ -4,8 +4,9 @@ import { use, useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
+import { useExperience } from '@/context/ExperienceContext';
 import { academyKnowledge } from '@/data/academyKnowledge';
-import { alumniMemory } from '@/data/alumniMemory';
+import { useAlumni } from '@/context/AlumniContext';
 import alumniStyles from './alumni.module.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import styles from './page.module.css';
@@ -14,6 +15,19 @@ import styles from './page.module.css';
 const courseExtras: Record<string, any> = {
     'ap-calculus-ab': {
         textbook: "https://obryant.us/ourpages/auto/2021/1/4/63136320/calculus%20of%20a%20single%20variable%208th%20edition%20larson%20hostetler-1.pdf?rnd=1609819461101",
+        textbookChapters: [
+            { title: "Ch P: Preparation", page: 1 },
+            { title: "Ch 1: Limits", page: 40 },
+            { title: "Ch 2: Derivatives", page: 95 },
+            { title: "Ch 3: Apps of Diff", page: 163 },
+            { title: "Ch 4: Integration", page: 246 },
+            { title: "Ch 5: Log/Exp/Trans", page: 322 },
+            { title: "Ch 6: Diff Equations", page: 403 },
+            { title: "Ch 7: Apps of Integration", page: 445 },
+            { title: "Ch 8: Integration Tech", page: 516 },
+            { title: "Ch 9: Infinite Series", page: 591 },
+            { title: "Ch 10: Conics/Par/Pol", page: 692 }
+        ],
         calendar: [
             { date: "Oct 15", event: "Unit 1-3 Comprehensive Test" },
             { date: "Dec 18", event: "Semester 1 Final (Limits & Derivatives)" },
@@ -30,11 +44,14 @@ const courseExtras: Record<string, any> = {
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
     const { openTutor, isOpen } = useTutor();
+    const { openModal } = useExperience();
+    const { tips: alumniMemory } = useAlumni();
     const textbookRef = useRef<HTMLDivElement>(null);
     const resourcesRef = useRef<HTMLDivElement>(null);
     const guidesRef = useRef<HTMLDivElement>(null);
 
     const [showTextbook, setShowTextbook] = useState(false);
+    const [currentChapterPage, setCurrentChapterPage] = useState<number | null>(null);
     const [showResources, setShowResources] = useState(false);
     const [showGuides, setShowGuides] = useState(false);
     const [activeResourceUnit, setActiveResourceUnit] = useState<number | null>(null);
@@ -148,8 +165,9 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                     className={styles.secondaryHeroBtn}
                                     onClick={() => openTutor(slug, undefined, `Course: ${data.title}. Description: ${data.description}. Wisdom: ${data.wisdom}`)}
                                 >
-                                    💬 Practice with AI
+                                    Practice with AI
                                 </button>
+
                             </div>
 
                             <div className={styles.unitList}>
@@ -166,10 +184,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                 >
                                                     {expandedUnit === unit.number ? 'Show Less' : 'Learn More'}
                                                 </button>
-                                                <span className={`${styles.priorityTag} ${styles[unit.priority.toLowerCase()]}`}>
-                                                    {unit.priority}
-                                                </span>
                                             </div>
+
 
                                             <div className={styles.unitContent}>
                                                 <p className={styles.unitPurpose}>
@@ -316,20 +332,42 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             {/* Alumni Advice in Sidebar */}
                             <div className={styles.sidebarCard} style={{ background: 'rgba(79, 70, 229, 0.03)', borderColor: 'rgba(79, 70, 229, 0.1)' }}>
                                 <h2 className={styles.sidebarTitle}>Alumni Advice</h2>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                    {alumniMemory.filter(tip => tip.courseId === data.id).map((tip, idx) => (
-                                        <div key={idx} style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', fontSize: '0.85rem', opacity: 0.6 }}>
-                                                <span style={{ fontWeight: 800, color: 'white' }}>{tip.studentName}</span>
-                                                <span>{tip.date}</span>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1.5rem' }}>
+                                    {alumniMemory
+                                        .filter(tip => tip.courseId === data.id)
+                                        .reverse() // Newest first
+                                        .slice(0, 3) // Show only latest 3
+                                        .map((tip, idx) => (
+                                            <div key={idx} style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', fontSize: '0.85rem', opacity: 0.6 }}>
+                                                    <span style={{ fontWeight: 800, color: 'white' }}>{tip.studentName}</span>
+                                                    <span>{tip.date}</span>
+                                                </div>
+                                                <p style={{ fontSize: '0.95rem', fontStyle: 'italic', lineHeight: '1.5', opacity: 0.9 }}>"{tip.tip}"</p>
                                             </div>
-                                            <p style={{ fontSize: '0.95rem', fontStyle: 'italic', lineHeight: '1.5', opacity: 0.9 }}>"{tip.tip}"</p>
-                                        </div>
-                                    ))}
+                                        ))}
                                     {alumniMemory.filter(tip => tip.courseId === data.id).length === 0 && (
                                         <p style={{ opacity: 0.5, fontStyle: 'italic', fontSize: '0.9rem' }}>Be the first to share advice for this course!</p>
                                     )}
                                 </div>
+
+                                <button
+                                    onClick={() => openModal(slug)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0.8rem',
+                                        background: 'rgba(79, 70, 229, 0.1)',
+                                        border: '1px solid rgba(79, 70, 229, 0.2)',
+                                        color: '#818cf8',
+                                        borderRadius: '0.5rem',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s'
+                                    }}
+                                >
+                                    Already taken this course?
+                                </button>
                             </div>
                         </aside>
                     )}
@@ -347,13 +385,43 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                         >
                             <div className={styles.textbookHeader}>
                                 <h2 className={styles.sectionTitle}>Online Textbook: {data.title}</h2>
-                                <button className={styles.closeTextbookBtn} onClick={() => setShowTextbook(false)}>Close ×</button>
+                                <button className={styles.closeTextbookBtn} onClick={() => { setShowTextbook(false); setCurrentChapterPage(null); }}>Close ×</button>
                             </div>
+
+                            {data.textbookChapters && (
+                                <div className={styles.chapterLinks}>
+                                    {data.textbookChapters.map((ch: any, i: number) => (
+                                        <button
+                                            key={i}
+                                            className={styles.chapterBtn}
+                                            onClick={() => setCurrentChapterPage(ch.page)}
+                                            style={{
+                                                background: currentChapterPage === ch.page ? '#3b82f6' : '',
+                                                color: currentChapterPage === ch.page ? 'white' : 'rgba(255,255,255,0.7)',
+                                            }}
+                                        >
+                                            {ch.title}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
                             <iframe
-                                src={data.textbook}
+                                key={currentChapterPage || 'default'}
+                                src={`${data.textbook}${currentChapterPage ? `#page=${currentChapterPage}` : ''}`}
                                 className={styles.textbookFrame}
                                 title="Course Textbook"
                             />
+                            <p style={{
+                                fontSize: '0.7rem',
+                                color: 'rgba(255,255,255,0.4)',
+                                textAlign: 'center',
+                                marginTop: '0.5rem',
+                                fontStyle: 'italic'
+                            }}>
+                                Textbook credits: Ron Larson, Bruce H. Edwards, Robert P. Hostetler. PDF resource courtesy of O'Bryant School of Math and Science.
+                            </p>
+
                         </motion.section>
                     )}
                 </AnimatePresence>
@@ -472,24 +540,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                     )}
                 </AnimatePresence>
 
-                {/* Bottom Section: Instructors */}
-                <section className={styles.instructorsSection}>
-                    <h2 className={styles.sectionTitle}>Your Instructors</h2>
-                    <div className={styles.instructorGrid}>
-                        {data.instructors.map((ins: any, i: number) => (
-                            <div key={i} className={styles.instructorCard}>
-                                <div className={styles.instructorAvatar}>
-                                    {ins.name ? ins.name.split(' ').map((n: string) => n.charAt(0)).join('') : 'AI'}
-                                </div>
-                                <div>
-                                    <h4 className={styles.instructorName}>{ins.name}</h4>
-                                    <p className={styles.instructorRole}>{ins.role}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
             </div>
         </main>
+
     );
 }

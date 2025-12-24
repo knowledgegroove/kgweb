@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
 import { academyKnowledge } from '@/data/academyKnowledge';
-import Anthropic from '@anthropic-ai/sdk';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || '' });
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+import { askAI } from '@/services/aiService';
 
 export async function POST(request: Request) {
     try {
@@ -17,76 +13,51 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Unit not found' }, { status: 404 });
         }
 
-        const systemPrompt = `You are a high-fidelity MCQ generator for students. 
-Generate 5 Multiple Choice Questions for: 
+        const randomSeed = Math.random().toString(36).substring(7);
+
+        const systemPrompt = `Generate 5 UNIQUE Multiple Choice Questions as a JSON array.
 Course: ${blueprint.title}
-Unit ${unit.number}: ${unit.title}
+Unit: ${unit.number}
+Seed: ${randomSeed}
 
-REQUIREMENTS:
-1. Valid JSON array of 5 objects.
-2. Each object: { "question": string, "options": [string, string, string, string], "answer": number(0-3), "explanation": string }.
-3. Use LaTeX for math ($...$ or $$...$$).
-4. Focus on these concepts: ${unit.keyConcepts.join(', ')}
-5. Include traps based on: ${unit.commonMistakes.map(m => m.mistake).join(', ')}.`;
+Format: [ { "question": "...", "options": ["A", "B", "C", "D"], "answer": 0, "explanation": "..." } ]
+Output ONLY JSON. No preamble.`;
 
-        let responseText = "";
-        let provider = "Claude";
 
-        // Try Anthropic first
-        if (process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.length > 10) {
-            try {
-                const response = await anthropic.messages.create({
-                    model: "claude-3-5-sonnet-20240620",
-                    max_tokens: 2000,
-                    system: systemPrompt,
-                    messages: [{ role: 'user', content: 'Output the 5 MCQs in the requested JSON format now.' }],
-                });
-                // @ts-ignore
-                responseText = response.content[0].text;
-                provider = "Claude";
-            } catch (err: any) {
-                console.error("Anthropic Practice Error:", err.message);
-                provider = "Fallback (Gemini)";
-                const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-                const result = await model.generateContent(`${systemPrompt}\n\nGenerate the JSON array now.`);
-                responseText = result.response.text();
-            }
-        } else {
-            provider = "Gemini";
-            const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-            const result = await model.generateContent(`${systemPrompt}\n\nGenerate the JSON array now.`);
-            responseText = result.response.text();
-        }
+        // Use unified askAI service
+        const responseText = await askAI([
+            { role: 'user', content: 'Output the 5 MCQs in JSON format now.' }
+        ], systemPrompt);
 
-        // Robust JSON extraction
-        let sanitized = responseText.trim();
-        const jsonStart = sanitized.indexOf('[');
-        const jsonEnd = sanitized.lastIndexOf(']');
+        // EXTRA ROBUST EXTRACTION
+        let jsonContent = responseText;
 
-        if (jsonStart !== -1 && jsonEnd !== -1) {
-            sanitized = sanitized.substring(jsonStart, jsonEnd + 1);
-        } else {
-            throw new Error(`AI response did not contain a valid JSON array. (Provider: ${provider})`);
-        }
+        // Find the first '[' and last ']'
+        const start = jsonContent.indexOf('[');
+        const end = jsonContent.lastIndexOf(']');
 
-        try {
-            const questions = JSON.parse(sanitized);
-            const labeledQuestions = Array.isArray(questions) ? questions.map((q: any) => ({
-                ...q,
-                explanation: `(${provider}) ${q.explanation}`
-            })) : [];
-
-            if (labeledQuestions.length === 0) throw new Error("Parsed JSON was not a valid array.");
-
-            return NextResponse.json({ questions: labeledQuestions });
-        } catch (e: any) {
-            console.error('Failed to parse AI JSON:', sanitized);
+        if (start === -1 || end === -1) {
+            console.error('[PracticeAPI] Invalid Structure:', responseText);
             return NextResponse.json({
-                error: 'Failed to generate valid practice set',
-                raw: sanitized.substring(0, 100),
-                provider: provider
+                error: 'AI did not return a valid JSON array',
+                responseText: responseText.substring(0, 500)
             }, { status: 500 });
         }
+
+        jsonContent = jsonContent.substring(start, end + 1);
+
+        try {
+            const questions = JSON.parse(jsonContent);
+            return NextResponse.json({ questions: Array.isArray(questions) ? questions : [] });
+        } catch (parseError: any) {
+            console.error('[PracticeAPI] Parse Error:', parseError.message);
+            return NextResponse.json({
+                error: 'Failed to parse AI response as JSON',
+                details: parseError.message,
+                raw: jsonContent.substring(0, 200)
+            }, { status: 500 });
+        }
+
 
     } catch (error: any) {
         console.error('Practice API Error:', error);
@@ -96,3 +67,4 @@ REQUIREMENTS:
         }, { status: 500 });
     }
 }
+

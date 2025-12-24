@@ -11,7 +11,7 @@
 
 /* Hero Section */
 .hero {
-    min-height: 50vh;
+    min-height: 70vh;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -20,11 +20,17 @@
     text-align: center;
     padding: 2rem;
     position: relative;
-    background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.05), transparent 50%);
+    background:
+        radial-gradient(circle at 20% 30%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 0%, #f8fafc 100%);
 }
 
+
+
+
 .heroContent {
-    max-width: 1000px;
+    max-width: 1200px;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -32,30 +38,82 @@
     gap: 1.5rem;
 }
 
+
+.welcomeBadge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.2rem;
+    color: #2563eb;
+    background: rgba(37, 99, 235, 0.08);
+    padding: 0.6rem 1.4rem;
+    border-radius: 2rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-family: var(--font-outfit), sans-serif;
+}
+
+
 .title {
-    font-size: clamp(3rem, 10vw, 7rem);
-    font-weight: 900;
-    letter-spacing: -0.06em;
-    line-height: 0.9;
+    font-size: clamp(3rem, 8vw, 6rem);
+
+
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
     margin-bottom: 0.5rem;
     color: #0f172a;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.05));
+    text-align: center;
+    font-family: var(--font-outfit), sans-serif;
+    padding-right: 0.2em;
+    /* Prevents "e" cutoff */
+    padding-bottom: 0.2em;
+    /* Prevents "y" and descender cutoff */
+    overflow: visible;
 }
+
+
+
 
 .subtitle {
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     color: #0f172a;
     opacity: 0.7;
-    max-width: 700px;
-    line-height: 1.4;
-    font-weight: 400;
+    max-width: 900px;
+    line-height: 1.45;
+    font-weight: 500;
+    font-family: var(--font-outfit), sans-serif;
 }
 
-.heroButtons {
+
+
+.heroActionRow {
     display: flex;
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
 }
+
+.secondaryBtn {
+    padding: 1rem 2rem;
+    font-weight: 750;
+    background: white;
+    color: #0f172a;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.secondaryBtn:hover {
+    background: #f8fafc;
+    border-color: #2563eb;
+    color: #2563eb;
+    transform: translateY(-2px);
+}
+
+/**** Stats Removed ****/
+
 
 /* Section Styling */
 .section {
@@ -83,23 +141,27 @@
 .categoryNumber {
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--accent);
+    color: #2563eb;
     opacity: 0.3;
     font-family: var(--font-geist-mono), monospace;
 }
+
 
 .categoryTitle {
     font-size: 2.5rem;
     font-weight: 800;
     letter-spacing: -0.03em;
     color: #0f172a;
+    font-family: var(--font-outfit), sans-serif;
 }
+
 
 .categoryLine {
     flex-grow: 1;
     height: 2px;
-    background: linear-gradient(to right, rgba(236, 72, 153, 0.2), transparent);
+    background: linear-gradient(to right, rgba(37, 99, 235, 0.2), transparent);
 }
+
 
 /* Course Grid */
 .grid {
@@ -135,25 +197,28 @@
 }
 
 .courseCardLink:hover .courseCard {
-    border-color: var(--accent);
-    box-shadow: 0 30px 60px -12px rgba(236, 72, 153, 0.15);
+    border-color: #2563eb;
+    box-shadow: 0 30px 60px -12px rgba(37, 99, 235, 0.15);
 }
 
 .courseTag {
     font-size: 0.8rem;
     font-weight: 800;
     text-transform: uppercase;
-    color: var(--accent);
+    color: #2563eb;
     letter-spacing: 0.15em;
     opacity: 0.8;
 }
 
+
 .courseTitle {
     font-size: 1.5rem;
-    font-weight: 850;
-    line-height: 1.2;
+    font-weight: 700;
+    line-height: 1.25;
     color: #0f172a;
+    font-family: var(--font-outfit), sans-serif;
 }
+
 
 .courseDesc {
     font-size: 0.95rem;
@@ -167,9 +232,10 @@
     align-items: center;
     gap: 0.8rem;
     font-weight: 700;
-    color: var(--accent);
+    color: #2563eb;
     transition: all 0.3s ease;
 }
+
 
 .courseCardLink:hover .courseLink {
     gap: 1.2rem;

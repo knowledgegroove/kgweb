@@ -4,8 +4,9 @@ import { createContext, useContext, useState } from 'react';
 
 interface ExperienceContextType {
     isModalOpen: boolean;
-    openModal: () => void;
+    openModal: (courseId?: string) => void;
     closeModal: () => void;
+    prefilledCourseId?: string;
 }
 
 const ExperienceContext = createContext<ExperienceContextType | undefined>(undefined);
@@ -13,11 +14,16 @@ const ExperienceContext = createContext<ExperienceContextType | undefined>(undef
 export function ExperienceProvider({ children }: { children: React.ReactNode }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const openModal = () => setIsModalOpen(true);
+    const [prefilledCourseId, setPrefilledCourseId] = useState<string | undefined>(undefined);
+
+    const openModal = (courseId?: string) => {
+        setPrefilledCourseId(courseId);
+        setIsModalOpen(true);
+    };
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <ExperienceContext.Provider value={{ isModalOpen, openModal, closeModal }}>
+        <ExperienceContext.Provider value={{ isModalOpen, openModal, closeModal, prefilledCourseId }}>
             {children}
         </ExperienceContext.Provider>
     );

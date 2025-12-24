@@ -34,7 +34,7 @@
 .subtitle {
     font-size: 1.5rem;
     line-height: 1.6;
-    color: var(--accent, #4f46e5);
+    color: var(--accent, #3b82f6);
     margin-bottom: 1.5rem;
     font-weight: 800;
     text-align: left;
@@ -98,7 +98,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    color: var(--accent, #4f46e5);
+    color: var(--accent, #3b82f6);
     font-size: 1.2rem;
 }
 
@@ -140,7 +140,7 @@
     color: white;
     max-width: 900px;
     line-height: 1.3;
-    background: linear-gradient(to right, #fff, var(--accent, #4f46e5));
+    background: linear-gradient(to right, #fff, var(--accent, #3b82f6));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -150,4 +150,29 @@
     .title {
         font-size: 3.5rem;
     }
+}
+
+.footerGrid {
+    margin-top: 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.ctaCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    text-align: center;
+}
+
+
+.ctaTitle {
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: white;
+    line-height: 1.1;
 }

@@ -21,7 +21,7 @@
 }
 
 .backLink {
-    color: var(--accent);
+    color: #3b82f6;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@
 
 .backLink:hover {
     transform: translateX(-5px);
-    text-shadow: 0 0 10px var(--accent);
+    text-shadow: 0 0 10px #3b82f6;
 }
 
 .content {
@@ -86,7 +86,7 @@
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--accent);
+    color: #3b82f6;
 }
 
 .unitList ul {
@@ -131,7 +131,7 @@
 
 .secondaryHeroBtn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
+    border-color: #3b82f6;
 }
 
 .unitsGrid {
@@ -151,7 +151,7 @@
 
 .unitCard:hover {
     background: rgba(255, 255, 255, 0.04);
-    border-color: var(--accent);
+    border-color: #3b82f6;
 }
 
 .unitHeader {
@@ -165,7 +165,7 @@
 .unitNum {
     font-size: 0.75rem;
     font-weight: 800;
-    color: var(--accent);
+    color: #3b82f6;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
@@ -180,7 +180,7 @@
 .learnMoreBtn {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--accent);
+    color: #3b82f6;
     padding: 0.4rem 0.8rem;
     border-radius: 6px;
     font-size: 0.7rem;
@@ -193,7 +193,7 @@
 
 .learnMoreBtn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
+    border-color: #3b82f6;
     transform: translateY(-1px);
 }
 
@@ -270,7 +270,7 @@
     content: "•";
     position: absolute;
     left: 0;
-    color: var(--accent);
+    color: #3b82f6;
 }
 
 .unitAiBtn {
@@ -357,12 +357,12 @@
     font-size: 1.4rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: var(--accent);
+    color: #3b82f6;
 }
 
 .wisdomCard {
-    background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(79, 70, 229, 0.1));
-    border-color: rgba(236, 72, 153, 0.2);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(79, 70, 229, 0.1));
+    border-color: rgba(59, 130, 246, 0.2);
 }
 
 .wisdomText {
@@ -526,7 +526,7 @@
 
 .closeTextbookBtn:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: var(--accent);
+    border-color: #3b82f6;
 }
 
 .closeBtn {
@@ -550,7 +550,7 @@
     font-size: 2rem;
     font-weight: 800;
     margin-bottom: 2rem;
-    background: linear-gradient(to right, #fff, var(--accent));
+    background: linear-gradient(to right, #fff, #3b82f6);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -630,7 +630,7 @@
     width: 50px;
     height: 50px;
     border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top-color: var(--accent);
+    border-top-color: #3b82f6;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -658,7 +658,7 @@
 .problemNum {
     font-size: 0.8rem;
     font-weight: 800;
-    color: var(--accent);
+    color: #3b82f6;
     text-transform: uppercase;
     margin-bottom: 0.5rem;
     display: block;
@@ -750,7 +750,7 @@
     font-size: 1.6rem;
     font-weight: 700;
     margin-bottom: 2rem;
-    background: linear-gradient(to right, var(--accent), #fff);
+    background: linear-gradient(to right, #3b82f6, #fff);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -795,7 +795,7 @@
 .resourceLinkItem:hover,
 .resourceLinkCard:hover {
     background: rgba(255, 255, 255, 0.07);
-    border-color: var(--accent);
+    border-color: #3b82f6;
     transform: translateY(-4px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
@@ -807,7 +807,7 @@
 }
 
 .linkUrl {
-    color: var(--accent);
+    color: #3b82f6;
     font-size: 0.85rem;
     opacity: 0.6;
     word-break: break-all;
@@ -839,14 +839,14 @@
 .unitResourceCard:hover {
     transform: translateX(10px);
     background: rgba(255, 255, 255, 0.08);
-    border-color: var(--accent);
+    border-color: #3b82f6;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .unitResourceNum {
     font-size: 0.85rem;
     font-weight: 800;
-    color: var(--accent);
+    color: #3b82f6;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     min-width: 80px;
@@ -904,4 +904,51 @@
 .mathContent strong {
     color: white;
     font-weight: 700;
+}
+
+.textbookFrame {
+    width: 100%;
+    height: 85vh;
+    min-height: 800px;
+    border: none;
+    border-radius: 1.5rem;
+    background: white;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.textbookHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.chapterLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.chapterBtn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 0.8rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chapterBtn:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: translateY(-2px);
 }

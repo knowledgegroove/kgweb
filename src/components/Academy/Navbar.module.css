@@ -45,11 +45,11 @@
 }
 
 .breadcrumb:hover {
-    color: var(--accent);
+    color: #3b82f6;
 }
 
 .logo span {
-    color: var(--accent);
+    color: #3b82f6;
 }
 
 .links {

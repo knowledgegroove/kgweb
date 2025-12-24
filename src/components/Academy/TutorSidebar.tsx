@@ -357,7 +357,7 @@ export default function TutorSidebar() {
                                     <motion.div key="step1" className={styles.stepContainer} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                                         <h4 className={styles.label}>Which course are you studying?</h4>
                                         <div className={styles.grid}>
-                                            {['ap-calculus-ab', 'ap-physics-1', 'ap-chem', 'ap-world'].map(id => (
+                                            {['ap-calculus-ab', 'ap-chemistry', 'ap-world-history'].map(id => (
                                                 <button key={id} className={styles.choiceBtn} onClick={() => {
                                                     setCourse(id);
                                                     const targetPath = `/academy/courses/${id}`;
@@ -366,10 +366,11 @@ export default function TutorSidebar() {
                                                     }
                                                     handleNext();
                                                 }}>
-                                                    {id.replace('ap-', 'AP ').toUpperCase()}
+                                                    {id.replace('ap-', '').replace('-', ' ').toUpperCase()}
                                                 </button>
                                             ))}
                                         </div>
+
                                     </motion.div>
                                 )}
 

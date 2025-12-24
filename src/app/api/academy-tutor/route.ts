@@ -38,7 +38,8 @@ Success Blueprint: ${blueprint.overview.successBlueprint}
 Exam Format: ${blueprint.examFormat}
 Curriculum: ${blueprint.curriculumLink || 'N/A'}
 Textbooks: ${blueprint.textbooks?.map(t => `${t.title} (Chapters: ${t.chapters.join(', ')})`).join(' | ') || 'N/A'}
-Recent Past Tests: ${blueprint.pastTests?.map(p => `${p.year} (Focus: ${p.focus}, Difficulty: ${p.difficulty})`).join(' | ') || 'N/A'}
+Recent Past Tests: ${blueprint.pastTests?.map(p => `${p.year} (Focus: ${p.focus})`).join(' | ') || 'N/A'}
+
 Teacher Tips: ${blueprint.teacherTips.join(' | ')}
 STUDENT INSIGHTS (Alumni Memory): ${relevantTips.map(t => `"${t.tip}" - ${t.studentName}`).join(' | ') || 'None yet'}
 ` : ''}
@@ -70,7 +71,8 @@ STYLE:
 
 MATH NOTATION (ZERO TOLERANCE FOR PLAIN TEXT):
 - Use ONLY LaTeX. NEVER write "lim" as text or "a/b".
-- Wrap EVERY equation in double dollar signs $$ ... $$ to force a new line.
+- Wrap inline math (like variables $x$, $y$ or small terms $f(x)$) in SINGLE dollar signs: $ ... $
+- Wrap MAJOR equations or steps in DOUBLE dollar signs: $$ ... $$ to force a new line.
 - Example:
   $$ \\lim_{x \\to c} f(x) = L $$
   $$ \\frac{dy}{dx} = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h} $$`;
