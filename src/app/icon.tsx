@@ -33,6 +33,7 @@ export default function Icon() {
                         width: '100%',
                         height: '100%',
                         objectFit: 'contain',
+                        transform: 'translate(1px, 1px)', // Subtle South-East shift for better visual balance
                     }}
                 />
             </div>
