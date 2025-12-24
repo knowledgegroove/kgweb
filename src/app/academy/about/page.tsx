@@ -31,6 +31,9 @@ export default function AboutPage() {
                     <p className={styles.heroDescription}>
                         Knowledge Groove Academy is an online learning platform designed to help students master challenging academic subjects through structured, concept-driven instruction and purposeful practice.
                     </p>
+                    <p className={styles.heroDescription} style={{ color: 'rgba(255, 255, 255, 0.9)', fontStyle: 'italic', marginTop: '1.5rem', fontWeight: 500 }}>
+                        Founded by Ishaan Garg, a high school student focused on building practical, useful tools for the community.
+                    </p>
                 </motion.div>
             </section>
 
