@@ -2,16 +2,50 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 33.333vw;
+    width: 450px;
     height: 100vh;
     background: #05050a;
-    /* Darker, solid background */
     border-left: 1px solid rgba(255, 255, 255, 0.15);
     z-index: 2100;
-    /* Higher z-index than content */
     display: flex;
     flex-direction: column;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fullScreen {
+    width: 100vw;
+}
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.iconBtn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iconBtn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5rem;
+}
+
+.activeIcon {
+    opacity: 1;
+    color: var(--accent);
 }
 
 .header {

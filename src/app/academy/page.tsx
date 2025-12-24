@@ -17,19 +17,34 @@ const courses = [
         category: "Science",
         id: "02",
         items: [
-            { title: "AP Chemistry", desc: "Dive into the properties, composition, and structure of matter.", tag: "SCIENCE" }
+            { title: "AP Chemistry", desc: "Dive into the properties, composition, and structure of matter.", tag: "SCIENCE" },
+            { title: "AP Physics 1", desc: "Master the laws of motion, force, and energy.", tag: "SCIENCE" },
+            { title: "Honors Physics", desc: "A deep dive into classical mechanics and physical phenomena.", tag: "SCIENCE" },
+            { title: "Honors Chemistry", desc: "Explore the building blocks of the universe and chemical reactions.", tag: "SCIENCE" }
         ]
     },
     {
         category: "History",
         id: "03",
         items: [
-            { title: "AP World History", desc: "A journey through global historical developments and cultural changes.", tag: "HISTORY" }
+            { title: "AP World History", desc: "A journey through global historical developments and cultural changes.", tag: "HISTORY" },
+            { title: "AP US History", desc: "Explore the American narrative from pre-colonial times to the present.", tag: "HISTORY" }
+        ]
+    },
+    {
+        category: "Tech",
+        id: "04",
+        items: [
+            { title: "AP Computer Science A", desc: "Master the principles of object-oriented programming with Java.", tag: "TECH" }
         ]
     }
 ];
 
-export default function AcademyPage() {
+import { useExperience } from '@/context/ExperienceContext';
+
+export default function AcademyLanding() {
+    const { openModal } = useExperience();
+
     const { openTutor } = useTutor();
 
     return (
@@ -48,12 +63,12 @@ export default function AcademyPage() {
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 >
                     <h1 className={styles.title}>
-                        Knowledge Groove <br />
-                        <span className="gradient-text-primary">Academy</span>
+                        Welcome to <br />
+                        <span className="gradient-text-primary">Knowledge Groove Academy</span>
                     </h1>
                     <p className={styles.subtitle}>
-                        The premium platform for high school success. <br />
-                        Real advice. AI Strategy. Proven Results.
+                        A premium learning platform for high school mastery. <br />
+                        Curriculum-aligned learning. Targeted practice. Clear understanding.
                     </p>
                     <div className={styles.heroButtons}>
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -116,15 +131,41 @@ export default function AcademyPage() {
             {/* Footer CTA */}
             <section className={styles.footerCta}>
                 <motion.div
-                    className={styles.ctaContent}
+                    className={styles.footerGrid}
                     initial={{ opacity: 0, y: 50 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                 >
-                    <h2 className={styles.ctaTitle}>Ready to start?</h2>
-                    <div className={styles.heroButtons}>
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn">Enroll Now</motion.button>
-                        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn" style={{ background: 'white', color: 'black', border: '1px solid rgba(0,0,0,0.1)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>Contact Us</motion.button>
+                    <div className={styles.ctaCard}>
+                        <h2 className={styles.ctaTitle}>Ready to start?</h2>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="btn"
+                            style={{ width: '100%', maxWidth: '280px' }}
+                        >
+                            Enroll Now
+                        </motion.button>
+                    </div>
+
+                    <div className={styles.ctaCard}>
+                        <h2 className={styles.ctaTitle}>Already completed a course?</h2>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="btn"
+                            onClick={openModal}
+                            style={{
+                                background: 'white',
+                                color: 'black',
+                                border: '1px solid rgba(0,0,0,0.1)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                width: '100%',
+                                maxWidth: '280px'
+                            }}
+                        >
+                            Share Your Experience
+                        </motion.button>
                     </div>
                 </motion.div>
             </section>

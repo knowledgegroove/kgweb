@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { academyKnowledge } from '@/data/academyKnowledge';
+import { alumniMemory } from '@/data/alumniMemory';
+import alumniStyles from './alumni.module.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import styles from './page.module.css';
 
@@ -27,7 +29,7 @@ const courseExtras: Record<string, any> = {
 
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
-    const { openTutor } = useTutor();
+    const { openTutor, isOpen } = useTutor();
     const textbookRef = useRef<HTMLDivElement>(null);
     const resourcesRef = useRef<HTMLDivElement>(null);
     const guidesRef = useRef<HTMLDivElement>(null);
@@ -123,7 +125,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     return (
         <main className={styles.main}>
             <div className={styles.content}>
-                <div className={styles.grid}>
+                <div className={`${styles.grid} ${isOpen ? styles.tutorActiveGrid : ''}`}>
                     {/* Left Column (Main Content) */}
                     <div className={styles.mainContentArea}>
                         <motion.section
@@ -292,24 +294,45 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                     </div>
 
                     {/* Right Column (Sidebar) */}
-                    <aside className={styles.sidebar}>
-                        <div className={`${styles.sidebarCard} ${styles.wisdomCard}`}>
-                            <h2 className={styles.sidebarTitle}>Student Wisdom</h2>
-                            <p className={styles.wisdomText}>"{data.wisdom}"</p>
-                        </div>
-
-                        <div className={styles.sidebarCard}>
-                            <h2 className={styles.sidebarTitle}>Course Calendar</h2>
-                            <div className={styles.calendarList}>
-                                {data.calendar.map((item: any, i: number) => (
-                                    <div key={i} className={styles.calendarItem}>
-                                        <span className={styles.calendarDate}>{item.date}</span>
-                                        <span className={styles.calendarEvent}>{item.event}</span>
-                                    </div>
-                                ))}
+                    {!isOpen && (
+                        <aside className={styles.sidebar}>
+                            <div className={`${styles.sidebarCard} ${styles.wisdomCard}`}>
+                                <h2 className={styles.sidebarTitle}>Student Wisdom</h2>
+                                <p className={styles.wisdomText}>"{data.wisdom}"</p>
                             </div>
-                        </div>
-                    </aside>
+
+                            <div className={styles.sidebarCard}>
+                                <h2 className={styles.sidebarTitle}>Course Calendar</h2>
+                                <div className={styles.calendarList}>
+                                    {data.calendar.map((item: any, i: number) => (
+                                        <div key={i} className={styles.calendarItem}>
+                                            <span className={styles.calendarDate}>{item.date}</span>
+                                            <span className={styles.calendarEvent}>{item.event}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Alumni Advice in Sidebar */}
+                            <div className={styles.sidebarCard} style={{ background: 'rgba(79, 70, 229, 0.03)', borderColor: 'rgba(79, 70, 229, 0.1)' }}>
+                                <h2 className={styles.sidebarTitle}>Alumni Advice</h2>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                                    {alumniMemory.filter(tip => tip.courseId === data.id).map((tip, idx) => (
+                                        <div key={idx} style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', fontSize: '0.85rem', opacity: 0.6 }}>
+                                                <span style={{ fontWeight: 800, color: 'white' }}>{tip.studentName}</span>
+                                                <span>{tip.date}</span>
+                                            </div>
+                                            <p style={{ fontSize: '0.95rem', fontStyle: 'italic', lineHeight: '1.5', opacity: 0.9 }}>"{tip.tip}"</p>
+                                        </div>
+                                    ))}
+                                    {alumniMemory.filter(tip => tip.courseId === data.id).length === 0 && (
+                                        <p style={{ opacity: 0.5, fontStyle: 'italic', fontSize: '0.9rem' }}>Be the first to share advice for this course!</p>
+                                    )}
+                                </div>
+                            </div>
+                        </aside>
+                    )}
                 </div>
 
                 {/* Textbook Section */}

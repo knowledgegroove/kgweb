@@ -1,20 +1,32 @@
 .mainWrapper {
     min-height: 100vh;
     background: #ffffff;
-    /* Academy Home is light themed currently based on AcademyPage.tsx */
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     width: 100%;
-    overflow-x: hidden;
 }
 
 .tutorOpen {
-    padding-right: 33.333vw;
+    padding-right: 450px;
+}
+
+.tutorOpen.fullScreenActive {
+    padding-right: 0;
+}
+
+.scalingLayer {
+    width: 100%;
+}
+
+.fullScreenActive .scalingLayer {
+    opacity: 0.1;
+    pointer-events: none;
+    filter: blur(4px);
 }
 
 .contentArea {
     padding-top: 80px;
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
 }
 
 /* Ensure the course page (dark themed) still looks good */

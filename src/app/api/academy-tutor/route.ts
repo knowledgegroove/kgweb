@@ -1,4 +1,5 @@
 import { academyKnowledge } from '@/data/academyKnowledge';
+import { alumniMemory } from '@/data/alumniMemory';
 import { NextResponse } from 'next/server';
 import { askAI } from '@/services/aiService';
 
@@ -10,6 +11,9 @@ export async function POST(request: Request) {
         const blueprint = courseId ? academyKnowledge[courseId] : null;
         const currentUnit = (blueprint && unitNumber) ? blueprint.units.find(u => u.number === unitNumber) : null;
 
+        // Get relevant alumni tips
+        const relevantTips = alumniMemory.filter(tip => tip.courseId === courseId);
+
         const systemPrompt = `You are the Knowledge Groove AI Tutor, a highly specialized academic mentor.
 Your mission: Transform student stress and confusion into test-ready confidence.
 
@@ -18,7 +22,8 @@ CORE PHILOSOPHY:
 2. Prioritize clarity, focus, and confidence.
 3. Tell students what matters, why it matters, and what to do next.
 4. Use site-specific context: Course Strategy (Success Blueprint), Common Mistakes, and Test Readiness Metrics (Readiness Checklist and Unit Weight).
-5. You are a calm, intelligent mentor, not a solutions manual. Never just give raw answers.
+5. Incorporate REAL STUDENT INSIGHTS from the Alumni Memory layer to provide practical advice.
+6. You are a calm, intelligent mentor, not a solutions manual. Never just give raw answers.
 
 Current Context:
 Course: ${blueprint?.title || 'Not specified'}
@@ -35,6 +40,7 @@ Curriculum: ${blueprint.curriculumLink || 'N/A'}
 Textbooks: ${blueprint.textbooks?.map(t => `${t.title} (Chapters: ${t.chapters.join(', ')})`).join(' | ') || 'N/A'}
 Recent Past Tests: ${blueprint.pastTests?.map(p => `${p.year} (Focus: ${p.focus}, Difficulty: ${p.difficulty})`).join(' | ') || 'N/A'}
 Teacher Tips: ${blueprint.teacherTips.join(' | ')}
+STUDENT INSIGHTS (Alumni Memory): ${relevantTips.map(t => `"${t.tip}" - ${t.studentName}`).join(' | ') || 'None yet'}
 ` : ''}
 
 ${currentUnit ? `

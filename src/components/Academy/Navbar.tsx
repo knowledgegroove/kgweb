@@ -9,9 +9,10 @@ export default function AcademyNavbar() {
     const { openTutor, isOpen } = useTutor();
     const pathname = usePathname();
     const isCoursePage = pathname.includes('/courses/');
+    const courseSlug = isCoursePage ? pathname.split('/').pop() : undefined;
 
     return (
-        <nav className={styles.nav} style={{ right: isOpen ? '33.333vw' : '0' }}>
+        <nav className={styles.nav}>
             <div className={styles.container}>
                 <div className={styles.left}>
                     <Link href="/academy" className={styles.logo}>
@@ -25,10 +26,15 @@ export default function AcademyNavbar() {
                 </div>
 
                 <div className={styles.links}>
-                    {!isCoursePage && <Link href="/academy#courses">Courses</Link>}
+                    {!isCoursePage && (
+                        <>
+                            <Link href="/academy/about">About Us</Link>
+                            <Link href="/academy#courses">Courses</Link>
+                        </>
+                    )}
                     <button
                         className={styles.aiBtn}
-                        onClick={() => openTutor()}
+                        onClick={() => openTutor(courseSlug)}
                     >
                         ✨ Ask AI Tutor
                     </button>

@@ -45,6 +45,11 @@
     grid-template-columns: 2.2fr 1fr;
     gap: 5rem;
     margin-bottom: 6rem;
+    transition: all 0.4s ease;
+}
+
+.tutorActiveGrid {
+    grid-template-columns: 1fr;
 }
 
 /* Hero & Units */
@@ -751,13 +756,31 @@
     color: transparent;
 }
 
-.linksList {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+.linksGridWrapper {
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
 }
 
-.resourceLinkItem {
+.unitPathTitle {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.6));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.linksList,
+.linksGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+}
+
+.resourceLinkItem,
+.resourceLinkCard {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -769,10 +792,12 @@
     transition: all 0.3s ease;
 }
 
-.resourceLinkItem:hover {
+.resourceLinkItem:hover,
+.resourceLinkCard:hover {
     background: rgba(255, 255, 255, 0.07);
     border-color: var(--accent);
     transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .linkTitle {

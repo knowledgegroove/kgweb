@@ -7,6 +7,7 @@ import { generateInitialAdvice } from '@/utils/mentorLogic';
 import { academyKnowledge } from '@/data/academyKnowledge';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
+import { useRouter, usePathname } from 'next/navigation';
 import styles from './TutorSidebar.module.css';
 
 interface Message {
@@ -130,7 +131,9 @@ const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) =
 };
 
 export default function TutorSidebar() {
-    const { isOpen, closeTutor, initialCourseId, initialUnitNumber, initialPageContext, initialMode } = useTutor();
+    const { isOpen, isFullScreen, closeTutor, toggleFullScreen, initialCourseId, initialUnitNumber, initialPageContext, initialMode } = useTutor();
+    const router = useRouter();
+    const pathname = usePathname();
     const [step, setStep] = useState(1);
     const [course, setCourse] = useState('');
     const [unit, setUnit] = useState<number | null>(null);
@@ -165,7 +168,7 @@ export default function TutorSidebar() {
                         setStep(3); // Options step
                     }
                 } else {
-                    setStep(2); // Unit selection
+                    setStep(0); // General Greeting
                 }
             } else {
                 setStep(0); // General Greeting
@@ -309,7 +312,7 @@ export default function TutorSidebar() {
                 <>
                     {/* Side Panel */}
                     <motion.div
-                        className={styles.sidebar}
+                        className={`${styles.sidebar} ${isFullScreen ? styles.fullScreen : ''}`}
                         initial={{ x: '100%' }}
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
@@ -323,7 +326,16 @@ export default function TutorSidebar() {
                                     <p>Grounded in Academy Database</p>
                                 </div>
                             </div>
-                            <button className={styles.closeBtn} onClick={closeTutor}>×</button>
+                            <div className={styles.headerActions}>
+                                <button
+                                    className={`${styles.iconBtn} ${isFullScreen ? styles.activeIcon : ''}`}
+                                    onClick={toggleFullScreen}
+                                    title={isFullScreen ? "Exit Full Screen" : "Full Screen Mode"}
+                                >
+                                    {isFullScreen ? '🗗' : '🗖'}
+                                </button>
+                                <button className={styles.closeBtn} onClick={closeTutor}>×</button>
+                            </div>
                         </div>
 
                         <div className={styles.content}>
@@ -334,7 +346,7 @@ export default function TutorSidebar() {
                                             <h2 className={styles.greetingTitle}>Welcome back.</h2>
                                             <p className={styles.greetingText}>Ready to master your AP course? I have the full course blueprint loaded.</p>
                                             <div className={styles.greetingButtons}>
-                                                <button className={styles.primaryAction} onClick={() => setStep(1)}>Let's start</button>
+                                                <button className={styles.primaryAction} onClick={() => course ? setStep(2) : setStep(1)}>Let's start</button>
                                                 <button className={styles.secondaryAction} onClick={closeTutor}>Just browsing</button>
                                             </div>
                                         </div>
@@ -346,7 +358,14 @@ export default function TutorSidebar() {
                                         <h4 className={styles.label}>Which course are you studying?</h4>
                                         <div className={styles.grid}>
                                             {['ap-calculus-ab', 'ap-physics-1', 'ap-chem', 'ap-world'].map(id => (
-                                                <button key={id} className={styles.choiceBtn} onClick={() => { setCourse(id); handleNext(); }}>
+                                                <button key={id} className={styles.choiceBtn} onClick={() => {
+                                                    setCourse(id);
+                                                    const targetPath = `/academy/courses/${id}`;
+                                                    if (!pathname.includes(id)) {
+                                                        router.push(targetPath);
+                                                    }
+                                                    handleNext();
+                                                }}>
                                                     {id.replace('ap-', 'AP ').toUpperCase()}
                                                 </button>
                                             ))}
@@ -517,9 +536,10 @@ export default function TutorSidebar() {
                                 )}
                             </AnimatePresence>
                         </div>
-                    </motion.div>
+                    </motion.div >
                 </>
-            )}
-        </AnimatePresence>
+            )
+            }
+        </AnimatePresence >
     );
 }

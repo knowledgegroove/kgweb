@@ -1,0 +1,149 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 600px;
+    background: #0d0d1a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    padding: 3rem;
+    z-index: 1001;
+    color: white;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+}
+
+.closeBtn {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.closeBtn:hover {
+    color: white;
+}
+
+.progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: linear-gradient(to right, #4f46e5, #ec4899);
+    transition: width 0.3s ease;
+}
+
+.question {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    line-height: 1.2;
+}
+
+.input,
+.textarea,
+.select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    padding: 1.2rem;
+    color: white;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+    border-color: #4f46e5;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.textarea {
+    min-height: 150px;
+    resize: none;
+}
+
+.actions {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nextBtn,
+.submitBtn {
+    flex: 1;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 1rem;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nextBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.nextBtn:hover:not(:disabled),
+.submitBtn:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+}
+
+.backBtn {
+    padding: 1.2rem 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.privacyToggle {
+    margin-bottom: 2.5rem;
+}
+
+.checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.checkboxLabel input {
+    width: 1.2rem;
+    height: 1.2rem;
+}
