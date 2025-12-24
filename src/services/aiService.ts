@@ -18,7 +18,7 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
     let lastError = "";
 
     // 1. Try OpenRouter (Primary)
-    if (openRouterKey && openRouterKey.startsWith('sk-or')) {
+    if (openRouterKey) {
         try {
             const res = await tryOpenRouter(messages, systemPrompt, openRouterKey);
             return `(OpenRouter) ${res}`;
@@ -29,7 +29,7 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
     }
 
     // 2. Try Cerebras (Fast Inference)
-    if (cerebrasKey && cerebrasKey.startsWith('csk-')) {
+    if (cerebrasKey) {
         try {
             const res = await tryCerebras(messages, systemPrompt, cerebrasKey);
             return `(Cerebras) ${res}`;
@@ -40,7 +40,7 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
     }
 
     // 3. Try Chutes (Alternative)
-    if (chutesKey && chutesKey.startsWith('cpk_')) {
+    if (chutesKey) {
         try {
             const res = await tryChutes(messages, systemPrompt, chutesKey);
             return `(Chutes) ${res}`;
@@ -52,13 +52,6 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
 
     // 4. Try Cloudflare (Workers AI)
     if (cloudflareKey) {
-        // Cloudflare usually requires Account ID. We'll try to infer or use standard endpoint if possible,
-        // but typically it's https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/meta/llama-3-8b-instruct
-        // Since we only have the key, we might need the account ID.
-        // HOWEVER, often the key is enough if we use a specific gateway or if the user provided Account ID in env.
-        // Let's assume for now we skip complex implementation unless we have ACCOUNT ID.
-        // But since the user provided it, we should try.
-        // Let's check if process.env.CLOUDFLARE_ACCOUNT_ID exists, or try to decode.
         const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
         if (accountId) {
             try {
@@ -82,7 +75,7 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
     }
 
     // 6. Try Gemini (Last Priority)
-    if (geminiKey && geminiKey.startsWith('AIza')) {
+    if (geminiKey) {
         try {
             console.log('[AIService] Attempting Gemini (gemini-2.0-flash)...');
             const genAI = new GoogleGenerativeAI(geminiKey);
@@ -101,17 +94,16 @@ export async function askAI(messages: AIMessage[], systemPrompt: string) {
                 },
             });
 
-            const userMessage = messages[messages.length - 1].content;
-            const promptWithInstructions = `INSTRUCTIONS:\n${systemPrompt}\n\nSTUDENT MESSAGE:\n${userMessage}`;
-
-            const result = await chat.sendMessage(promptWithInstructions);
-            return `(Gemini) ${result.response.text()}`;
-
-        } catch (geminiError: any) {
-            lastError += ` | Gemini: ${geminiError.message}`;
-            console.error('[AIService] Gemini Failed:', geminiError.message);
+            const result = await chat.sendMessage(messages[messages.length - 1].content);
+            const response = await result.response;
+            return response.text();
+        } catch (error: any) {
+            lastError += ` | Gemini: ${error.message}`;
+            console.error('[AIService] Gemini Failed:', error.message);
         }
     }
+
+
 
     return generateMockResponse(systemPrompt, messages[messages.length - 1].content, lastError || "No Working API Keys Found");
 }
