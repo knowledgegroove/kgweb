@@ -171,7 +171,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             </div>
 
                             <div className={styles.unitList}>
-                                <h2 className={styles.sectionTitle} style={{ color: 'white' }}>Units of Study</h2>
+                                <h2 className={styles.sectionTitle}>Units of Study</h2>
                                 <div className={styles.unitsGrid}>
                                     {data.units.map((unit: any, i: number) => (
                                         <div key={i} className={styles.unitCard}>
@@ -338,12 +338,12 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                         .reverse() // Newest first
                                         .slice(0, 3) // Show only latest 3
                                         .map((tip, idx) => (
-                                            <div key={idx} style={{ padding: '1.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '1rem', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.8rem', fontSize: '0.85rem', opacity: 0.6 }}>
-                                                    <span style={{ fontWeight: 800, color: 'white' }}>{tip.studentName}</span>
-                                                    <span>{tip.date}</span>
+                                            <div key={idx} className={styles.alumniTipCard}>
+                                                <div className={styles.alumniTipHeader}>
+                                                    <span className={styles.alumniName}>{tip.studentName}</span>
+                                                    <span className={styles.alumniDate}>{tip.date}</span>
                                                 </div>
-                                                <p style={{ fontSize: '0.95rem', fontStyle: 'italic', lineHeight: '1.5', opacity: 0.9 }}>"{tip.tip}"</p>
+                                                <p className={styles.alumniTipText}>"{tip.tip}"</p>
                                             </div>
                                         ))}
                                     {alumniMemory.filter(tip => tip.courseId === data.id).length === 0 && (
@@ -393,12 +393,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                     {data.textbookChapters.map((ch: any, i: number) => (
                                         <button
                                             key={i}
-                                            className={styles.chapterBtn}
+                                            className={`${styles.chapterBtn} ${currentChapterPage === ch.page ? styles.activeChapterBtn : ''}`}
                                             onClick={() => setCurrentChapterPage(ch.page)}
-                                            style={{
-                                                background: currentChapterPage === ch.page ? '#3b82f6' : '',
-                                                color: currentChapterPage === ch.page ? 'white' : 'rgba(255,255,255,0.7)',
-                                            }}
                                         >
                                             {ch.title}
                                         </button>
@@ -412,13 +408,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                 className={styles.textbookFrame}
                                 title="Course Textbook"
                             />
-                            <p style={{
-                                fontSize: '0.7rem',
-                                color: 'rgba(255,255,255,0.4)',
-                                textAlign: 'center',
-                                marginTop: '0.5rem',
-                                fontStyle: 'italic'
-                            }}>
+                            <p className={styles.textbookCredits}>
                                 Textbook credits: Ron Larson, Bruce H. Edwards, Robert P. Hostetler. PDF resource courtesy of O'Bryant School of Math and Science.
                             </p>
 

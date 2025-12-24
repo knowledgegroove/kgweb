@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 import { useTutor } from '@/context/TutorContext';
+import { useTheme } from '@/context/ThemeContext';
 import styles from './page.module.css';
 
 const courses = [
@@ -46,12 +47,13 @@ import { useExperience } from '@/context/ExperienceContext';
 
 export default function AcademyLanding() {
     const { openModal } = useExperience();
-
+    const { theme, toggleTheme } = useTheme();
     const { openTutor } = useTutor();
 
     return (
         <motion.main
             className={styles.main}
+            data-theme="light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}

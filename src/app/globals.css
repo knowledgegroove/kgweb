@@ -3,22 +3,32 @@
   --foreground: #ffffff;
   --primary: #4f46e5;
   --secondary: #a855f7;
-  --accent: #ec4899;
+  --accent: #3b82f6;
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.05);
   --card-hover: rgba(255, 255, 255, 0.08);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --primary: #4f46e5;
-    --secondary: #8b5cf6;
-    --glass-bg: rgba(0, 0, 0, 0.03);
-    --glass-border: rgba(0, 0, 0, 0.05);
-    --card-hover: rgba(0, 0, 0, 0.06);
-  }
+[data-theme='light'] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #4f46e5;
+  --secondary: #8b5cf6;
+  --accent: #3b82f6;
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --card-hover: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme='dark'] {
+  --background: #030014;
+  --foreground: #ffffff;
+  --primary: #4f46e5;
+  --secondary: #a855f7;
+  --accent: #3b82f6;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --card-hover: rgba(255, 255, 255, 0.08);
 }
 
 html,

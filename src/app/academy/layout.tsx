@@ -7,6 +7,7 @@ import styles from './layout.module.css';
 import { ExperienceProvider, useExperience } from '@/context/ExperienceContext';
 import ShareExperienceModal from '@/components/Academy/ShareExperienceModal';
 import { AlumniProvider } from '@/context/AlumniContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 function AcademyContent({ children }: { children: React.ReactNode }) {
     const { isOpen, isFullScreen } = useTutor();
@@ -31,15 +32,17 @@ export default function AcademyLayout({
     children: React.ReactNode;
 }) {
     return (
-        <TutorProvider>
-            <ExperienceProvider>
-                <AlumniProvider>
-                    <AcademyContent>
-                        {children}
-                    </AcademyContent>
-                    <TutorSidebar />
-                </AlumniProvider>
-            </ExperienceProvider>
-        </TutorProvider>
+        <ThemeProvider>
+            <TutorProvider>
+                <ExperienceProvider>
+                    <AlumniProvider>
+                        <AcademyContent>
+                            {children}
+                        </AcademyContent>
+                        <TutorSidebar />
+                    </AlumniProvider>
+                </ExperienceProvider>
+            </TutorProvider>
+        </ThemeProvider>
     );
 }
