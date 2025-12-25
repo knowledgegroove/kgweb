@@ -1046,3 +1046,38 @@
     border-color: #3b82f6;
     transform: translateY(-2px);
 }
+.interactiveCard {
+    cursor: pointer;
+}
+
+.spreadsheetContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.spreadsheetFooter {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.externalLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.8rem;
+    background: #3b82f6;
+    color: white;
+    font-weight: 700;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+}
+
+.externalLink:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+    background: #2563eb;
+}

@@ -14,6 +14,7 @@ import styles from './page.module.css';
 // Add secondary UI-only data here
 const courseExtras: Record<string, any> = {
     'ap-calculus-ab': {
+        pastExams: "https://docs.google.com/spreadsheets/d/1WwZy0P_kmAy2CNOnA4maBXAGwxMQH0DQ_kJujUzVVbo/edit?usp=sharing",
         textbook: "https://obryant.us/ourpages/auto/2021/1/4/63136320/calculus%20of%20a%20single%20variable%208th%20edition%20larson%20hostetler-1.pdf?rnd=1609819461101",
         textbookChapters: [
             { title: "Ch P: Preparation", page: 1 },
@@ -57,6 +58,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     const [activeResourceUnit, setActiveResourceUnit] = useState<number | null>(null);
     const [activeGuideUnit, setActiveGuideUnit] = useState<number | null>(null);
     const [expandedUnit, setExpandedUnit] = useState<number | null>(null);
+    const [showPastExams, setShowPastExams] = useState(false);
+    const pastExamsRef = useRef<HTMLDivElement>(null);
 
     const blueprint = academyKnowledge[slug];
     const extras = courseExtras[slug] || { calendar: [], instructors: [] };
@@ -99,6 +102,15 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         }
     }, [showGuides, activeGuideUnit]);
 
+    useEffect(() => {
+        if (showPastExams && pastExamsRef.current) {
+            const timer = setTimeout(() => {
+                pastExamsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [showPastExams]);
+
     const MathRenderer = ({ text }: { text: string }) => {
         const lines = text.split('\n');
         return (
@@ -123,19 +135,27 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
         );
     };
 
-    const toggleResourceSection = (section: 'textbook' | 'resources' | 'guides') => {
+    const toggleResourceSection = (section: 'textbook' | 'resources' | 'guides' | 'pastExams') => {
         if (section === 'textbook') {
             setShowTextbook(!showTextbook);
             setShowResources(false);
             setShowGuides(false);
+            setShowPastExams(false);
         } else if (section === 'resources') {
             setShowResources(!showResources);
             setShowTextbook(false);
             setShowGuides(false);
+            setShowPastExams(false);
         } else if (section === 'guides') {
             setShowGuides(!showGuides);
             setShowTextbook(false);
             setShowResources(false);
+            setShowPastExams(false);
+        } else if (section === 'pastExams') {
+            setShowPastExams(!showPastExams);
+            setShowTextbook(false);
+            setShowResources(false);
+            setShowGuides(false);
         }
     };
 
@@ -295,7 +315,11 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                         <p>Full digital access to your course materials.</p>
                                     </div>
                                 )}
-                                <div className={styles.resourceCard}>
+                                <div
+                                    className={`${styles.resourceCard} ${data.pastExams ? styles.interactiveCard : ''}`}
+                                    onClick={() => data.pastExams && toggleResourceSection('pastExams')}
+                                    style={{ cursor: data.pastExams ? 'pointer' : 'default' }}
+                                >
                                     <div className={styles.resourceIcon}>✍️</div>
                                     <h3>Past Exams</h3>
                                     <p>Real past exam questions with scoring rubrics.</p>
@@ -472,6 +496,43 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                         </div>
                                     </div>
                                 )}
+                            </div>
+                        </motion.section>
+                    )}
+                </AnimatePresence>
+
+                {/* Past Exams Section */}
+                <AnimatePresence>
+                    {showPastExams && data.pastExams && (
+                        <motion.section
+                            ref={pastExamsRef}
+                            className={styles.resourcesContentSection}
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                        >
+                            <div className={styles.textbookHeader}>
+                                <h2 className={styles.sectionTitle}>Past Exams Archive: {data.title}</h2>
+                                <button className={styles.closeTextbookBtn} onClick={() => setShowPastExams(false)}>Close ×</button>
+                            </div>
+
+                            <div className={styles.spreadsheetContainer}>
+                                <iframe
+                                    src={`${data.pastExams.replace('/edit?usp=sharing', '/preview')}`}
+                                    className={styles.textbookFrame}
+                                    style={{ minHeight: '80vh' }}
+                                    title="Past Exams Spreadsheet"
+                                />
+                                <div className={styles.spreadsheetFooter}>
+                                    <a
+                                        href={data.pastExams}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.externalLink}
+                                    >
+                                        Open in Google Sheets ↗
+                                    </a>
+                                </div>
                             </div>
                         </motion.section>
                     )}
