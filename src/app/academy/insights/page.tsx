@@ -2,10 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import styles from './insights.module.css';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
-    LineChart,
-    Line,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -14,7 +12,7 @@ import {
     AreaChart,
     Area
 } from 'recharts';
-import { Download, FileText, Share2, Layers, Users, Activity, BarChart3 } from 'lucide-react';
+import { Download, FileText, Share2, Layers, Users, Activity, BarChart3, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -24,6 +22,7 @@ interface AnalyticsSummary {
     repeatingVisitors: number;
     avgVisitsPerUser: number | string;
     repeatingRatio: string | number;
+    alumniContributions: number;
     pageViews: [string, number][];
     visitorHistory: { date: string, visitors: number, views: number }[];
     recentLogs: any[];
@@ -34,15 +33,17 @@ export default function AnalyticsInsights() {
     const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
     const [loading, setLoading] = useState(true);
     const [mounted, setMounted] = useState(false);
+    const [range, setRange] = useState<'7d' | '30d' | 'all'>('7d');
+    const [showAllPulse, setShowAllPulse] = useState(false);
     const dashboardRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setMounted(true);
     }, []);
 
-    const fetchAnalytics = async () => {
+    const fetchAnalytics = async (selectedRange: string) => {
         try {
-            const res = await fetch('/api/analytics/stats');
+            const res = await fetch(`/api/analytics/stats?range=${selectedRange}`);
             const data = await res.json();
             setSummary(data);
         } catch (error) {
@@ -53,8 +54,8 @@ export default function AnalyticsInsights() {
     };
 
     useEffect(() => {
-        fetchAnalytics();
-    }, []);
+        fetchAnalytics(range);
+    }, [range]);
 
     const exportToPDF = async () => {
         if (!dashboardRef.current) return;
@@ -109,6 +110,8 @@ export default function AnalyticsInsights() {
 
     if (!summary) return null;
 
+    const visibleLogs = showAllPulse ? summary.recentLogs : summary.recentLogs.slice(0, 5);
+
     return (
         <main className={styles.container} ref={dashboardRef} data-theme="light">
             <motion.div
@@ -123,11 +126,11 @@ export default function AnalyticsInsights() {
                 <div className={styles.actionRow}>
                     <button className={styles.actionBtn} onClick={exportToPDF}>
                         <FileText size={18} />
-                        Download PDF
+                        PDF Report
                     </button>
                     <button className={styles.actionBtn} onClick={exportToCSV}>
                         <Share2 size={18} />
-                        Export to Sheets
+                        CSV Export
                     </button>
                 </div>
             </motion.div>
@@ -136,21 +139,21 @@ export default function AnalyticsInsights() {
                 <motion.div className={styles.statCard} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Users size={16} color="#6366f1" />
-                        <span className={styles.statLabel}>Unique Visitors</span>
+                        <span className={styles.statLabel}>Unique Students</span>
                     </div>
                     <span className={styles.statValue}>{summary.uniqueVisitors}</span>
                 </motion.div>
                 <motion.div className={styles.statCard} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Layers size={16} color="#6366f1" />
-                        <span className={styles.statLabel}>Total Visits</span>
+                        <span className={styles.statLabel}>Total Page Views</span>
                     </div>
                     <span className={styles.statValue}>{summary.totalVisits}</span>
                 </motion.div>
                 <motion.div className={styles.statCard} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Activity size={16} color="#6366f1" />
-                        <span className={styles.statLabel}>Daily Avg.</span>
+                        <span className={styles.statLabel}>Avg Duration</span>
                     </div>
                     <span className={styles.statValue}>{summary.avgVisitsPerUser}</span>
                 </motion.div>
@@ -161,15 +164,36 @@ export default function AnalyticsInsights() {
                     </div>
                     <span className={styles.statValue}>{summary.repeatingRatio}%</span>
                 </motion.div>
+                <motion.div className={styles.statCard} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <GraduationCap size={16} color="#6366f1" />
+                        <span className={styles.statLabel}>Alumni Tips</span>
+                    </div>
+                    <span className={styles.statValue}>{summary.alumniContributions}</span>
+                </motion.div>
             </div>
 
             <motion.section
                 className={styles.chartSection}
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.6 }}
             >
-                <h2>Visitor Frequency (Last 7 Days)</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+                    <h2 style={{ margin: 0 }}>Engagement History</h2>
+                    <div className={styles.rangeSelector}>
+                        {(['7d', '30d', 'all'] as const).map((r) => (
+                            <button
+                                key={r}
+                                className={`${styles.rangeBtn} ${range === r ? styles.rangeBtnActive : ''}`}
+                                onClick={() => setRange(r)}
+                            >
+                                {r.toUpperCase()}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
                 <div className={styles.chartContainer}>
                     {mounted && (
                         <ResponsiveContainer width="100%" height="100%">
@@ -243,21 +267,37 @@ export default function AnalyticsInsights() {
                 <section className={styles.section}>
                     <h2>Real-time Pulse</h2>
                     <div className={styles.logList}>
-                        {mounted && summary.recentLogs?.map((log, i) => (
-                            <motion.div
-                                key={i}
-                                className={styles.logItem}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.1 * i }}
+                        <AnimatePresence mode="popLayout">
+                            {mounted && visibleLogs.map((log, i) => (
+                                <motion.div
+                                    key={i}
+                                    className={styles.logItem}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <span className={styles.logTag}>{log.isUnique ? 'NEW' : 'RETURN'}</span>
+                                    <span className={styles.logInfo}>
+                                        Student entered <strong>{log.path}</strong>
+                                    </span>
+                                    <span className={styles.logTime}>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+
+                        {summary.recentLogs.length > 5 && (
+                            <button
+                                className={styles.showMoreBtn}
+                                onClick={() => setShowAllPulse(!showAllPulse)}
                             >
-                                <span className={styles.logTag}>{log.isUnique ? 'NEW' : 'RETURN'}</span>
-                                <span className={styles.logInfo}>
-                                    Student entered <strong>{log.path}</strong>
-                                </span>
-                                <span className={styles.logTime}>{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                            </motion.div>
-                        ))}
+                                {showAllPulse ? (
+                                    <>Collapse <ChevronUp size={16} style={{ verticalAlign: 'middle', marginLeft: '4px' }} /></>
+                                ) : (
+                                    <>Show {summary.recentLogs.length - 5} More Signals <ChevronDown size={16} style={{ verticalAlign: 'middle', marginLeft: '4px' }} /></>
+                                )}
+                            </button>
+                        )}
                     </div>
                 </section>
             </div>

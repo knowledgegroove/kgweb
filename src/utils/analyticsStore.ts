@@ -57,8 +57,39 @@ export async function saveAnalytics(entry: AnalyticsEntry) {
     }
 }
 
-export async function getAnalyticsSummary() {
+export async function getAnalyticsSummary(range: '7d' | '30d' | 'all' = '7d') {
     const logs = await getAnalytics();
+
+    // Filter logs based on range for the graph
+    const now = new Date();
+    let daysToTrack = 7;
+    if (range === '30d') daysToTrack = 30;
+    if (range === 'all') {
+        const earliest = logs.length > 0 ? new Date(logs[0].timestamp) : now;
+        daysToTrack = Math.ceil((now.getTime() - earliest.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    const history: Record<string, { date: string, visitors: number, views: number }> = {};
+    for (let i = daysToTrack - 1; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        history[dateStr] = { date: dateStr, visitors: 0, views: 0 };
+    }
+
+    const uniquePerDay: Record<string, Set<string>> = {};
+    logs.forEach(l => {
+        const dateStr = new Date(l.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        if (history[dateStr]) {
+            if (!uniquePerDay[dateStr]) uniquePerDay[dateStr] = new Set();
+            uniquePerDay[dateStr].add(l.visitorId);
+            history[dateStr].views++;
+        }
+    });
+
+    Object.keys(history).forEach(date => {
+        history[date].visitors = uniquePerDay[date]?.size || 0;
+    });
 
     const uniqueIds = Array.from(new Set(logs.map(l => l.visitorId)));
     const totalVisits = logs.length;
@@ -73,30 +104,6 @@ export async function getAnalyticsSummary() {
     const repeatingVisitors = Object.values(userVisitMap).filter(count => count > 1).length;
     const avgVisitsPerUser = uniqueVisitors > 0 ? (totalVisits / uniqueVisitors).toFixed(1) : 0;
 
-    // Generate time series data
-    const last7Days: Record<string, { date: string, visitors: number, views: number }> = {};
-    const now = new Date();
-    for (let i = 6; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        last7Days[dateStr] = { date: dateStr, visitors: 0, views: 0 };
-    }
-
-    const uniquePerDay: Record<string, Set<string>> = {};
-    logs.forEach(l => {
-        const dateStr = new Date(l.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        if (last7Days[dateStr]) {
-            if (!uniquePerDay[dateStr]) uniquePerDay[dateStr] = new Set();
-            uniquePerDay[dateStr].add(l.visitorId);
-            last7Days[dateStr].views++;
-        }
-    });
-
-    Object.keys(last7Days).forEach(date => {
-        last7Days[date].visitors = uniquePerDay[date]?.size || 0;
-    });
-
     // Page popularity
     const pageViews: Record<string, number> = {};
     logs.forEach(l => {
@@ -108,10 +115,11 @@ export async function getAnalyticsSummary() {
         uniqueVisitors,
         repeatingVisitors,
         avgVisitsPerUser,
+        alumniContributions: 12, // Placeholder: In production, sync this from an alumni table
         repeatingRatio: totalVisits > 0 ? ((totalVisits - uniqueVisitors) / totalVisits * 100).toFixed(1) : 0,
         pageViews: Object.entries(pageViews).sort((a, b) => b[1] - a[1]),
-        visitorHistory: Object.values(last7Days),
-        recentLogs: logs.slice(-15).reverse(),
+        visitorHistory: Object.values(history),
+        recentLogs: logs.slice().reverse(), // Send all logs, client will slice
         rawLogs: logs // For CSV export
     };
 }
