@@ -10,58 +10,56 @@ interface AlumniContextType {
 
 const AlumniContext = createContext<AlumniContextType | undefined>(undefined);
 
+import { supabase } from '@/utils/supabaseClient';
+
 export function AlumniProvider({ children }: { children: React.ReactNode }) {
     const [tips, setTips] = useState<AlumniTip[]>(initialData);
 
-    useEffect(() => {
-        // Load from localStorage on mount
-        const savedTips = localStorage.getItem('kg_alumni_tips');
-        if (savedTips) {
-            try {
-                const parsed = JSON.parse(savedTips);
-                // Merge static data with saved user data (in case static data updated)
-                // For simplicity, let's just use the saved data if it exists, or maybe append user tips? 
-                // A better approach is to store ONLY user added tips in local storage.
-            } catch (e) {
-                console.error('Failed to parse saved tips', e);
-            }
+    const fetchTips = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('alumni_tips')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+
+            const dbTips: AlumniTip[] = (data || []).map(row => ({
+                courseId: row.course_id,
+                studentName: row.student_name,
+                tip: row.tip,
+                date: row.created_at.split('T')[0]
+            }));
+
+            // Merge static initial data with database data (avoid duplicates if same content)
+            setTips([...initialData, ...dbTips]);
+        } catch (e) {
+            console.error('Failed to fetch alumni tips:', e);
         }
+    };
+
+    useEffect(() => {
+        fetchTips();
     }, []);
 
-    // Better approach: Keep static data separate from user data
-    // But for this simple requirement, let's just manage one list.
-    // Initialization:
-    useEffect(() => {
-        const savedUserTips = localStorage.getItem('kg_user_tips');
-        if (savedUserTips) {
-             try {
-                const userTips = JSON.parse(savedUserTips);
-                setTips([...initialData, ...userTips]);
-            } catch (e) {
-                console.error('Failed to parse user tips', e);
-            }
-        } else {
-            setTips(initialData);
-        }
-    }, []);
+    const addTip = async (tip: AlumniTip) => {
+        try {
+            // 1. Optimistically update UI
+            setTips(prev => [...prev, tip]);
 
-    const addTip = (tip: AlumniTip) => {
-        setTips(prev => {
-            const newTips = [...prev, tip];
-            
-            // Save only the new tip to user tips in localStorage
-            const savedUserTips = localStorage.getItem('kg_user_tips');
-            let userTips: AlumniTip[] = [];
-            if (savedUserTips) {
-                try {
-                    userTips = JSON.parse(savedUserTips);
-                } catch (e) {}
-            }
-            userTips.push(tip);
-            localStorage.setItem('kg_user_tips', JSON.stringify(userTips));
-            
-            return newTips;
-        });
+            // 2. Save to Supabase
+            const { error } = await supabase
+                .from('alumni_tips')
+                .insert([{
+                    course_id: tip.courseId,
+                    student_name: tip.studentName,
+                    tip: tip.tip
+                }]);
+
+            if (error) throw error;
+        } catch (e) {
+            console.error('Failed to save alumni tip:', e);
+        }
     };
 
     return (

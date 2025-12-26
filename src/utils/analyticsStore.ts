@@ -110,12 +110,17 @@ export async function getAnalyticsSummary(range: '7d' | '30d' | 'all' = '7d') {
         pageViews[l.path] = (pageViews[l.path] || 0) + 1;
     });
 
+    // Fetch real alumni count
+    const { count: alumniCount } = await supabase
+        .from('alumni_tips')
+        .select('*', { count: 'exact', head: true });
+
     return {
         totalVisits,
         uniqueVisitors,
         repeatingVisitors,
         avgVisitsPerUser,
-        alumniContributions: 12, // Placeholder: In production, sync this from an alumni table
+        alumniContributions: alumniCount || 0,
         repeatingRatio: totalVisits > 0 ? ((totalVisits - uniqueVisitors) / totalVisits * 100).toFixed(1) : 0,
         pageViews: Object.entries(pageViews).sort((a, b) => b[1] - a[1]),
         visitorHistory: Object.values(history),
