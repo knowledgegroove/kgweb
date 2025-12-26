@@ -1,0 +1,270 @@
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 8rem 4rem 4rem;
+    min-height: 100vh;
+    background: #f8fafc;
+    /* Forced solid light background */
+    color: #0f172a;
+    /* Forced dark text */
+}
+
+.loading {
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #4f46e5;
+    font-weight: 700;
+}
+
+/* Header */
+.header {
+    margin-bottom: 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.header h1 {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    color: #0f172a !important;
+    /* Force dark text */
+    letter-spacing: -0.04em;
+}
+
+.header p {
+    font-size: 1.4rem;
+    color: #0f172a !important;
+    /* Force dark text */
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.actionRow {
+    display: flex;
+    gap: 1rem;
+}
+
+.actionBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #0f172a;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.actionBtn:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-color: #6366f1;
+    transform: translateY(-2px);
+}
+
+/* Stats */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.statCard {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 2.5rem 2rem;
+    border-radius: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.statCard:hover {
+    border-color: #6366f1;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #4f46e5;
+    /* Adjusted for light mode */
+}
+
+.statValue {
+    font-size: 4rem;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1;
+}
+
+/* Chart Section */
+.chartSection {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 3rem;
+    border-radius: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.chartSection h2 {
+    font-size: 2rem;
+    font-weight: 950;
+    margin-bottom: 2.5rem;
+    color: #0f172a;
+}
+
+.chartContainer {
+    width: 100%;
+    height: 400px;
+}
+
+/* Content Grid */
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+.section {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 3rem;
+    border-radius: 2.5rem;
+}
+
+.section h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #0f172a;
+}
+
+/* Page Views */
+.pageList {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.pageItem {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.pagePath {
+    width: 180px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.pageBarContainer {
+    flex-grow: 1;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pageBar {
+    height: 100%;
+    background: linear-gradient(to right, #6366f1, #a855f7);
+    border-radius: 6px;
+}
+
+.pageCount {
+    width: 60px;
+    text-align: right;
+    font-weight: 950;
+    color: #4f46e5;
+    font-size: 1.4rem;
+}
+
+/* Log List */
+.logList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.logItem {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.2rem;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 1.2rem;
+    transition: all 0.2s;
+}
+
+.logItem:hover {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.logTag {
+    font-size: 0.75rem;
+    font-weight: 900;
+    padding: 0.3rem 0.8rem;
+    background: rgba(79, 70, 229, 0.1);
+    color: #4f46e5;
+    border-radius: 8px;
+    letter-spacing: 0.05em;
+}
+
+.logInfo {
+    flex-grow: 1;
+    font-weight: 750;
+    color: #0f172a;
+    font-size: 1.1rem;
+}
+
+.logInfo strong {
+    color: #4f46e5;
+}
+
+.logTime {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #4f46e5;
+}
+
+@media (max-width: 1100px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contentGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2rem;
+    }
+}
