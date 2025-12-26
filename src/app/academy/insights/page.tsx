@@ -171,49 +171,51 @@ export default function AnalyticsInsights() {
             >
                 <h2>Visitor Frequency (Last 7 Days)</h2>
                 <div className={styles.chartContainer}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={summary.visitorHistory || []}>
-                            <defs>
-                                <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
-                            <XAxis
-                                dataKey="date"
-                                stroke="rgba(0,0,0,0.6)"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                dy={10}
-                            />
-                            <YAxis
-                                stroke="rgba(0,0,0,0.6)"
-                                fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
-                                allowDecimals={false}
-                            />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: '#fff',
-                                    border: '1px solid #4f46e5',
-                                    borderRadius: '12px',
-                                    color: '#0f172a'
-                                }}
-                                itemStyle={{ color: '#0f172a' }}
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="visitors"
-                                stroke="#6366f1"
-                                strokeWidth={3}
-                                fillOpacity={1}
-                                fill="url(#colorVisits)"
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                    {mounted && (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={summary.visitorHistory || []}>
+                                <defs>
+                                    <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" vertical={false} />
+                                <XAxis
+                                    dataKey="date"
+                                    stroke="rgba(0,0,0,0.6)"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    dy={10}
+                                />
+                                <YAxis
+                                    stroke="rgba(0,0,0,0.6)"
+                                    fontSize={12}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    allowDecimals={false}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: '#fff',
+                                        border: '1px solid #4f46e5',
+                                        borderRadius: '12px',
+                                        color: '#0f172a'
+                                    }}
+                                    itemStyle={{ color: '#0f172a' }}
+                                />
+                                <Area
+                                    type="monotone"
+                                    dataKey="visitors"
+                                    stroke="#6366f1"
+                                    strokeWidth={3}
+                                    fillOpacity={1}
+                                    fill="url(#colorVisits)"
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    )}
                 </div>
             </motion.section>
 
