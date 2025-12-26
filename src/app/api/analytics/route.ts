@@ -14,8 +14,8 @@ export async function POST(request: Request) {
         console.log(`⏰ Time: ${data.timestamp}`);
         console.log('----------------------------------------\n');
 
-        // 2. Persist to local "database" file
-        saveAnalytics(data);
+        // 2. Persist to Supabase
+        await saveAnalytics(data);
 
         return NextResponse.json({ success: true });
     } catch (error) {

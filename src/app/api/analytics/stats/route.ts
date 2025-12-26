@@ -3,7 +3,7 @@ import { getAnalyticsSummary } from '@/utils/analyticsStore';
 
 export async function GET() {
     try {
-        const summary = getAnalyticsSummary();
+        const summary = await getAnalyticsSummary();
         return NextResponse.json(summary);
     } catch (error) {
         console.error('[Stats API] Error:', error);

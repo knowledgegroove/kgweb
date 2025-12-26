@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const STORAGE_PATH = path.join(process.cwd(), 'src/data/analytics_logs.json');
+import { supabase } from './supabaseClient';
 
 export interface AnalyticsEntry {
     visitorId: string;
@@ -14,38 +11,54 @@ export interface AnalyticsEntry {
     language: string;
 }
 
-export function getAnalytics() {
+export async function getAnalytics() {
     try {
-        if (!fs.existsSync(STORAGE_PATH)) {
-            return [];
-        }
-        const data = fs.readFileSync(STORAGE_PATH, 'utf8');
-        return JSON.parse(data) as AnalyticsEntry[];
+        const { data, error } = await supabase
+            .from('analytics')
+            .select('*')
+            .order('timestamp', { ascending: true });
+
+        if (error) throw error;
+
+        return (data || []).map(row => ({
+            visitorId: row.visitor_id,
+            path: row.path,
+            isUnique: row.is_unique,
+            isRepeating: row.is_repeating,
+            visitCount: row.visit_count,
+            timestamp: row.timestamp,
+            userAgent: row.user_agent,
+            language: row.language
+        })) as AnalyticsEntry[];
     } catch (error) {
-        console.error('Failed to read analytics:', error);
+        console.error('Failed to fetch analytics from Supabase:', error);
         return [];
     }
 }
 
-export function saveAnalytics(entry: AnalyticsEntry) {
+export async function saveAnalytics(entry: AnalyticsEntry) {
     try {
-        const logs = getAnalytics();
-        logs.push(entry);
+        const { error } = await supabase
+            .from('analytics')
+            .insert([{
+                visitor_id: entry.visitorId,
+                path: entry.path,
+                is_unique: entry.isUnique,
+                is_repeating: entry.isRepeating,
+                visit_count: entry.visitCount,
+                timestamp: entry.timestamp,
+                user_agent: entry.userAgent,
+                language: entry.language
+            }]);
 
-        // Ensure directory exists
-        const dir = path.dirname(STORAGE_PATH);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-
-        fs.writeFileSync(STORAGE_PATH, JSON.stringify(logs, null, 2));
+        if (error) throw error;
     } catch (error) {
-        console.error('Failed to save analytics:', error);
+        console.error('Failed to save analytics to Supabase:', error);
     }
 }
 
-export function getAnalyticsSummary() {
-    const logs = getAnalytics();
+export async function getAnalyticsSummary() {
+    const logs = await getAnalytics();
 
     const uniqueIds = Array.from(new Set(logs.map(l => l.visitorId)));
     const totalVisits = logs.length;
