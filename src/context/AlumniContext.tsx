@@ -17,12 +17,22 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
 
     const fetchTips = async () => {
         try {
+            // Verify Supabase is configured before fetching
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            if (!supabaseUrl || supabaseUrl.includes('placeholder')) {
+                console.warn('[AlumniContext] Supabase not configured. Using static initial data only.');
+                return;
+            }
+
             const { data, error } = await supabase
                 .from('alumni_tips')
                 .select('*')
                 .order('created_at', { ascending: false });
 
-            if (error) throw error;
+            if (error) {
+                console.error('[AlumniContext] Supabase Error:', error.message, error.details);
+                return;
+            }
 
             const dbTips: AlumniTip[] = (data || []).map(row => ({
                 courseId: row.course_id,
@@ -33,8 +43,8 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
 
             // Merge static initial data with database data (avoid duplicates if same content)
             setTips([...initialData, ...dbTips]);
-        } catch (e) {
-            console.error('Failed to fetch alumni tips:', e);
+        } catch (e: any) {
+            console.error('Failed to fetch alumni tips:', e?.message || e);
         }
     };
 
@@ -47,6 +57,10 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
             // 1. Optimistically update UI
             setTips(prev => [...prev, tip]);
 
+            // Skip saving to DB if not configured
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            if (!supabaseUrl || supabaseUrl.includes('placeholder')) return;
+
             // 2. Save to Supabase
             const { error } = await supabase
                 .from('alumni_tips')
@@ -57,8 +71,8 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
                 }]);
 
             if (error) throw error;
-        } catch (e) {
-            console.error('Failed to save alumni tip:', e);
+        } catch (e: any) {
+            console.error('Failed to save alumni tip:', e?.message || e);
         }
     };
 
