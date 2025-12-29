@@ -43,7 +43,7 @@ export default function TypewriterText({
 
         const interval = setInterval(() => {
             if (currentIndex < text.length) {
-                setDisplayedText((prev) => text.slice(0, currentIndex + 1));
+                setDisplayedText(() => text.slice(0, currentIndex + 1));
                 currentIndex++;
             } else {
                 clearInterval(interval);

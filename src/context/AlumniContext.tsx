@@ -43,7 +43,8 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
 
             // Merge static initial data with database data (avoid duplicates if same content)
             setTips([...initialData, ...dbTips]);
-        } catch (e: any) {
+        } catch (err: unknown) {
+            const e = err as Error;
             console.error('Failed to fetch alumni tips:', e?.message || e);
         }
     };
@@ -71,7 +72,8 @@ export function AlumniProvider({ children }: { children: React.ReactNode }) {
                 }]);
 
             if (error) throw error;
-        } catch (e: any) {
+        } catch (err: unknown) {
+            const e = err as Error;
             console.error('Failed to save alumni tip:', e?.message || e);
         }
     };

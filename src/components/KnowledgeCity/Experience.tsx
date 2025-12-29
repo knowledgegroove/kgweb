@@ -1,4 +1,4 @@
-import { useScroll, Sky, Environment, PerspectiveCamera, Cloud } from '@react-three/drei';
+import { useScroll, Sky, PerspectiveCamera, Cloud } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { useRef, useMemo } from 'react';
 import * as THREE from 'three';

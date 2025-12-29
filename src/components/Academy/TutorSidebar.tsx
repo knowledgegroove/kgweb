@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { generateInitialAdvice } from '@/utils/mentorLogic';
@@ -17,6 +17,13 @@ interface Message {
         course?: string;
         unit?: string;
     };
+}
+
+interface PracticeQuestion {
+    question: string;
+    options: string[];
+    answer: number;
+    explanation: string;
 }
 
 const MathRenderer = ({ text }: { text: string }) => {
@@ -45,15 +52,17 @@ const MathRenderer = ({ text }: { text: string }) => {
 };
 
 const TypewriterText = ({ text, speed = 5 }: { text: string; speed?: number }) => {
-    const [index, setIndex] = useState(0);
-
     const formattedText = useMemo(() => {
         return text.replace(/^\((OpenRouter|Gemini|Claude|Local Logic|AIService|Fallback \(Gemini\))\)\s*/, '').trim();
     }, [text]);
 
-    useEffect(() => {
+    const [index, setIndex] = useState(0);
+    const [prevText, setPrevText] = useState(formattedText);
+
+    if (formattedText !== prevText) {
+        setPrevText(formattedText);
         setIndex(0);
-    }, [formattedText]);
+    }
 
     useEffect(() => {
         if (formattedText && index < formattedText.length) {
@@ -145,42 +154,13 @@ export default function TutorSidebar() {
     const chatEndRef = useRef<HTMLDivElement>(null);
 
     // Practice specific state
-    const [practiceQuestions, setPracticeQuestions] = useState<any[]>([]);
+    const [practiceQuestions, setPracticeQuestions] = useState<PracticeQuestion[]>([]);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [showExplanation, setShowExplanation] = useState(false);
     const [practiceScore, setPracticeScore] = useState(0);
 
-    // Sync context to local state once upon opening
-    useEffect(() => {
-        if (isOpen) {
-            const mode = initialMode || 'chat';
-            setActiveMode(mode);
-
-            if (initialCourseId) {
-                setCourse(initialCourseId);
-                setMessages([]);
-                if (initialUnitNumber) {
-                    setUnit(initialUnitNumber);
-                    if (mode === 'practice') {
-                        startPractice(initialCourseId, initialUnitNumber);
-                    } else {
-                        setStep(3); // Options step
-                    }
-                } else {
-                    setStep(0); // General Greeting
-                }
-            } else {
-                setStep(0); // General Greeting
-                setCourse('');
-                setUnit(null);
-                setSituation('');
-                setMessages([]);
-            }
-        }
-    }, [isOpen]); // Only run when sidebar opens
-
-    const startPractice = async (courseId: string, unitNum: number) => {
+    const startPractice = useCallback(async (courseId: string, unitNum: number) => {
         setStep(5); // 5: Loading Practice
         setLoading(true);
         setPracticeScore(0);
@@ -204,14 +184,45 @@ export default function TutorSidebar() {
                 }]);
                 setStep(3); // Options step
             }
-        } catch (e: any) {
+        } catch (err: unknown) {
+            const e = err as Error;
             console.error('Practice Fetch Error:', e);
             setMessages(prev => [...prev, { role: 'bot', content: `(System) I had trouble connecting to the practice engine: ${e.message}.` }]);
             setStep(3); // Options step
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    // Sync context to local state once upon opening
+    useEffect(() => {
+        if (isOpen) {
+            const mode = initialMode || 'chat';
+            setActiveMode(mode);
+
+            if (initialCourseId) {
+                setCourse(initialCourseId);
+                setMessages([]);
+                if (initialUnitNumber) {
+                    setUnit(initialUnitNumber);
+                    if (mode === 'practice') {
+                        startPractice(initialCourseId, initialUnitNumber);
+                    } else {
+                        setStep(3); // Options step
+                    }
+                } else {
+                    setStep(1); // Course Greeting/Title
+                }
+            } else {
+                setStep(0); // General Greeting
+                setCourse('');
+                setUnit(null);
+                setSituation('');
+                setMessages([]);
+            }
+        }
+    }, [isOpen, initialMode, initialCourseId, initialUnitNumber, startPractice]); // Only run when sidebar opens
+
 
     const handleOptionSelect = (idx: number) => {
         if (showExplanation) return;
@@ -346,7 +357,7 @@ export default function TutorSidebar() {
                                             <h2 className={styles.greetingTitle}>Welcome back.</h2>
                                             <p className={styles.greetingText}>Ready to master your AP course? I have the full course blueprint loaded.</p>
                                             <div className={styles.greetingButtons}>
-                                                <button className={styles.primaryAction} onClick={() => course ? setStep(2) : setStep(1)}>Let's start</button>
+                                                <button className={styles.primaryAction} onClick={() => course ? setStep(2) : setStep(1)}>Let&apos;s start</button>
                                                 <button className={styles.secondaryAction} onClick={closeTutor}>Just browsing</button>
                                             </div>
                                         </div>
@@ -378,7 +389,7 @@ export default function TutorSidebar() {
                                     <motion.div key="step2" className={styles.stepContainer} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
                                         <h4 className={styles.label}>Which unit?</h4>
                                         <div className={styles.grid}>
-                                            {(academyKnowledge[course]?.units || [1, 2, 3, 4, 5, 6, 7, 8]).map((u: any) => {
+                                            {(academyKnowledge[course]?.units || [1, 2, 3, 4, 5, 6, 7, 8]).map((u: number | { number: number }) => {
                                                 const num = typeof u === 'number' ? u : u.number;
                                                 return (
                                                     <button

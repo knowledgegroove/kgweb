@@ -25,6 +25,15 @@ import jsPDF from 'jspdf';
 // High-resolution world map that includes states/provinces (Admin 1)
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
 
+interface AnalyticsLog {
+    visitorId: string;
+    path: string;
+    isUnique: boolean;
+    visitCount: number;
+    timestamp: string;
+    language: string;
+}
+
 interface AnalyticsSummary {
     totalVisits: number;
     uniqueVisitors: number;
@@ -36,8 +45,8 @@ interface AnalyticsSummary {
     visitorHistory: { date: string, visitors: number, views: number }[];
     countries: { id: string, value: number }[];
     states: { id: string, value: number }[];
-    recentLogs: any[];
-    rawLogs: any[];
+    recentLogs: AnalyticsLog[];
+    rawLogs: AnalyticsLog[];
 }
 
 export default function AnalyticsInsights() {
@@ -341,8 +350,8 @@ export default function AnalyticsInsights() {
                             style={{ width: "100%", height: "100%" }}
                         >
                             <Geographies geography={geoUrl}>
-                                {({ geographies }: { geographies: any[] }) =>
-                                    geographies.map((geo: any) => {
+                                {({ geographies }: { geographies: Array<{ rsmKey: string; properties: { name: string; iso_a3: string }; id: string }> }) =>
+                                    geographies.map((geo) => {
                                         // Properties check for world-atlas countries dataset
                                         // The keys in summary.countries are likely 'US', 'GB', 'IN', etc.
                                         const countryId = geo.id; // Usually numeric in world-atlas, or ISO-A2

@@ -89,7 +89,8 @@ MATH NOTATION (ZERO TOLERANCE FOR PLAIN TEXT):
             }
         });
 
-    } catch (error: any) {
+    } catch (err: unknown) {
+        const error = err as Error;
         console.error('AI Tutor Error:', error);
         const isQuotaError = error.message?.includes('429') || error.message?.includes('quota');
         return NextResponse.json({

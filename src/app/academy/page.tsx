@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 import { useTutor } from '@/context/TutorContext';
@@ -47,6 +47,7 @@ import { useExperience } from '@/context/ExperienceContext';
 
 export default function AcademyLanding() {
     const { openModal } = useExperience();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { theme, toggleTheme } = useTheme();
     const { openTutor } = useTutor();
 
@@ -108,7 +109,7 @@ export default function AcademyLanding() {
                         </div>
 
                         <div className={styles.grid}>
-                            {category.items.map((course, idx) => (
+                            {category.items.map((course) => (
 
                                 <Link
                                     key={course.title}

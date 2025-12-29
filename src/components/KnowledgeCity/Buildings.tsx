@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Text, Float, RoundedBox, useScroll } from '@react-three/drei';
+import { Text, Float, useScroll } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Road Segment Component
-export function Road({ position, rotation = [0, 0, 0], length = 20 }: any) {
+export function Road({ position, rotation = [0, 0, 0], length = 20 }: { position: [number, number, number]; rotation?: [number, number, number]; length?: number }) {
     return (
         <group position={position} rotation={rotation}>
             {/* Road Surface */}
@@ -56,7 +56,7 @@ function MovingMarkings({ length }: { length: number }) {
     useFrame(() => {
         if (markings.current) {
             const offset = scroll.offset * 50;
-            markings.current.children.forEach((child: any, i) => {
+            markings.current.children.forEach((child, i) => {
                 const zPos = ((offset + i * 5) % length) - length / 2;
                 child.position.z = -zPos;
             });
@@ -81,7 +81,8 @@ export function PodcastDistrict({ position }: { position: [number, number, numbe
 
     useFrame((state) => {
         if (lightsRef.current) {
-            lightsRef.current.children.forEach((light: any, i) => {
+            lightsRef.current.children.forEach((child, i) => {
+                const light = child as THREE.PointLight;
                 // Pulsing effect with offset for each light
                 const pulse = Math.sin(state.clock.elapsedTime * 2 + i * 0.8) * 0.5 + 0.5;
                 if (light.intensity !== undefined) {
@@ -278,7 +279,7 @@ export function AcademyDistrict({ position }: { position: [number, number, numbe
 
     useFrame((state) => {
         if (handsRef.current) {
-            handsRef.current.children.forEach((hand: any, i) => {
+            handsRef.current.children.forEach((hand, i) => {
                 // Hands raise and lower at different times
                 const wave = Math.sin(state.clock.elapsedTime * 1.5 + i) * 0.3 + 0.3;
                 hand.position.y = 1.5 + wave;
@@ -331,7 +332,7 @@ export function AcademyDistrict({ position }: { position: [number, number, numbe
             {/* Animated Raised Hands */}
             <group ref={handsRef}>
                 {[[-2, 0, 0], [0, 0, 0.5], [1.5, 0, -0.5]].map((pos, i) => (
-                    <mesh key={i} position={pos as any}>
+                    <mesh key={i} position={pos as [number, number, number]}>
                         <sphereGeometry args={[0.15, 8, 8]} />
                         <meshStandardMaterial color="#ffb6c1" emissive="#ff69b4" emissiveIntensity={0.5} />
                     </mesh>
@@ -443,7 +444,7 @@ export function CreatorTower({ position }: { position: [number, number, number] 
                 outlineWidth={0.05}
                 outlineColor="#000000"
             >
-                I'm Ishaan
+                I&apos;m Ishaan
             </Text>
             <Text
                 position={[0, 0.8, 0]}

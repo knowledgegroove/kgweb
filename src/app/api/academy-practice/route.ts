@@ -49,7 +49,8 @@ Output ONLY JSON. No preamble.`;
         try {
             const questions = JSON.parse(jsonContent);
             return NextResponse.json({ questions: Array.isArray(questions) ? questions : [] });
-        } catch (parseError: any) {
+        } catch (err: unknown) {
+            const parseError = err as Error;
             console.error('[PracticeAPI] Parse Error:', parseError.message);
             return NextResponse.json({
                 error: 'Failed to parse AI response as JSON',
@@ -59,7 +60,8 @@ Output ONLY JSON. No preamble.`;
         }
 
 
-    } catch (error: any) {
+    } catch (err: unknown) {
+        const error = err as Error;
         console.error('Practice API Error:', error);
         return NextResponse.json({
             error: 'Failed to generate practice set',

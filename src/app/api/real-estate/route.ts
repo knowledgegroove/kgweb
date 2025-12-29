@@ -57,7 +57,8 @@ export async function POST(request: Request) {
             });
         }
 
-    } catch (error: any) {
+    } catch (err: unknown) {
+        const error = err as Error;
         console.error('Real Estate Analysis Error:', error);
         return NextResponse.json({
             error: 'Failed to analyze property',
@@ -66,7 +67,9 @@ export async function POST(request: Request) {
     }
 }
 
-function processHasDataSearchResponse(property: any, searchAddress: string) {
+function processHasDataSearchResponse(propertyObj: Record<string, unknown>, searchAddress: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const property = propertyObj as any;
     // HasData Search Results typically have slightly different fields than full property details
     const price = property.price || property.unformattedPrice || 0;
     const rent = property.rentZestimate || (price * 0.005);
@@ -98,7 +101,7 @@ function calculateScore(price: number, rent: number) {
     if (!price || !rent) return 70;
     const annualRent = rent * 12;
     const yield_ = (annualRent / price) * 100;
-    let score = Math.min(Math.max(Math.round(yield_ * 12), 40), 98);
+    const score = Math.min(Math.max(Math.round(yield_ * 12), 40), 98);
     return score;
 }
 

@@ -5,12 +5,22 @@ import { Instance, Instances } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
+// Simple seeded random to keep render pure for React 19
+const createRandom = (seed: number) => {
+    let s = seed;
+    return () => {
+        s = (s * 1664525 + 1013904223) % 4294967296;
+        return s / 4294967296;
+    };
+};
+
 export function Trees({ count = 150, area = 200 }: { count?: number, area?: number }) {
     const trees = useMemo(() => {
+        const random = createRandom(12345); // Constant seed for stability
         const temp = [];
         for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * area;
-            const z = (Math.random() - 0.5) * area - 50;
+            const x = (random() - 0.5) * area;
+            const z = (random() - 0.5) * area - 50;
             // Avoid placing trees on the main road path (center) - narrower exclusion for narrower road
             if (Math.abs(x) < 5) continue;
 
@@ -24,13 +34,13 @@ export function Trees({ count = 150, area = 200 }: { count?: number, area?: numb
             // Creator Tower: [0, -80]
             if (Math.abs(x - 0) < 8 && Math.abs(z - (-80)) < 8) continue;
 
-            const scale = 1.5 + Math.random() * 2; // Larger, more varied sizes
-            const typeRandom = Math.random();
+            const scale = 1.5 + random() * 2; // Larger, more varied sizes
+            const typeRandom = random();
             const treeType = typeRandom > 0.7 ? 'pine' : (typeRandom > 0.4 ? 'deciduous' : 'bushy');
-            const height = 4 + Math.random() * 6; // Varied heights
+            const height = 4 + random() * 6; // Varied heights
 
             // Varied greens
-            const colorBase = Math.random();
+            const colorBase = random();
             let color;
             if (colorBase > 0.6) color = "#2d5a27"; // Deep green
             else if (colorBase > 0.3) color = "#4a7c35"; // Medium green
@@ -50,7 +60,7 @@ export function Trees({ count = 150, area = 200 }: { count?: number, area?: numb
         <group>
             {/* Pine Trees */}
             {pines.map((data, i) => (
-                <group key={`pine-${i}`} position={data.position as any} scale={data.scale * 0.5}>
+                <group key={`pine-${i}`} position={data.position as [number, number, number]} scale={data.scale * 0.5}>
                     <mesh position={[0, data.height * 0.2, 0]}>
                         <cylinderGeometry args={[0.2, 0.4, data.height * 0.4, 8]} />
                         <meshStandardMaterial color="#3d2817" roughness={0.9} />
@@ -72,7 +82,7 @@ export function Trees({ count = 150, area = 200 }: { count?: number, area?: numb
 
             {/* Deciduous Trees (Round/Cloudy) */}
             {deciduous.map((data, i) => (
-                <group key={`deciduous-${i}`} position={data.position as any} scale={data.scale * 0.5}>
+                <group key={`deciduous-${i}`} position={data.position as [number, number, number]} scale={data.scale * 0.5}>
                     <mesh position={[0, data.height * 0.25, 0]}>
                         <cylinderGeometry args={[0.2, 0.5, data.height * 0.5, 8]} />
                         <meshStandardMaterial color="#4a3c31" roughness={0.9} />
@@ -94,7 +104,7 @@ export function Trees({ count = 150, area = 200 }: { count?: number, area?: numb
 
             {/* Bushy Trees (Low and Wide) */}
             {bushy.map((data, i) => (
-                <group key={`bushy-${i}`} position={data.position as any} scale={data.scale * 0.5}>
+                <group key={`bushy-${i}`} position={data.position as [number, number, number]} scale={data.scale * 0.5}>
                     <mesh position={[0, data.height * 0.2, 0]}>
                         <cylinderGeometry args={[0.3, 0.5, data.height * 0.4, 8]} />
                         <meshStandardMaterial color="#4a3c31" roughness={0.9} />
@@ -112,14 +122,15 @@ export function Trees({ count = 150, area = 200 }: { count?: number, area?: numb
 export function Mountains() {
     // Create trees for mountain slopes
     const mountainTrees = useMemo(() => {
+        const random = createRandom(54321); // Different seed for variety
         const temp = [];
         for (let i = 0; i < 120; i++) {
             // Distribute trees on mountain slopes
-            const side = Math.random() > 0.5 ? -1 : 1;
-            const x = side * (30 + Math.random() * 50);
-            const z = -80 - Math.random() * 60;
-            const y = Math.random() * 15; // Trees at various elevations
-            const scale = 0.8 + Math.random() * 0.8;
+            const side = random() > 0.5 ? -1 : 1;
+            const x = side * (30 + random() * 50);
+            const z = -80 - random() * 60;
+            const y = random() * 15; // Trees at various elevations
+            const scale = 0.8 + random() * 0.8;
             temp.push({ position: [x, y, z], scale });
         }
         return temp;
@@ -176,8 +187,8 @@ export function Mountains() {
                 {mountainTrees.map((data, i) => (
                     <Instance
                         key={i}
-                        position={data.position as any}
-                        scale={[data.scale, data.scale, data.scale] as any}
+                        position={data.position as [number, number, number]}
+                        scale={[data.scale, data.scale, data.scale] as [number, number, number]}
                     />
                 ))}
             </Instances>
@@ -189,8 +200,8 @@ export function Mountains() {
                 {mountainTrees.map((data, i) => (
                     <Instance
                         key={i}
-                        position={[data.position[0], data.position[1] + 2, data.position[2]] as any}
-                        scale={[data.scale, data.scale, data.scale] as any}
+                        position={[data.position[0], data.position[1] + 2, data.position[2]] as [number, number, number]}
+                        scale={[data.scale, data.scale, data.scale] as [number, number, number]}
                     />
                 ))}
             </Instances>
@@ -256,7 +267,7 @@ export function HighwayCars() {
 
     useFrame((state) => {
         if (carsRef.current) {
-            carsRef.current.children.forEach((carGroup: any, i) => {
+            carsRef.current.children.forEach((carGroup, i) => {
                 const car = cars[i];
                 // Move cars continuously based on time
                 // Cars move backward (negative z direction)

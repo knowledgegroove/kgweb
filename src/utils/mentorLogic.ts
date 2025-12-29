@@ -1,4 +1,4 @@
-import { academyKnowledge, CourseBlueprint } from '@/data/academyKnowledge';
+import { academyKnowledge } from '@/data/academyKnowledge';
 
 export function generateInitialAdvice(courseId: string, unitNumber: number, situation: string) {
     const blueprint = academyKnowledge[courseId];

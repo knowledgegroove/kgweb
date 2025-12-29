@@ -69,7 +69,6 @@ export default function ShareExperienceModal({ isOpen, onClose }: ShareExperienc
 
         // Synthesize the tip from user input
         // Prioritize "mistakes" or "shaky" areas as they are most helpful advice
-        const tipContent = `${formData.mistakes} Also, ${formData.shaky}`;
 
         // formatted date YYYY-MM-DD
         const date = new Date().toISOString().split('T')[0];

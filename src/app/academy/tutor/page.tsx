@@ -18,8 +18,6 @@ interface Message {
 import { InlineMath, BlockMath } from 'react-katex';
 
 const Typewriter = ({ text, speed = 8 }: { text: string; speed?: number }) => {
-    const [index, setIndex] = useState(0);
-
     // CLEANUP & REFORMAT: Force spacing between sections if AI forgets
     const formattedText = useMemo(() => {
         let clean = text.replace(/^\((OpenRouter|Gemini|Claude|AIService)\)\s*/, '');
@@ -32,9 +30,13 @@ const Typewriter = ({ text, speed = 8 }: { text: string; speed?: number }) => {
         return clean.trim();
     }, [text]);
 
-    useEffect(() => {
-        setIndex(0); // Reset when text changes
-    }, [formattedText]);
+    const [index, setIndex] = useState(0);
+    const [prevText, setPrevText] = useState(formattedText);
+
+    if (formattedText !== prevText) {
+        setPrevText(formattedText);
+        setIndex(0);
+    }
 
     useEffect(() => {
         if (formattedText && index < formattedText.length) {
@@ -165,7 +167,8 @@ export default function AITutorPage() {
 
             const data = await response.json();
             setMessages([...newMessages, { role: 'bot', content: data.content, grounded: data.grounding }]);
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as Error;
             console.error('Error:', error);
             setMessages([...newMessages, { role: 'bot', content: `Error: ${error.message}. Please try again later.` }]);
         } finally {
@@ -258,7 +261,7 @@ export default function AITutorPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                         >
-                            <span className={styles.label}>What's the situation?</span>
+                            <span className={styles.label}>What&apos;s the situation?</span>
                             <div className={styles.courseGrid}>
                                 {[
                                     { id: 'behind', label: 'Falling behind', sub: 'I need a catch-up plan.' },

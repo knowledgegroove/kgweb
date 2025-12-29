@@ -1,18 +1,23 @@
 'use client';
 
 import { use, useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutor } from '@/context/TutorContext';
 import { useExperience } from '@/context/ExperienceContext';
 import { academyKnowledge } from '@/data/academyKnowledge';
 import { useAlumni } from '@/context/AlumniContext';
-import alumniStyles from './alumni.module.css';
 import { InlineMath, BlockMath } from 'react-katex';
 import styles from './page.module.css';
 
-// Add secondary UI-only data here
-const courseExtras: Record<string, any> = {
+interface CourseExtra {
+    pastExams: string;
+    textbook: string;
+    textbookChapters: { title: string; page: number }[];
+    calendar: { date: string; event: string }[];
+    instructors: { name: string; role: string }[];
+}
+
+const courseExtras: Record<string, CourseExtra> = {
     'ap-calculus-ab': {
         pastExams: "https://docs.google.com/spreadsheets/d/1WwZy0P_kmAy2CNOnA4maBXAGwxMQH0DQ_kJujUzVVbo/edit?usp=sharing",
         textbook: "https://obryant.us/ourpages/auto/2021/1/4/63136320/calculus%20of%20a%20single%20variable%208th%20edition%20larson%20hostetler-1.pdf?rnd=1609819461101",
@@ -64,17 +69,6 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
     const blueprint = academyKnowledge[slug];
     const extras = courseExtras[slug] || { calendar: [], instructors: [] };
 
-    if (!blueprint) {
-        return <div className={styles.error}>Course not found</div>;
-    }
-
-    const data = {
-        ...blueprint,
-        ...extras,
-        description: blueprint.overview.testingFocus,
-        wisdom: blueprint.overview.successBlueprint,
-    };
-
     useEffect(() => {
         if (showTextbook && textbookRef.current) {
             const timer = setTimeout(() => {
@@ -110,6 +104,17 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
             return () => clearTimeout(timer);
         }
     }, [showPastExams]);
+
+    if (!blueprint) {
+        return <div className={styles.error}>Course not found</div>;
+    }
+
+    const data = {
+        ...blueprint,
+        ...extras,
+        description: blueprint.overview.testingFocus,
+        wisdom: blueprint.overview.successBlueprint,
+    };
 
     const MathRenderer = ({ text }: { text: string }) => {
         const lines = text.split('\n');
@@ -193,7 +198,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             <div className={styles.unitList}>
                                 <h2 className={styles.sectionTitle}>Units of Study</h2>
                                 <div className={styles.unitsGrid}>
-                                    {data.units.map((unit: any, i: number) => (
+                                    {data.units.map((unit, i: number) => (
                                         <div key={i} className={styles.unitCard}>
                                             <div className={styles.unitHeader}>
                                                 <span className={styles.unitNum}>Unit {unit.number}</span>
@@ -235,7 +240,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                             >
                                                                 <h5>Test Traps</h5>
                                                                 <ul>
-                                                                    {unit.commonMistakes.slice(0, 2).map((m: any, idx: number) => (
+                                                                    {unit.commonMistakes.slice(0, 2).map((m, idx: number) => (
                                                                         <motion.li
                                                                             key={idx}
                                                                             variants={{
@@ -262,7 +267,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                             >
                                                                 <h5>Readiness</h5>
                                                                 <ul>
-                                                                    {unit.readinessChecklist.slice(0, 2).map((r: any, idx: number) => (
+                                                                    {unit.readinessChecklist.slice(0, 2).map((r, idx: number) => (
                                                                         <motion.li
                                                                             key={idx}
                                                                             variants={{
@@ -338,13 +343,13 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                         <aside className={styles.sidebar}>
                             <div className={`${styles.sidebarCard} ${styles.wisdomCard}`}>
                                 <h2 className={styles.sidebarTitle}>Student Wisdom</h2>
-                                <p className={styles.wisdomText}>"{data.wisdom}"</p>
+                                <p className={styles.wisdomText}>&quot;{data.wisdom}&quot;</p>
                             </div>
 
                             <div className={styles.sidebarCard}>
                                 <h2 className={styles.sidebarTitle}>Course Calendar</h2>
                                 <div className={styles.calendarList}>
-                                    {data.calendar.map((item: any, i: number) => (
+                                    {data.calendar.map((item, i: number) => (
                                         <div key={i} className={styles.calendarItem}>
                                             <span className={styles.calendarDate}>{item.date}</span>
                                             <span className={styles.calendarEvent}>{item.event}</span>
@@ -367,7 +372,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                                     <span className={styles.alumniName}>{tip.studentName}</span>
                                                     <span className={styles.alumniDate}>{tip.date}</span>
                                                 </div>
-                                                <p className={styles.alumniTipText}>"{tip.tip}"</p>
+                                                <p className={styles.alumniTipText}>&quot;{tip.tip}&quot;</p>
                                             </div>
                                         ))}
                                     {alumniMemory.filter(tip => tip.courseId === data.id).length === 0 && (
@@ -414,7 +419,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
 
                             {data.textbookChapters && (
                                 <div className={styles.chapterLinks}>
-                                    {data.textbookChapters.map((ch: any, i: number) => (
+                                    {data.textbookChapters.map((ch, i: number) => (
                                         <button
                                             key={i}
                                             className={`${styles.chapterBtn} ${currentChapterPage === ch.page ? styles.activeChapterBtn : ''}`}
@@ -433,7 +438,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                 title="Course Textbook"
                             />
                             <p className={styles.textbookCredits}>
-                                Textbook credits: Ron Larson, Bruce H. Edwards, Robert P. Hostetler. PDF resource courtesy of O'Bryant School of Math and Science.
+                                Textbook credits: Ron Larson, Bruce H. Edwards, Robert P. Hostetler. PDF resource courtesy of O&apos;Bryant School of Math and Science.
                             </p>
 
                         </motion.section>
@@ -463,7 +468,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             <div className={styles.resourceLinksContent}>
                                 {activeResourceUnit === null ? (
                                     <div className={styles.unitResourceGrid}>
-                                        {data.resourceLinks.map((cat: any, idx: number) => (
+                                        {data.resourceLinks?.map((cat, idx: number) => (
                                             <button
                                                 key={idx}
                                                 className={styles.unitResourceCard}
@@ -481,7 +486,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                             {data.resourceLinks[activeResourceUnit].category}
                                         </h3>
                                         <div className={styles.linksGrid}>
-                                            {data.resourceLinks[activeResourceUnit].links.map((link: any, lIdx: number) => (
+                                            {data.resourceLinks?.[activeResourceUnit].links.map((link, lIdx: number) => (
                                                 <a
                                                     key={lIdx}
                                                     href={link.url}
@@ -561,8 +566,8 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                             <div className={styles.resourceLinksContent}>
                                 {activeGuideUnit === null ? (
                                     <div className={styles.unitResourceGrid}>
-                                        {data.units.map((unit: any, idx: number) => {
-                                            const hasGuide = data.strategyGuides?.some((g: any) => g.unitNumber === unit.number);
+                                        {data.units.map((unit, idx: number) => {
+                                            const hasGuide = data.strategyGuides?.some((g) => g.unitNumber === unit.number);
                                             return (
                                                 <button
                                                     key={idx}
@@ -579,7 +584,7 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                                     </div>
                                 ) : (
                                     <div className={styles.guideWrapper}>
-                                        {data.strategyGuides?.filter((g: any) => g.unitNumber === activeGuideUnit).map((guide: any, gIdx: number) => (
+                                        {data.strategyGuides?.filter((g) => g.unitNumber === activeGuideUnit).map((guide, gIdx: number) => (
                                             <div key={gIdx} className={styles.guideContentBody}>
                                                 <MathRenderer text={guide.content} />
                                             </div>
