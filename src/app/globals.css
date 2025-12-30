@@ -272,3 +272,33 @@ h6 {
 .delay-300 {
   animation-delay: 0.3s;
 }
+/* NGO Platform Utilities */
+@import "tailwindcss";
+
+:root {
+  --background-ngo: #05070a;
+  --foreground-ngo: #f8fafc;
+  --primary-ngo: #10b981;
+  --accent-ngo: #3b82f6;
+  --glass-ngo: rgba(255, 255, 255, 0.03);
+  --glass-border-ngo: rgba(255, 255, 255, 0.08);
+}
+
+@layer utilities {
+  .glass {
+    background: var(--glass-ngo);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border-ngo);
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  }
+  
+  .bg-mesh {
+    background-image: 
+      radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+  }
+}
