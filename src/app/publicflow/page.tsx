@@ -17,7 +17,7 @@ export default function Home() {
         className="text-center mb-16"
       >
         <div className="w-16 h-16 bg-emerald-500 rounded-[24px] flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(16,185,129,0.4)]">
-          <Shield className="text-white w-8 h-8" />
+          <Shield size={32} className="text-white w-8 h-8" />
         </div>
         <h1 className="text-5xl font-black tracking-tighter mb-4 text-glow">Transparency Hub</h1>
         <p className="text-white/40 max-w-md mx-auto leading-relaxed text-sm font-medium uppercase tracking-[0.2em]">
@@ -33,18 +33,18 @@ export default function Home() {
             className="glass p-10 rounded-[48px] border-emerald-500/20 hover:border-emerald-500/50 transition-all group bg-gradient-to-br from-white/[0.03] to-transparent relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Heart className="w-32 h-32 text-emerald-500" />
+              <Heart size={128} className="w-32 h-32 text-emerald-500" />
             </div>
 
             <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 border border-emerald-500/20">
-              <Wallet className="w-6 h-6 text-emerald-500" />
+              <Wallet size={24} className="w-6 h-6 text-emerald-500" />
             </div>
             <h2 className="text-3xl font-bold mb-3">Donor Portal</h2>
             <p className="text-white/40 text-sm leading-relaxed mb-8">
               Contribute via Crypto or USD and track your money in real-time as it moves across the global ledger.
             </p>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-emerald-500 group-hover:gap-4 transition-all">
-              Enter Dashboard <ArrowRight className="w-4 h-4" />
+              Enter Dashboard <ArrowRight size={16} className="w-4 h-4" />
             </div>
           </motion.div>
         </Link>
@@ -56,18 +56,18 @@ export default function Home() {
             className="glass p-10 rounded-[48px] border-blue-500/20 hover:border-blue-500/50 transition-all group bg-gradient-to-br from-white/[0.03] to-transparent relative overflow-hidden"
           >
             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-              <Activity className="w-32 h-32 text-blue-400" />
+              <Activity size={128} className="w-32 h-32 text-blue-400" />
             </div>
 
             <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center mb-6 border border-blue-500/20">
-              <Shield className="w-6 h-6 text-blue-400" />
+              <Shield size={32} className="w-6 h-6 text-blue-400" />
             </div>
             <h2 className="text-3xl font-bold mb-3">NGO Portal</h2>
             <p className="text-white/40 text-sm leading-relaxed mb-8">
               Manage treasury funds, disburse payments to providers, and provide verifiable proof of impact.
             </p>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400 group-hover:gap-4 transition-all">
-              Manage Vault <ArrowRight className="w-4 h-4" />
+              Manage Vault <ArrowRight size={16} className="w-4 h-4" />
             </div>
           </motion.div>
         </Link>
@@ -75,15 +75,15 @@ export default function Home() {
 
       <div className="mt-24 grid grid-cols-3 gap-12 opacity-20 hover:opacity-100 transition-opacity duration-700">
         <div className="flex items-center gap-3">
-          <Globe className="w-4 h-4" />
+          <Globe size={16} className="w-4 h-4" />
           <span className="text-[10px] font-bold uppercase tracking-widest">Global Audit</span>
         </div>
         <div className="flex items-center gap-3">
-          <Activity className="w-4 h-4" />
+          <Activity size={128} className="w-4 h-4" />
           <span className="text-[10px] font-bold uppercase tracking-widest">Real-time Chain</span>
         </div>
         <div className="flex items-center gap-3">
-          <Shield className="w-4 h-4" />
+          <Shield size={32} className="w-4 h-4" />
           <span className="text-[10px] font-bold uppercase tracking-widest">Zero Leakage</span>
         </div>
       </div>

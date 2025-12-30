@@ -175,7 +175,7 @@ export default function DonorPage() {
                         onClick={handleConnect}
                         className="w-full py-5 rounded-3xl bg-emerald-500 text-black font-black uppercase tracking-widest text-xs shadow-[0_10px_30px_rgba(16,185,129,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
                     >
-                        <Wallet className="w-5 h-5 font-bold" />
+                        <Wallet size={24} className="w-5 h-5 font-bold" />
                         Connect Donor Wallet
                     </button>
 
@@ -199,7 +199,7 @@ export default function DonorPage() {
                     </Link>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)]">
-                            <Shield className="text-white w-6 h-6" />
+                            <Shield size={32} className="text-white w-6 h-6" />
                         </div>
                         <div>
                             <h1 className="text-xl font-semibold tracking-tight text-glow">Donor Dashboard</h1>
@@ -239,7 +239,7 @@ export default function DonorPage() {
                         <div>
                             <div className="text-[10px] font-bold text-white/30 uppercase mb-1">Your Contribution Pool</div>
                             <div className="text-2xl font-bold flex items-center gap-2">
-                                <Wallet className="w-5 h-5 text-blue-400" />
+                                <Wallet size={24} className="w-5 h-5 text-blue-400" />
                                 {donorBalance} ETH
                             </div>
                         </div>
@@ -278,7 +278,7 @@ export default function DonorPage() {
                                         <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/5 -z-10" />
                                         <div className="flex flex-col items-center gap-4 relative">
                                             <div className={`w-16 h-16 rounded-3xl glass flex items-center justify-center border-emerald-500 transition-all duration-500 ${trackingStep >= 1 ? 'shadow-[0_0_40px_rgba(16,185,129,0.2)] border-emerald-500' : 'border-white/10'}`}>
-                                                {donationMethod === 'usd' ? <CreditCard className="w-6 h-6 text-emerald-500" /> : <Wallet className="w-6 h-6 text-emerald-500" />}
+                                                {donationMethod === 'usd' ? <CreditCard className="w-6 h-6 text-emerald-500" /> : <Wallet size={24} className="w-6 h-6 text-emerald-500" />}
                                             </div>
                                             <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">{donationMethod === 'usd' ? "Your Card" : "Your Wallet"}</span>
                                         </div>

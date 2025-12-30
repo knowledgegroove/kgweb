@@ -100,7 +100,7 @@ export default function NGOPage() {
                     className="glass p-12 rounded-[48px] max-w-lg w-full text-center border-blue-500/20 shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
                 >
                     <div className="w-20 h-20 bg-blue-500 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-[0_0_40px_rgba(59,130,246,0.4)]">
-                        <Shield className="text-white w-10 h-10" />
+                        <Shield size={32} className="text-white w-10 h-10" />
                     </div>
                     <h2 className="text-3xl font-bold mb-4 tracking-tighter">NGO Admin Access</h2>
                     <p className="text-white/40 text-sm mb-10 leading-relaxed font-medium">
@@ -111,7 +111,7 @@ export default function NGOPage() {
                         onClick={handleConnect}
                         className="w-full py-5 rounded-3xl bg-blue-500 text-white font-black uppercase tracking-widest text-xs shadow-[0_10px_30px_rgba(59,130,246,0.3)] hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
                     >
-                        <Wallet className="w-5 h-5 font-bold" />
+                        <Wallet size={24} className="w-5 h-5 font-bold" />
                         Connect Admin Wallet
                     </button>
                     <p className="mt-6 text-[9px] text-white/20 uppercase tracking-widest font-bold">Authorized Multisig Required</p>
@@ -129,7 +129,7 @@ export default function NGOPage() {
                     </Link>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.4)]">
-                            <Shield className="text-white w-6 h-6" />
+                            <Shield size={32} className="text-white w-6 h-6" />
                         </div>
                         <div>
                             <h1 className="text-xl font-semibold tracking-tight text-glow">NGO Portal</h1>
@@ -182,7 +182,7 @@ export default function NGOPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="glass p-8 rounded-[40px] relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                                <Shield className="w-24 h-24 text-emerald-500" />
+                                <Shield size={32} className="w-24 h-24 text-emerald-500" />
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Total Treasury Balance</div>
                             <div className="text-4xl font-black text-glow mb-4">{treasuryBalance} <span className="text-lg font-normal text-white/40">ETH</span></div>
