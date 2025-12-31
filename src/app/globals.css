@@ -9,14 +9,21 @@
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.05);
   --card-hover: rgba(255, 255, 255, 0.08);
-  
-  /* NGO Brand Colors */
-  --bg-ngo: #05070a;
-  --primary-ngo: #10b981;
-  --accent-ngo: #3b82f6;
 }
 
-html, body {
+[data-theme='light'] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #4f46e5;
+  --secondary: #8b5cf6;
+  --accent: #3b82f6;
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --card-hover: rgba(0, 0, 0, 0.06);
+}
+
+html,
+body {
   max-width: 100vw;
   overflow-x: hidden;
   scroll-behavior: smooth;
@@ -27,74 +34,86 @@ html, body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-outfit), var(--font-geist-sans), sans-serif;
+  font-family: var(--font-outfit), var(--font-geist-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  position: relative;
 }
 
-/* Animations */
-@keyframes bgPulse {
-  0% { transform: scale(1); opacity: 0.5; }
-  100% { transform: scale(1.1); opacity: 0.8; }
+/* Original Animated Background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
+  z-index: -1;
+  animation: bgPulse 10s ease-in-out infinite alternate;
+  pointer-events: none;
 }
 
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+/* Original Components */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  transition: all 0.4s ease;
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
 }
 
-/* Base Styles */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
+/* --- NGO PLATFORM OVERRIDES (PUBLICFLOW) --- */
 .bg-mesh {
-  background-color: var(--bg-ngo);
+  background-color: #05070a !important;
   background-image: 
     radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
-  background-attachment: fixed;
+    radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.1) 0%, transparent 40%) !important;
+  background-attachment: fixed !important;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .text-glow {
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.4) !important;
 }
 
-/* Spacing & Layout Core Fallbacks */
+/* TAILWIND FALLBACKS FOR ROBUSTNESS */
 .flex { display: flex; }
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.text-center { text-align: center; }
 .grid { display: grid; }
 .relative { position: relative; }
 .absolute { position: absolute; }
-.fixed { position: fixed; }
 .w-full { width: 100%; }
 .min-h-screen { min-height: 100vh; }
 
-/* NGO-Specific Grid & Padding Guards (Fixing "Squished" UI) */
 .max-w-4xl { max-width: 1120px; }
 .max-w-6xl { max-width: 1280px; }
 .gap-8 { gap: 2rem; }
-.gap-6 { gap: 1.5rem; }
 .p-8 { padding: 2rem; }
 .p-10 { padding: 2.5rem; }
-.p-12 { padding: 3rem; }
 .mb-16 { margin-bottom: 4rem; }
-.mb-8 { margin-bottom: 2rem; }
-.mb-4 { margin-bottom: 1rem; }
 
-/* Responsive Grid Guard */
 @media (min-width: 768px) {
   .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 }
@@ -104,18 +123,13 @@ body {
   .lg\:col-span-4 { grid-column: span 4 / span 4; }
 }
 
-/* Typography Sizing Guards */
-.text-5xl { font-size: 3rem; line-height: 1; }
-.text-3xl { font-size: 1.875rem; line-height: 2.25rem; }
-.text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-.text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-.text-xs { font-size: 0.75rem; line-height: 1rem; }
-.font-black { font-weight: 900; }
-.font-bold { font-weight: 700; }
+.text-5xl { font-size: 3.5rem; font-weight: 900; line-height: 1; }
+.text-3xl { font-size: 1.875rem; font-weight: 700; }
+.text-sm { font-size: 0.875rem; }
+.uppercase { text-transform: uppercase; }
+.tracking-tighter { letter-spacing: -0.05em; }
+.tracking-widest { letter-spacing: 0.1em; }
 
-/* Gradient & Effect Guards */
-.bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
-.from-white\/\[0\.03\] { --tw-gradient-from: rgba(255, 255, 255, 0.03); --tw-gradient-to: rgba(255, 255, 255, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-.rounded-full { border-radius: 9999px; }
-.rounded-\[48px\] { border-radius: 48px; }
-.rounded-3xl { border-radius: 1.5rem; }
+/* Original Animations Restore */
+@keyframes bgPulse { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
