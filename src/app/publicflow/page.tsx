@@ -64,7 +64,7 @@ export default function Home() {
             </div>
             <h2 className="text-3xl font-bold mb-3">NGO Portal</h2>
             <p className="text-white/40 text-sm leading-relaxed mb-8">
-              Manage treasury funds, disburse payments to providers, and provide verifiable proof of impact.
+              Authorize spend requests, manage multi-sig treasury vaults, and settlement layers with verifiable proof of impact.
             </p>
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-blue-400 group-hover:gap-4 transition-all">
               Manage Vault <ArrowRight size={16} className="w-4 h-4" />

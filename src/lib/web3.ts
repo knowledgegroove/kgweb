@@ -11,10 +11,21 @@ import { Alchemy, Network, AssetTransfersCategory } from "alchemy-sdk";
 export const NGO_CONFIG = {
     name: "SaveTheChildren Web3",
     donor: "0xC42700c26467402582ec76F0e94DCC4564b9BEf4", // Account 1
-    treasury: "0xdd64Dbd30C9DfC5b6B06bE08E7178e3F197F2c1f", // Account 2
+    admin: "0xdd64Dbd30C9DfC5b6B06bE08E7178e3F197F2c1f", // Controller (Account 2)
+    treasury: "0xdd64Dbd30C9DfC5b6B06bE08E7178e3F197F2c1f", // Backwards compat
     chainId: 11155111, // Sepolia
-    usdcToken: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // Correct Official Sepolia USDC
+    usdcToken: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238", // Official Sepolia USDC
+    contractAddress: "0xdd64Dbd30C9DfC5b6B06bE08E7178e3F197F2c1f", // THE VAULT (Pointing to Account 2 for demo)
+    offRampAddress: "0x9876543210fedcba9876543210fedcba98765432", // Regulated Off-Ramp Bridge
 };
+
+export interface SpendAuthorization {
+    purpose: string; // food, logistics, medical
+    supplierId: string;
+    amount: string;
+    settlementPath: 'usdc_direct' | 'fiat_offramp';
+    signatures: string[];
+}
 
 // --- ALCHEMY SETUP (The "Provider" for Reading) ---
 // REPLACE THIS with your key from dashboard.alchemy.com
@@ -95,8 +106,9 @@ export async function sendDonation(amount: string, destination: string = NGO_CON
     return tx;
 }
 
-export async function sendUSDCDonation(amount: string, destination: string = NGO_CONFIG.treasury) {
+export async function sendUSDCDonation(amount: string, destination: string = NGO_CONFIG.contractAddress) {
     const { signer } = await connectWallet();
+    console.log(`[ON-RAMP] Converting USD to USDC and depositing into PublicFlow Vault: ${destination}`);
 
     // Minimal ERC20 ABI for transfer
     const abi = ["function transfer(address to, uint256 amount) public returns (bool)"];
@@ -117,6 +129,29 @@ export async function getAccountBalance(address: string) {
         return ethers.formatEther(balance.toString());
     } catch (err) {
         console.error("Failed to fetch account balance", err);
+        return "0.0";
+    }
+}
+
+export async function getUSDCBalance(address: string) {
+    if (!address || address.trim() === "" || !address.startsWith("0x")) return "0.0";
+
+    try {
+        const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`);
+
+        // Minimal ABI to get balance
+        const abi = ["function balanceOf(address owner) view returns (uint256)"];
+        const contract = new ethers.Contract(NGO_CONFIG.usdcToken, abi, provider);
+
+        const balance = await contract.balanceOf(address);
+        const formattedBalance = ethers.formatUnits(balance, 6);
+
+        console.log(`[DEBUG] Token: ${NGO_CONFIG.usdcToken}`);
+        console.log(`[DEBUG] Direct RPC Balance: ${formattedBalance} USDC`);
+
+        return formattedBalance;
+    } catch (err) {
+        console.error("[DEBUG] Failed to fetch USDC balance via direct RPC", err);
         return "0.0";
     }
 }
@@ -163,31 +198,60 @@ export async function getTransparencyEvents(treasuryAddress: string = NGO_CONFIG
                 type: "Incoming Donation",
                 name: "Mock Donor",
                 amount: "0.5 ETH",
-                timestamp: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                blockNumber: 1,
+                purpose: "N/A",
+                destination: "N/A",
+                goods: "N/A",
                 receiptHash: null,
             }
         ];
     }
 
     try {
-        // Get all transfers TO and FROM the treasury
-        const transfers = await alchemy.core.getAssetTransfers({
+        // Fetch transfers TO the treasury
+        const incoming = await alchemy.core.getAssetTransfers({
             toAddress: treasuryAddress,
             excludeZeroValue: true,
             category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.ERC20],
-            maxCount: 15,
+            maxCount: 10,
         });
 
-        return transfers.transfers.map((t, index) => {
+        // Fetch transfers FROM the treasury
+        const outgoing = await alchemy.core.getAssetTransfers({
+            fromAddress: treasuryAddress,
+            excludeZeroValue: true,
+            category: [AssetTransfersCategory.EXTERNAL, AssetTransfersCategory.ERC20],
+            maxCount: 10,
+        });
+
+        const combined = [...incoming.transfers, ...outgoing.transfers].sort((a, b) => {
+            // Sort by block number descending (newest first)
+            return (parseInt(b.blockNum, 16) || 0) - (parseInt(a.blockNum, 16) || 0);
+        });
+
+        return combined.map((t, index) => {
             const isUSDC = t.rawContract?.address?.toLowerCase() === NGO_CONFIG.usdcToken.toLowerCase();
             const symbol = isUSDC ? "USDC" : (t.asset || "ETH");
+            const isIncoming = t.to?.toLowerCase() === treasuryAddress.toLowerCase();
+
+            // Mock metadata for the demo (In production, this would come from the Smart Contract)
+            const purpose = !isIncoming ? (t.to?.toLowerCase() === NGO_CONFIG.offRampAddress.toLowerCase() ? "Emergency Logistics" : "Medical Supplies") : "N/A";
+            const destination = !isIncoming ? (t.to?.toLowerCase() === NGO_CONFIG.offRampAddress.toLowerCase() ? "Amazon Global Fulfillment" : "Verified Medical Provider") : "N/A";
+            const goods = !isIncoming ? (t.to?.toLowerCase() === NGO_CONFIG.offRampAddress.toLowerCase() ? "Logistics Equipment & Tents" : "First Aid Kits & Vaccines") : "N/A";
 
             return {
-                id: `${t.hash}-${index}-${Date.now()}`,
-                type: t.to?.toLowerCase() === treasuryAddress.toLowerCase() ? "Incoming Donation" : "Outgoing Expense",
-                name: t.from?.toLowerCase() === treasuryAddress.toLowerCase() ? "NGO Treasury" : (isUSDC ? "Fiat-to-Crypto Bridge" : "Verified Donor"),
+                id: `${t.hash}-${index}`,
+                type: isIncoming ? "Incoming Donation" : "Outgoing Expense",
+                name: isIncoming ? (isUSDC ? "Fiat-to-Crypto Bridge" : "Verified Donor") : (t.to?.toLowerCase() === NGO_CONFIG.offRampAddress.toLowerCase() ? "Regulated Off-Ramp" : "Verified Provider"),
+                from: t.from,
+                to: t.to,
                 amount: `${t.value} ${symbol}`,
-                timestamp: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                blockNumber: parseInt(t.blockNum, 16),
+                purpose,
+                destination,
+                goods,
                 receiptHash: t.hash.substring(0, 10),
             };
         });
@@ -199,7 +263,11 @@ export async function getTransparencyEvents(treasuryAddress: string = NGO_CONFIG
                 type: "Incoming Donation",
                 name: "Recent Donor",
                 amount: "0.15 ETH",
-                timestamp: Date.now(),
+                timestamp: new Date().toLocaleString(),
+                blockNumber: 1,
+                purpose: "N/A",
+                destination: "N/A",
+                goods: "N/A",
                 receiptHash: "0xVERIFIED"
             }
         ];
