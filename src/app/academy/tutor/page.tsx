@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import styles from './page.module.css';
 import Link from 'next/link';
 import { generateInitialAdvice } from '@/utils/mentorLogic';
+import { academyKnowledge } from '@/data/academyKnowledge';
 
 interface Message {
     role: 'user' | 'bot';
@@ -212,18 +213,20 @@ export default function AITutorPage() {
                         >
                             <span className={styles.label}>Which course are we conquering?</span>
                             <div className={styles.courseGrid}>
-                                {[
-                                    { id: 'ap-calculus-ab', name: 'AP Calculus AB', icon: '📐' },
-                                    { id: 'ap-chemistry', name: 'AP Chemistry', icon: '🧪' },
-                                    { id: 'ap-world-history', name: 'AP World History', icon: '🌍' }
-                                ].map(c => (
+                                {Object.values(academyKnowledge).map(c => (
                                     <button
                                         key={c.id}
                                         className={`${styles.choiceBtn} ${course === c.id ? styles.active : ''}`}
                                         onClick={() => { setCourse(c.id); handleNext(); }}
                                     >
-                                        <span style={{ fontSize: '2rem' }}>{c.icon}</span>
-                                        {c.name}
+                                        <span style={{ fontSize: '2rem' }}>{
+                                            c.title.includes('Calculus') ? '📐' :
+                                                c.title.includes('Chemistry') ? '🧪' :
+                                                    c.title.includes('History') ? '🌍' :
+                                                        c.title.includes('Physics') ? '⚛️' :
+                                                            c.title.includes('Computer Science') ? '💻' : '📚'
+                                        }</span>
+                                        {c.title}
                                     </button>
                                 ))}
                             </div>

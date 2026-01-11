@@ -10,11 +10,26 @@ import {
 import { connectWallet, sendDonation, sendUSDCDonation, getTransparencyEvents, getTreasuryBalance, getAccountBalance, getUSDCBalance, watchUSDC, NGO_CONFIG } from "@/lib/web3";
 import { ethers } from "ethers";
 
+interface HistoryEvent {
+    id: string;
+    type: string;
+    name: string;
+    from?: string;
+    to?: string | null;
+    amount: string;
+    timestamp: string;
+    receiptHash: string;
+    blockNumber: number;
+    purpose?: string;
+    destination?: string;
+    goods?: string;
+}
+
 export default function NGOPage() {
     const [account, setAccount] = useState<string | null>(null);
     const [treasuryBalance, setTreasuryBalance] = useState("0.0");
     const [usdcBalance, setUsdcBalance] = useState("0.0");
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<HistoryEvent[]>([]);
     const [disbursing, setDisbursing] = useState(false);
     const [disburseAmount, setDisburseAmount] = useState("");
     const [recipient, setRecipient] = useState("0xC42700c26467402582ec76f0e94dcc4564b9bef4");
@@ -358,10 +373,24 @@ export default function NGOPage() {
                             {events.map((event) => (
                                 <div key={event.id} className="p-4 rounded-3xl bg-white/[0.02] border border-white/5">
                                     <div className="flex justify-between items-center mb-2">
-                                        <span className="text-[11px] font-bold">{event.name}</span>
+                                        <div className="flex flex-col">
+                                            <span className="text-[11px] font-bold">{event.name}</span>
+                                            <span className="text-[8px] font-black uppercase text-white/20 tracking-widest">{event.type}</span>
+                                        </div>
                                         <span className={`text-[10px] font-bold ${event.type.includes('Donation') ? 'text-emerald-500' : 'text-blue-400'}`}>{event.amount}</span>
                                     </div>
-                                    <div className="text-[8px] font-black uppercase text-white/20 tracking-widest">{event.type}</div>
+                                    <div className="mt-2 pt-2 border-t border-white/5 flex flex-col gap-1">
+                                        {event.purpose && event.purpose !== "N/A" && (
+                                            <div className="flex justify-between text-[8px] uppercase tracking-wider">
+                                                <span className="text-white/20 font-bold">Purpose:</span>
+                                                <span className="text-white/40">{event.purpose}</span>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-between text-[8px] uppercase tracking-wider">
+                                            <span className="text-white/20 font-bold">Proof:</span>
+                                            <span className="text-blue-500/50 font-mono">#{event.receiptHash}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>

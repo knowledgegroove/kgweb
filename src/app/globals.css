@@ -45,8 +45,10 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background:
     radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.15), transparent 25%),
     radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.15), transparent 25%);
@@ -80,7 +82,7 @@ body::before {
 /* --- NGO PLATFORM OVERRIDES (PUBLICFLOW) --- */
 .bg-mesh {
   background-color: #05070a !important;
-  background-image: 
+  background-image:
     radial-gradient(circle at 0% 0%, rgba(16, 185, 129, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.1) 0%, transparent 40%) !important;
   background-attachment: fixed !important;
@@ -97,39 +99,148 @@ body::before {
 }
 
 /* TAILWIND FALLBACKS FOR ROBUSTNESS */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.items-center { align-items: center; }
-.justify-center { justify-content: center; }
-.grid { display: grid; }
-.relative { position: relative; }
-.absolute { position: absolute; }
-.w-full { width: 100%; }
-.min-h-screen { min-height: 100vh; }
+.flex {
+  display: flex;
+}
 
-.max-w-4xl { max-width: 1120px; }
-.max-w-6xl { max-width: 1280px; }
-.gap-8 { gap: 2rem; }
-.p-8 { padding: 2rem; }
-.p-10 { padding: 2.5rem; }
-.mb-16 { margin-bottom: 4rem; }
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.grid {
+  display: grid;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.max-w-4xl {
+  max-width: 1120px;
+}
+
+.max-w-6xl {
+  max-width: 1280px;
+}
+
+.gap-8 {
+  gap: 2rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
+.p-10 {
+  padding: 2.5rem;
+}
+
+.mb-16 {
+  margin-bottom: 4rem;
+}
 
 @media (min-width: 768px) {
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-}
-@media (min-width: 1024px) {
-  .lg\:grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
-  .lg\:col-span-8 { grid-column: span 8 / span 8; }
-  .lg\:col-span-4 { grid-column: span 4 / span 4; }
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.text-5xl { font-size: 3.5rem; font-weight: 900; line-height: 1; }
-.text-3xl { font-size: 1.875rem; font-weight: 700; }
-.text-sm { font-size: 0.875rem; }
-.uppercase { text-transform: uppercase; }
-.tracking-tighter { letter-spacing: -0.05em; }
-.tracking-widest { letter-spacing: 0.1em; }
+@media (min-width: 1024px) {
+  .lg\:grid-cols-12 {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  .lg\:col-span-8 {
+    grid-column: span 8 / span 8;
+  }
+
+  .lg\:col-span-4 {
+    grid-column: span 4 / span 4;
+  }
+}
+
+.text-5xl {
+  font-size: 3.5rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.tracking-tighter {
+  letter-spacing: -0.05em;
+}
+
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.gradient-text-pink {
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
 
 /* Original Animations Restore */
-@keyframes bgPulse { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bgPulse {
+  0% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

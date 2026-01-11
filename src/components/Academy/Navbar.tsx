@@ -41,6 +41,7 @@ export default function AcademyNavbar() {
                         <>
                             <Link href="/academy/about">About Us</Link>
                             <Link href="/academy#courses">Courses</Link>
+                            <Link href="/workshops">Workshops</Link>
                         </>
                     )}
                     {!isLandingPage && (

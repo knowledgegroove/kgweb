@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
 function processHasDataSearchResponse(propertyObj: Record<string, unknown>, searchAddress: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const property = propertyObj as any;
+    const property = propertyObj as Record<string, any>;
     // HasData Search Results typically have slightly different fields than full property details
     const price = property.price || property.unformattedPrice || 0;
     const rent = property.rentZestimate || (price * 0.005);

@@ -1,0 +1,222 @@
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+    overflow-x: hidden;
+    background: #030014;
+    color: #ffffff;
+}
+
+.hero {
+    min-height: 70vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(79, 70, 229, 0.1) 0%, transparent 40%),
+        linear-gradient(to bottom, #030014, #05011d);
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 15vh;
+    background: linear-gradient(to top, #030014, transparent);
+    z-index: 1;
+}
+
+.heroContent {
+    max-width: 1000px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.title {
+    font-size: clamp(3.5rem, 10vw, 6rem);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+}
+
+.subtitle {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 800px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.section {
+    width: 100%;
+    max-width: 1200px;
+    padding: 6rem 2rem;
+    z-index: 2;
+}
+
+.sectionTitle {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 4rem;
+    text-align: center;
+    color: #ffffff;
+    position: relative;
+}
+
+.sectionTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #ec4899, #4f46e5);
+    border-radius: 2px;
+}
+
+.workshopGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 3rem;
+}
+
+.workshopCard {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 2rem;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.workshopCard:hover {
+    transform: translateY(-15px) scale(1.02);
+    border-color: rgba(236, 72, 153, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(236, 72, 153, 0.1);
+}
+
+.imagePlaceholder {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.imagePlaceholder img {
+    transition: transform 0.6s ease;
+}
+
+.workshopCard:hover .imagePlaceholder img {
+    transform: scale(1.1);
+}
+
+.cardContent {
+    padding: 2.5rem;
+}
+
+.workshopDate {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ec4899;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+}
+
+.workshopTitle {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #ffffff;
+}
+
+.workshopDesc {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.6);
+    line-height: 1.7;
+}
+
+.gallerySection {
+    background: rgba(255, 255, 255, 0.02);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8rem 2rem;
+    position: relative;
+}
+
+.galleryGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.galleryItem {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.galleryItem:hover {
+    border-color: rgba(79, 70, 229, 0.4);
+}
+
+.galleryItem img {
+    object-fit: cover;
+    filter: grayscale(20%);
+    transition: all 0.5s ease;
+}
+
+.galleryItem:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.1);
+}
+
+.footer {
+    padding: 6rem 2rem;
+    width: 100%;
+    text-align: center;
+    background: #030014;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footerText {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .sectionTitle {
+        font-size: 2.5rem;
+    }
+
+    .workshopGrid {
+        grid-template-columns: 1fr;
+    }
+}

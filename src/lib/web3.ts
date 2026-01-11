@@ -28,8 +28,7 @@ export interface SpendAuthorization {
 }
 
 // --- ALCHEMY SETUP (The "Provider" for Reading) ---
-// REPLACE THIS with your key from dashboard.alchemy.com
-const ALCHEMY_API_KEY: string = "e7rA-gUEF7VuSaJiNVSpc";
+const ALCHEMY_API_KEY: string = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || "e7rA-gUEF7VuSaJiNVSpc";
 
 const config = {
     apiKey: ALCHEMY_API_KEY,
@@ -125,10 +124,14 @@ export async function sendUSDCDonation(amount: string, destination: string = NGO
 export async function getAccountBalance(address: string) {
     if (!address || address.trim() === "" || !address.startsWith("0x")) return "0.0";
     try {
+        if (!ALCHEMY_API_KEY || ALCHEMY_API_KEY.length < 30) {
+            return "0.0";
+        }
         const balance = await alchemy.core.getBalance(address, "latest");
         return ethers.formatEther(balance.toString());
     } catch (err) {
-        console.error("Failed to fetch account balance", err);
+        // Only log once or silently fail to avoid flooding
+        console.warn("[Web3] Balance fetch failed. Check Alchemy API Key.");
         return "0.0";
     }
 }
@@ -137,6 +140,9 @@ export async function getUSDCBalance(address: string) {
     if (!address || address.trim() === "" || !address.startsWith("0x")) return "0.0";
 
     try {
+        if (!ALCHEMY_API_KEY || ALCHEMY_API_KEY.length < 30) {
+            return "0.0";
+        }
         const provider = new ethers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${ALCHEMY_API_KEY}`);
 
         // Minimal ABI to get balance
@@ -145,13 +151,8 @@ export async function getUSDCBalance(address: string) {
 
         const balance = await contract.balanceOf(address);
         const formattedBalance = ethers.formatUnits(balance, 6);
-
-        console.log(`[DEBUG] Token: ${NGO_CONFIG.usdcToken}`);
-        console.log(`[DEBUG] Direct RPC Balance: ${formattedBalance} USDC`);
-
         return formattedBalance;
     } catch (err) {
-        console.error("[DEBUG] Failed to fetch USDC balance via direct RPC", err);
         return "0.0";
     }
 }
@@ -159,10 +160,12 @@ export async function getUSDCBalance(address: string) {
 export async function getTreasuryBalance() {
     if (!NGO_CONFIG.treasury || NGO_CONFIG.treasury === "") return "0.0";
     try {
+        if (!ALCHEMY_API_KEY || ALCHEMY_API_KEY.length < 30) {
+            return "0.0";
+        }
         const balance = await alchemy.core.getBalance(NGO_CONFIG.treasury, "latest");
         return ethers.formatEther(balance.toString());
     } catch (err) {
-        console.error("Failed to fetch balance", err);
         return "0.0";
     }
 }
@@ -190,7 +193,7 @@ export async function watchUSDC() {
 
 export async function getTransparencyEvents(treasuryAddress: string = NGO_CONFIG.treasury) {
     if (!treasuryAddress || treasuryAddress.trim() === "" || !treasuryAddress.startsWith("0x")) return [];
-    if (ALCHEMY_API_KEY.includes("your-api-key") || ALCHEMY_API_KEY === "") {
+    if (!ALCHEMY_API_KEY || ALCHEMY_API_KEY.length < 30 || ALCHEMY_API_KEY.includes("your-api-key")) {
         // Fallback to mock data if no key is provided
         return [
             {
@@ -199,11 +202,13 @@ export async function getTransparencyEvents(treasuryAddress: string = NGO_CONFIG
                 name: "Mock Donor",
                 amount: "0.5 ETH",
                 timestamp: new Date().toLocaleString(),
+                from: "0x123",
+                to: treasuryAddress,
                 blockNumber: 1,
                 purpose: "N/A",
                 destination: "N/A",
                 goods: "N/A",
-                receiptHash: null,
+                receiptHash: "0xMOCK_TX",
             }
         ];
     }
@@ -252,7 +257,7 @@ export async function getTransparencyEvents(treasuryAddress: string = NGO_CONFIG
                 purpose,
                 destination,
                 goods,
-                receiptHash: t.hash.substring(0, 10),
+                receiptHash: t.hash.substring(0, 14), // Longer hash for better tracking
             };
         });
     } catch (error) {

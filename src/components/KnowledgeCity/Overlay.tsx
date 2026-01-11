@@ -48,7 +48,10 @@ export default function Overlay() {
                     <p style={{ marginBottom: '1.5rem', lineHeight: '1.6' }}>
                         Workshops, tutoring, and confidence building.
                     </p>
-                    <a href="/academy" style={{ pointerEvents: 'auto', color: '#ec4899', fontWeight: 'bold', textDecoration: 'none' }}>Visit the Academy →</a>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <a href="/academy" style={{ pointerEvents: 'auto', color: '#ec4899', fontWeight: 'bold', textDecoration: 'none' }}>Visit the Academy →</a>
+                        <a href="/workshops" style={{ pointerEvents: 'auto', color: '#ec4899', fontWeight: 'bold', textDecoration: 'none' }}>Visit Workshop Center →</a>
+                    </div>
                 </div>
             </section>
 

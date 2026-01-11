@@ -9,6 +9,21 @@ import {
 } from "lucide-react";
 import { connectWallet, sendDonation, sendUSDCDonation, getTransparencyEvents, getTreasuryBalance, getAccountBalance, getUSDCBalance, NGO_CONFIG } from "@/lib/web3";
 
+interface HistoryEvent {
+    id: string;
+    type: string;
+    name: string;
+    from?: string;
+    to?: string | null;
+    amount: string;
+    timestamp: string;
+    receiptHash: string;
+    blockNumber: number;
+    purpose?: string;
+    destination?: string;
+    goods?: string;
+}
+
 export default function DonorPage() {
     const [account, setAccount] = useState<string | null>(null);
     const [donating, setDonating] = useState(false);
@@ -17,17 +32,18 @@ export default function DonorPage() {
     const [showImpactSummary, setShowImpactSummary] = useState(false);
     const [isSimMode, setIsSimMode] = useState(false);
     const [donationMethod, setDonationMethod] = useState<'crypto' | 'usd'>('crypto');
-    const [events, setEvents] = useState<any[]>([]);
+    const [events, setEvents] = useState<HistoryEvent[]>([]);
     const [showAllEvents, setShowAllEvents] = useState(false);
     const [treasuryBalance, setTreasuryBalance] = useState("42.5");
     const [donorBalance, setDonorBalance] = useState("0.0");
     const [donorUsdcBalance, setDonorUsdcBalance] = useState("0.0");
     const [cardInfo, setCardInfo] = useState({ number: '', expiry: '', cvc: '' });
     const [isCustom, setIsCustom] = useState(false);
-    const [disbursementInfo, setDisbursementInfo] = useState<any>(null);
+    const [disbursementInfo, setDisbursementInfo] = useState<HistoryEvent | null>(null);
     const [archivedTxHashes, setArchivedTxHashes] = useState<string[]>([]);
     const [trackingTxHash, setTrackingTxHash] = useState<string | null>(null);
     const [onRampStatus, setOnRampStatus] = useState<'idle' | 'authorizing' | 'bridging' | 'completed' | 'failed'>('idle');
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const saved = localStorage.getItem("archived_donations");
@@ -90,12 +106,12 @@ export default function DonorPage() {
 
                 if (userDonation) {
                     // Look for disbursements that happened AFTER (or in same block) as the donation
-                    const settlement = data.find((e: any) => e.type === "Outgoing Expense" && e.blockNumber >= userDonation.blockNumber);
+                    const settlement = data.find((e: HistoryEvent) => e.type === "Outgoing Expense" && e.blockNumber >= userDonation.blockNumber);
 
-                    if (settlement && (trackingStep < 4 || trackingTxHash)) {
+                    if (settlement) {
                         setTrackingStep(4);
                         setDisbursementInfo(settlement);
-                    } else if (!settlement) {
+                    } else {
                         setTrackingStep(3); // Donation found, but not yet spent
                     }
                 }
@@ -142,6 +158,7 @@ export default function DonorPage() {
         }
 
         setDonating(true);
+        setIsProcessing(true);
         setTrackingStep(1);
         setShowImpactSummary(false);
         setDisbursementInfo(null); // RESET DISBURSEMENT FOR NEW FLOW
@@ -173,22 +190,22 @@ export default function DonorPage() {
 
                 setTimeout(() => {
                     setTrackingStep(3);
-                    const incomingEvent = {
+                    const incomingEvent: HistoryEvent = {
                         id: `sim-in-${Date.now()}`,
                         type: "Incoming Donation",
                         name: donationMethod === 'usd' ? "Fiat-to-Crypto Onramp" : "Your Contribution",
                         amount: donationAmount,
                         timestamp: new Date().toLocaleString(),
-                        receiptHash: "v_STRIPE_79213",
+                        receiptHash: "v_STRIPE_" + Math.random().toString(16).slice(2, 8).toUpperCase(),
                         blockNumber: 9999998,
-                        purpose: "N/A",
-                        destination: "PublicFlow Vault",
-                        goods: "N/A"
+                        from: account || "0xSimulated_Donor_Address",
+                        to: NGO_CONFIG.treasury
                     };
                     setEvents(prev => [incomingEvent, ...prev]);
+                    setIsProcessing(false);
 
                     setTimeout(() => {
-                        const disbursement = {
+                        const disbursement: HistoryEvent = {
                             id: `sim-out-${Date.now()}`,
                             type: "Outgoing Expense",
                             name: "Medical Supply Order",
@@ -198,14 +215,15 @@ export default function DonorPage() {
                             destination: "United Health Supplies",
                             goods: "First Aid Kits & Rehydration Salts",
                             receiptHash: "0xIMPACT_PR_" + Math.random().toString(16).slice(2, 8),
-                            blockNumber: 9999999
+                            blockNumber: 9999999,
+                            to: "0xProvider_Vendor_Address"
                         };
 
                         setTrackingStep(4);
                         setDonating(false);
                         setDisbursementInfo(disbursement);
                         setEvents(prev => [disbursement, ...prev]);
-                        setAmount("0.01"); // Reset amount
+                        setAmount("0.01"); // Reset amount for next donation
                     }, 4000);
                 }, 2000);
             }, 2000);
@@ -225,8 +243,8 @@ export default function DonorPage() {
             // Wait for confirmation
             await tx.wait();
             setTrackingStep(3); // Locked in NGO Vault
+            setIsProcessing(false);
 
-            setDonating(false);
             fetchData();
 
             // Note: Step 4 (Settlement) only occurs on-chain when the NGO actually spends the funds.
@@ -368,11 +386,20 @@ export default function DonorPage() {
                                             {trackingStep === 4 && (disbursementInfo ? `Settled: ${disbursementInfo.amount} disbursed` : "Impact Achieved: Funds Disbursed")}
                                         </span>
                                         <h3 className="text-2xl font-bold">
-                                            {trackingStep === 1 && "Initialization"}
+                                            {trackingStep === 1 && (donationMethod === 'usd' ? "USD to USDC Exchange" : "Initialization")}
                                             {trackingStep === 2 && "Immutable Record Created"}
                                             {trackingStep === 3 && "Vault Secured"}
                                             {trackingStep === 4 && (disbursementInfo ? `Payout to Verified Partner` : "Mission Success")}
                                         </h3>
+                                        {trackingStep === 1 && donationMethod === 'usd' && (
+                                            <div className="mt-6 w-full max-w-xs mx-auto bg-white/5 h-1.5 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: onRampStatus === 'authorizing' ? '30%' : onRampStatus === 'bridging' ? '70%' : '100%' }}
+                                                    className="h-full bg-emerald-500 shadow-[0_0_10px_#10b981]"
+                                                />
+                                            </div>
+                                        )}
                                         {trackingStep === 4 && disbursementInfo && (
                                             <div className="mt-8 p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/20 max-w-md mx-auto text-left">
                                                 <div className="text-[10px] uppercase font-black text-emerald-500 tracking-widest mb-4 flex items-center gap-2">
@@ -504,7 +531,7 @@ export default function DonorPage() {
                                     onClick={() => {
                                         // Archive the current donation and its settlement
                                         if (events.length > 0 && account) {
-                                            const currentDonation = events.find((e: any) =>
+                                            const currentDonation = events.find((e: HistoryEvent) =>
                                                 (trackingTxHash ? e.receiptHash === trackingTxHash : e.from?.toLowerCase() === account.toLowerCase()) &&
                                                 e.type === "Incoming Donation"
                                             );
@@ -515,6 +542,7 @@ export default function DonorPage() {
                                         setTrackingStep(0);
                                         setDisbursementInfo(null);
                                         setTrackingTxHash(null);
+                                        setDonating(false);
                                     }}
                                     className="w-full py-6 rounded-3xl font-black uppercase tracking-widest text-[11px] bg-emerald-500 text-black shadow-lg hover:scale-[1.02] transition-all flex items-center justify-center gap-3"
                                 >
@@ -524,11 +552,11 @@ export default function DonorPage() {
                             ) : (
                                 <button
                                     onClick={handleDonate}
-                                    disabled={donating && trackingStep > 0}
-                                    className={`w-full py-6 rounded-3xl font-black uppercase tracking-widest text-[11px] transition-all flex items-center justify-center gap-3 ${trackingStep > 0 ? 'bg-white/10 text-white/40 border border-white/10' : 'bg-emerald-500 text-black shadow-lg hover:scale-[1.02]'}`}
+                                    disabled={isProcessing}
+                                    className={`w-full py-6 rounded-3xl font-black uppercase tracking-widest text-[11px] transition-all flex items-center justify-center gap-3 ${isProcessing ? 'bg-white/10 text-white/40 border border-white/10' : 'bg-emerald-500 text-black shadow-lg hover:scale-[1.02]'}`}
                                 >
-                                    {donating ? <Activity className="w-5 h-5 animate-spin" /> : <ArrowUpRight className="w-5 h-5" />}
-                                    <span>{trackingStep > 0 ? "Tracking Progress..." : "Confirm & Send"}</span>
+                                    {isProcessing ? <Activity className="w-5 h-5 animate-spin" /> : (donating ? <ArrowUpRight className="w-5 h-5" /> : <Heart className="w-5 h-5 text-white/80" />)}
+                                    <span>{isProcessing ? "Processing..." : (donating ? "Send Another Contribution" : "Confirm & Send")}</span>
                                 </button>
                             )}
                         </div>
@@ -559,7 +587,9 @@ export default function DonorPage() {
                                     <div className="flex flex-col items-end gap-1">
                                         <div className={`text-[10px] font-bold ${event.type.includes('Donation') ? 'text-emerald-500' : 'text-blue-400'}`}>{event.amount}</div>
                                         {event.type.includes('Donation') && (
-                                            <div className="text-[7px] font-black text-white/10 uppercase tracking-widest group-hover:text-emerald-500/40 transition-colors">Click to Track</div>
+                                            <div className={`px-2 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest transition-all ${trackingTxHash === event.receiptHash ? 'bg-emerald-500 text-black' : 'bg-white/5 text-white/20 group-hover:text-emerald-500/60'}`}>
+                                                {trackingTxHash === event.receiptHash ? 'Tracking' : 'Track Impact'}
+                                            </div>
                                         )}
                                     </div>
                                 </button>
