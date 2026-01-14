@@ -2,27 +2,26 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import styles from './page.module.css';
 
 const workshops = [
     {
-        title: "Mastering AP Calculus",
-        date: "December 2025",
-        desc: "An intensive weekend workshop focusing on derivative applications and integral techniques for high-performing students.",
-        image: "/images/workshops/workshop1.png"
+        title: "Mastering Precalculus",
+        date: "Upcoming 2026",
+        desc: "A comprehensive deep dive into functions, trigonometry, and analytical geometry to build a rock-solid foundation for Calculus.",
+        image: ""
     },
     {
-        title: "Future of Tech: AI & Robotics",
-        date: "November 2025",
-        desc: "A hands-on exploration of artificial intelligence fundamentals and their practical applications in modern robotics.",
-        image: "/images/workshops/workshop2.png"
+        title: "AI and Impact",
+        date: "Upcoming 2026",
+        desc: "Exploring how artificial intelligence is reshaping industries and understanding the real-world consequences of the AI revolution.",
+        image: ""
     },
     {
-        title: "Financial Literacy for Teens",
-        date: "October 2025",
-        desc: "Empowering the next generation with essential knowledge about investing, budgeting, and the stock market.",
-        image: "/images/workshops/workshop3.png"
+        title: "Ethics of AI",
+        date: "Upcoming 2026",
+        desc: "A critical discussion on the moral implications, bias, and societal challenges posed by rapidly evolving AI technologies.",
+        image: ""
     }
 ];
 
@@ -67,13 +66,7 @@ export default function WorkshopsPage() {
                             transition={{ duration: 0.7, delay: index * 0.15 }}
                         >
                             <div className={styles.imagePlaceholder}>
-                                <Image
-                                    src={workshop.image}
-                                    alt={workshop.title}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 33vw"
-                                    priority={index === 0}
-                                />
+                                {/* Image section made blank */}
                             </div>
                             <div className={styles.cardContent}>
                                 <div className={styles.workshopDate}>{workshop.date}</div>
@@ -96,7 +89,7 @@ export default function WorkshopsPage() {
                     Moments from the Groove
                 </motion.h2>
                 <div className={styles.galleryGrid}>
-                    {[1, 2, 3, 1, 2, 3].map((item, index) => (
+                    {[1, 2, 3, 4, 5, 6].map((item, index) => (
                         <motion.div
                             key={index}
                             className={styles.galleryItem}
@@ -105,12 +98,7 @@ export default function WorkshopsPage() {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.05 }}
                         >
-                            <Image
-                                src={`/images/workshops/workshop${item}.png`}
-                                alt={`Gallery image ${index + 1}`}
-                                fill
-                                sizes="(max-width: 600px) 50vw, 25vw"
-                            />
+                            {/* Image section made blank */}
                         </motion.div>
                     ))}
                 </div>
