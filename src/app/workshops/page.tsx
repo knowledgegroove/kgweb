@@ -106,6 +106,7 @@ export default function WorkshopsPage() {
 
             {/* Footer */}
             <footer className={styles.footer}>
+                <p className={styles.footerText} style={{ marginBottom: '0.5rem', fontWeight: 'bold', opacity: 1 }}>By Ishaan Garg</p>
                 <p className={styles.footerText}>© 2026 Knowledge Groove. All rights reserved.</p>
             </footer>
         </main>

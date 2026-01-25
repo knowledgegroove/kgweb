@@ -71,6 +71,15 @@ export default function AcademyLanding() {
                         Welcome to <br />
                         <span className="gradient-text-blue">Knowledge Groove Academy</span>
                     </h1>
+                    <p style={{
+                        fontSize: '1.5rem',
+                        fontWeight: '500',
+                        color: '#3b82f6',
+                        marginTop: '-1.5rem',
+                        marginBottom: '2rem',
+                        fontStyle: 'italic',
+                        opacity: 0.9
+                    }}>By Ishaan Garg</p>
 
 
                     <p className={styles.subtitle}>
@@ -199,6 +208,7 @@ export default function AcademyLanding() {
                 maxWidth: '800px',
                 margin: '0 auto'
             }}>
+                <p style={{ marginBottom: '0.5rem', fontWeight: 'bold' }}>By Ishaan Garg</p>
                 <p>AP® is a registered trademark of the College Board, which was not involved in the production of, and does not endorse, this product.</p>
             </footer>
 
