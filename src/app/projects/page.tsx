@@ -27,7 +27,7 @@ export default function ProjectsPage() {
             {projects.map((p, i) => (
               <Reveal key={p.name}>
                 <div className="grid gap-6 border-b border-border-strong py-12 md:grid-cols-[3rem_1fr_auto] md:items-start">
-                  <span className="numeral text-sm text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <h2 className="font-display text-3xl text-foreground">{p.name}</h2>
                     <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">{p.description}</p>

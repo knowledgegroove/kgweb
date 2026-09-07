@@ -51,7 +51,7 @@ export default function AcademyPage() {
             {workshops.map((w, i) => (
               <Reveal key={w.title}>
                 <div className="grid gap-8 border-b border-border-strong py-12 md:grid-cols-[3rem_1fr_1fr]">
-                  <span className="numeral text-sm text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <h2 className="font-display text-3xl text-foreground">{w.title}</h2>
                     <p className="mt-4 max-w-md text-base leading-relaxed text-muted">{w.summary}</p>

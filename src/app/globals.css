@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --color-background: #f7f2e7;
-  --color-background-alt: #efe6d3;
-  --color-surface: #fbf8f1;
+  --color-background: #f4efe1;
+  --color-background-alt: #e8dcc1;
+  --color-surface: #faf6ec;
   --color-surface-raised: #ffffff;
-  --color-foreground: #1c1810;
-  --color-muted: #5b5344;
-  --color-muted-dim: #8a8171;
+  --color-foreground: #1a1712;
+  --color-muted: #5c5344;
+  --color-muted-dim: #8f8571;
 
-  --color-accent: #b5482a;
-  --color-accent-deep: #8a3620;
-  --color-navy: #1f2e3a;
+  --color-accent: #a8431f;
+  --color-accent-deep: #7d3117;
+  --color-navy: #223347;
+  --color-navy-deep: #182636;
 
-  --color-border: #e0d5bd;
-  --color-border-strong: #cbbc98;
+  --color-border: #ddd0b2;
+  --color-border-strong: #c5b285;
 
   --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
   --font-body: var(--font-work-sans), "Work Sans", ui-sans-serif, system-ui, sans-serif;
@@ -34,6 +35,7 @@
   --color-accent: var(--color-accent);
   --color-accent-deep: var(--color-accent-deep);
   --color-navy: var(--color-navy);
+  --color-navy-deep: var(--color-navy-deep);
   --color-border: var(--color-border);
   --color-border-strong: var(--color-border-strong);
   --font-display: var(--font-display);

@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, Microphone, SpotifyLogo } from "@phosphor-ico
 import { Container, Section, Kicker } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
+import { CanvasTrail } from "@/components/ui/CanvasTrail";
 import { site, episodes, workshops, projects } from "@/lib/data";
 
 export default function Home() {
@@ -38,8 +39,9 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <div className="border-b border-border">
-        <Container className="grid gap-10 py-20 md:grid-cols-[1.5fr_1fr] md:gap-16 md:py-32">
+      <div className="relative overflow-hidden border-b border-border">
+        <CanvasTrail className="hidden md:block" />
+        <Container className="relative z-10 grid gap-10 py-20 md:grid-cols-[1.5fr_1fr] md:gap-16 md:py-32">
           <div>
             <Reveal>
               <Kicker>Knowledge Groove — an ecosystem</Kicker>
@@ -73,7 +75,7 @@ export default function Home() {
             <dl className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-6">
               <Stat value="50+" label="Episodes" />
               <Stat value="5.0" label="Rating" />
-              <Stat value="2" label="Workshops" />
+              <Stat value="6" label="Workshops held" />
             </dl>
           </Reveal>
         </Container>
@@ -96,7 +98,7 @@ export default function Home() {
                   href={pillar.href}
                   className="focus-ring group grid grid-cols-[auto_1fr] items-start gap-6 border-b border-border py-8 transition-colors sm:grid-cols-[3rem_1fr_auto] sm:items-center sm:gap-10"
                 >
-                  <span className="numeral text-sm text-muted-dim">{pillar.n}</span>
+                  <span className="numeral text-sm text-navy">{pillar.n}</span>
                   <div className="min-w-0">
                     <h3 className="font-display text-2xl text-foreground transition-colors group-hover:text-accent md:text-3xl">
                       {pillar.title}
@@ -140,7 +142,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="focus-ring group grid grid-cols-[2rem_1fr] items-start gap-5 border-b border-border-strong py-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
                 >
-                  <span className="numeral text-sm text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="font-display text-lg leading-snug text-foreground transition-colors group-hover:text-accent md:text-xl">
                     {ep.title}
                   </h3>
@@ -188,7 +190,7 @@ export default function Home() {
             {workshops.map((w, i) => (
               <Reveal key={w.title}>
                 <div className="border-b border-border py-6">
-                  <span className="numeral text-xs text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral text-xs text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="mt-2 font-display text-xl text-foreground">{w.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted">{w.summary}</p>
                 </div>

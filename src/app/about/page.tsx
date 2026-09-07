@@ -58,7 +58,7 @@ export default function AboutPage() {
             {interests.map((label, i) => (
               <Reveal key={label}>
                 <div className="flex h-full flex-col gap-4 bg-surface p-7">
-                  <span className="numeral text-xs text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral text-xs text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <h3 className="font-display text-lg text-foreground">{label}</h3>
                 </div>
               </Reveal>

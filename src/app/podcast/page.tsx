@@ -50,7 +50,7 @@ export default function PodcastPage() {
                   rel="noopener noreferrer"
                   className="focus-ring group grid grid-cols-[2.5rem_1fr] gap-5 border-b border-border py-8 sm:grid-cols-[2.5rem_1fr_9rem_1.5rem] sm:items-start sm:gap-8"
                 >
-                  <span className="numeral pt-1 text-sm text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="numeral pt-1 text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <div className="min-w-0">
                     <h3 className="font-display text-xl text-foreground transition-colors group-hover:text-accent md:text-2xl">
                       {ep.title}
