@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Microphone, SpotifyLogo } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, Microphone, SpotifyLogo } from "@phosphor-icons/react/dist/ssr";
 import { Container, Section, Kicker } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { CanvasTrail } from "@/components/ui/CanvasTrail";
 import { GlowCard } from "@/components/ui/spotlight-card";
 import { FounderPhoto } from "@/components/FounderPhoto";
-import { FactTicker } from "@/components/FactTicker";
+import { EpisodeCarousel } from "@/components/EpisodeCarousel";
 import { site, episodes, workshops, projects, facts } from "@/lib/data";
 
 export default function Home() {
-  const featuredEpisodes = episodes.slice(0, 4);
 
   const pillars = [
     {
@@ -75,9 +74,14 @@ export default function Home() {
               A podcast, an academy, and courses on the way — built for people who want
               to actually understand the world, one idea at a time.
             </p>
-            <div className="mt-8 max-w-[12rem] border-t border-border pt-6">
-              <FactTicker facts={facts} />
-            </div>
+            <dl className="mt-8 grid max-w-sm grid-cols-2 gap-x-8 gap-y-5 border-t border-border pt-6">
+              {facts.map((fact) => (
+                <div key={fact.label}>
+                  <dd className="numeral text-xl text-foreground">{fact.value}</dd>
+                  <dt className="kicker mt-1 !text-muted-dim">{fact.label}</dt>
+                </div>
+              ))}
+            </dl>
           </Reveal>
         </Container>
       </div>
@@ -159,30 +163,9 @@ export default function Home() {
             </Link>
           </Reveal>
 
-          <RevealGroup className="mt-12 flex flex-col gap-4">
-            {featuredEpisodes.map((ep, i) => (
-              <Reveal key={ep.title}>
-                <a href={site.spotifyShow} target="_blank" rel="noopener noreferrer" className="focus-ring block">
-                  <GlowCard
-                    customSize
-                    className="group grid grid-cols-[2rem_1fr] items-start gap-5 p-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
-                  >
-                    <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="font-display text-lg leading-snug text-foreground transition-colors group-hover:text-accent md:text-xl">
-                      {ep.title}
-                    </h3>
-                    <span className="numeral col-span-2 text-xs text-muted-dim sm:col-span-1">
-                      {ep.date} &middot; {ep.duration}
-                    </span>
-                    <ArrowUpRight
-                      size={16}
-                      className="hidden text-muted-dim transition-colors group-hover:text-accent sm:block"
-                    />
-                  </GlowCard>
-                </a>
-              </Reveal>
-            ))}
-          </RevealGroup>
+          <Reveal delay={0.1} className="mt-12">
+            <EpisodeCarousel episodes={episodes} spotifyHref={site.spotifyShow} />
+          </Reveal>
 
           <Reveal className="mt-8 sm:hidden">
             <Link href="/podcast" className="focus-ring link-underline text-sm font-medium text-foreground">
