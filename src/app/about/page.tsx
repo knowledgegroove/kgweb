@@ -3,6 +3,7 @@ import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
 import { Container, Section, Kicker } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
+import { FounderPhoto } from "@/components/FounderPhoto";
 import { about, site } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -18,12 +19,7 @@ export default function AboutPage() {
       <div className="border-b border-border">
         <Container className="grid gap-12 py-16 md:grid-cols-[0.8fr_1.2fr] md:items-center md:py-20">
           <Reveal>
-            <div className="aspect-[4/5] w-full max-w-sm border border-border-strong bg-surface">
-              <div className="flex h-full w-full flex-col items-center justify-center gap-3">
-                <span className="font-display text-7xl text-muted-dim">IG</span>
-                <span className="kicker !text-muted-dim">Photo coming soon</span>
-              </div>
-            </div>
+            <FounderPhoto className="max-w-sm" />
           </Reveal>
 
           <Reveal delay={0.1}>

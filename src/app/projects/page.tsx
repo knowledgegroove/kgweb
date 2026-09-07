@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { ArrowRight } from "@phosphor-icons/react/dist/ssr";
+import { ArrowRight, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import { Container, Section, Kicker } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
+import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/Button";
+import { GlowCard } from "@/components/ui/spotlight-card";
 import { projects } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -23,28 +24,52 @@ export default function ProjectsPage() {
 
       <Section className="pt-14 md:pt-16">
         <Container>
-          <div className="border-t border-border-strong">
-            {projects.map((p, i) => (
-              <Reveal key={p.name}>
-                <div className="grid gap-6 border-b border-border-strong py-12 md:grid-cols-[3rem_1fr_auto] md:items-start">
+          <RevealGroup className="grid gap-6 md:grid-cols-2">
+            {projects.map((p, i) => {
+              const card = (
+                <GlowCard customSize glowColor="rust" className="flex h-full flex-col p-8">
                   <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
-                  <div>
-                    <h2 className="font-display text-3xl text-foreground">{p.name}</h2>
-                    <p className="mt-4 max-w-xl text-base leading-relaxed text-muted">{p.description}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 md:flex-col md:items-end md:text-right">
-                    {p.tags.map((tag) => (
-                      <span key={tag} className="kicker !text-muted-dim">
-                        {tag}
+                  <h2 className="mt-4 font-display text-2xl text-foreground md:text-3xl">{p.name}</h2>
+                  <p className="mt-3 flex-1 text-base leading-relaxed text-muted">{p.description}</p>
+                  <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+                    <div className="flex flex-wrap gap-x-4 gap-y-2">
+                      {p.tags.map((tag) => (
+                        <span key={tag} className="kicker !text-muted-dim">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    {p.href && (
+                      <span className="link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+                        View project
+                        <ArrowUpRight size={14} />
                       </span>
-                    ))}
+                    )}
                   </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+                </GlowCard>
+              );
 
-          <Reveal className="mt-14 flex flex-col items-start gap-6 border border-dashed border-border-strong p-10 md:flex-row md:items-center md:justify-between">
+              return (
+                <Reveal key={p.name}>
+                  {p.href ? (
+                    <a
+                      href={p.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="focus-ring block h-full"
+                      aria-label={`View ${p.name}`}
+                    >
+                      {card}
+                    </a>
+                  ) : (
+                    card
+                  )}
+                </Reveal>
+              );
+            })}
+          </RevealGroup>
+
+          <Reveal className="mt-8 flex flex-col items-start gap-6 border border-dashed border-border-strong p-10 md:flex-row md:items-center md:justify-between">
             <div>
               <h2 className="font-display text-xl text-foreground">More on the way</h2>
               <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">

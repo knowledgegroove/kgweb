@@ -4,6 +4,8 @@ import { Container, Section, Kicker } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
 import { CanvasTrail } from "@/components/ui/CanvasTrail";
+import { GlowCard } from "@/components/ui/spotlight-card";
+import { FounderPhoto } from "@/components/FounderPhoto";
 import { site, episodes, workshops, projects } from "@/lib/data";
 
 export default function Home() {
@@ -85,22 +87,14 @@ export default function Home() {
       <Section className="border-b border-border">
         <Container className="grid gap-10 md:grid-cols-[0.65fr_1.35fr] md:items-center">
           <Reveal>
-            <div className="aspect-[4/5] w-full max-w-xs border border-border-strong bg-surface">
-              <div className="flex h-full w-full items-center justify-center">
-                <span className="font-display text-6xl text-muted-dim">IG</span>
-              </div>
-            </div>
+            <FounderPhoto className="max-w-xs" />
           </Reveal>
           <Reveal delay={0.1}>
             <Kicker>The founder</Kicker>
             <h2 className="mt-6 font-display text-3xl leading-tight text-foreground md:text-4xl">
               {site.founder}
             </h2>
-            <blockquote className="mt-4 font-display text-2xl italic leading-snug text-foreground md:text-3xl">
-              &ldquo;Learning should be as engaging as anything else competing for your
-              attention.&rdquo;
-            </blockquote>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
+            <p className="mt-5 max-w-lg text-base leading-relaxed text-muted">
               Knowledge Groove is built by Ishaan Garg — still in high school, already
               building the podcast, the academy, and this entire site himself.
             </p>
@@ -248,10 +242,10 @@ export default function Home() {
             </Link>
           </Reveal>
 
-          <RevealGroup className="mt-12 grid gap-px overflow-hidden border border-border-strong sm:grid-cols-2">
+          <RevealGroup className="mt-12 grid gap-6 sm:grid-cols-2">
             {projects.map((p) => (
               <Reveal key={p.name}>
-                <div className="h-full bg-surface p-8">
+                <GlowCard customSize glowColor="rust" className="flex h-full flex-col p-8">
                   <h3 className="font-display text-2xl text-foreground">{p.name}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted">{p.description}</p>
                   <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
@@ -261,7 +255,7 @@ export default function Home() {
                       </span>
                     ))}
                   </div>
-                </div>
+                </GlowCard>
               </Reveal>
             ))}
           </RevealGroup>

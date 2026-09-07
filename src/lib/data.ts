@@ -94,6 +94,8 @@ export type Project = {
   name: string;
   description: string;
   tags: string[];
+  /** Live site or repo link — omit until a real URL is available. */
+  href?: string;
 };
 
 export const projects: Project[] = [
