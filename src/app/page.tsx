@@ -160,26 +160,27 @@ export default function Home() {
             </Link>
           </Reveal>
 
-          <RevealGroup className="mt-12 border-t border-border-strong">
+          <RevealGroup className="mt-12 flex flex-col gap-4">
             {featuredEpisodes.map((ep, i) => (
               <Reveal key={ep.title}>
-                <a
-                  href={site.spotifyShow}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="focus-ring group grid grid-cols-[2rem_1fr] items-start gap-5 border-b border-border-strong py-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
-                >
-                  <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
-                  <h3 className="font-display text-lg leading-snug text-foreground transition-colors group-hover:text-accent md:text-xl">
-                    {ep.title}
-                  </h3>
-                  <span className="numeral col-span-2 text-xs text-muted-dim sm:col-span-1">
-                    {ep.date} &middot; {ep.duration}
-                  </span>
-                  <ArrowUpRight
-                    size={16}
-                    className="hidden text-muted-dim transition-colors group-hover:text-accent sm:block"
-                  />
+                <a href={site.spotifyShow} target="_blank" rel="noopener noreferrer" className="focus-ring block">
+                  <GlowCard
+                    customSize
+                    glowColor="rust"
+                    className="group grid grid-cols-[2rem_1fr] items-start gap-5 p-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
+                  >
+                    <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
+                    <h3 className="font-display text-lg leading-snug text-foreground transition-colors group-hover:text-accent md:text-xl">
+                      {ep.title}
+                    </h3>
+                    <span className="numeral col-span-2 text-xs text-muted-dim sm:col-span-1">
+                      {ep.date} &middot; {ep.duration}
+                    </span>
+                    <ArrowUpRight
+                      size={16}
+                      className="hidden text-muted-dim transition-colors group-hover:text-accent sm:block"
+                    />
+                  </GlowCard>
                 </a>
               </Reveal>
             ))}

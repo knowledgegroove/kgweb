@@ -4,6 +4,7 @@ import { Container, Section } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/Button";
+import { GlowCard } from "@/components/ui/spotlight-card";
 import { site, episodes } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -41,34 +42,35 @@ export default function PodcastPage() {
             <h2 className="kicker hidden sm:block">Released</h2>
           </Reveal>
 
-          <RevealGroup>
+          <RevealGroup className="mt-6 flex flex-col gap-4">
             {episodes.map((ep, i) => (
               <Reveal key={ep.title}>
-                <a
-                  href={site.spotifyShow}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="focus-ring group grid grid-cols-[2.5rem_1fr] gap-5 border-b border-border py-8 sm:grid-cols-[2.5rem_1fr_9rem_1.5rem] sm:items-start sm:gap-8"
-                >
-                  <span className="numeral pt-1 text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
-                  <div className="min-w-0">
-                    <h3 className="font-display text-xl text-foreground transition-colors group-hover:text-accent md:text-2xl">
-                      {ep.title}
-                    </h3>
-                    <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-muted">{ep.description}</p>
-                    <span className="numeral mt-3 block text-xs text-muted-dim sm:hidden">
-                      {ep.date} &middot; {ep.duration}
+                <a href={site.spotifyShow} target="_blank" rel="noopener noreferrer" className="focus-ring block">
+                  <GlowCard
+                    customSize
+                    glowColor="rust"
+                    className="group grid grid-cols-[2.5rem_1fr] gap-5 p-6 sm:grid-cols-[2.5rem_1fr_9rem_1.5rem] sm:items-start sm:gap-8 sm:p-7"
+                  >
+                    <span className="numeral pt-1 text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
+                    <div className="min-w-0">
+                      <h3 className="font-display text-xl text-foreground transition-colors group-hover:text-accent md:text-2xl">
+                        {ep.title}
+                      </h3>
+                      <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-muted">{ep.description}</p>
+                      <span className="numeral mt-3 block text-xs text-muted-dim sm:hidden">
+                        {ep.date} &middot; {ep.duration}
+                      </span>
+                    </div>
+                    <span className="numeral hidden pt-1 text-right text-xs leading-relaxed text-muted-dim sm:block">
+                      {ep.date}
+                      <br />
+                      {ep.duration}
                     </span>
-                  </div>
-                  <span className="numeral hidden pt-1 text-right text-xs leading-relaxed text-muted-dim sm:block">
-                    {ep.date}
-                    <br />
-                    {ep.duration}
-                  </span>
-                  <ArrowUpRight
-                    size={17}
-                    className="hidden pt-1 text-muted-dim transition-colors group-hover:text-accent sm:block"
-                  />
+                    <ArrowUpRight
+                      size={17}
+                      className="hidden pt-1 text-muted-dim transition-colors group-hover:text-accent sm:block"
+                    />
+                  </GlowCard>
                 </a>
               </Reveal>
             ))}

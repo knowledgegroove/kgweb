@@ -85,7 +85,7 @@ export function GlowCard({ children, className, glowColor = "rust", customSize =
           mixBlendMode: "multiply",
         }}
       />
-      <div className="relative h-full">{children}</div>
+      {children}
     </div>
   );
 }
