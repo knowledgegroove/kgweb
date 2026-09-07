@@ -73,7 +73,7 @@ export default function ProjectsPage() {
             <div>
               <h2 className="font-display text-xl text-foreground">More on the way</h2>
               <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">
-                This portfolio grows alongside Knowledge Groove — check back for what&apos;s next,
+                This portfolio grows alongside Knowledge Groove, check back for what&apos;s next,
                 or reach out if you want to build something together.
               </p>
             </div>

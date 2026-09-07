@@ -25,11 +25,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Knowledge Groove — Podcast, Academy & Courses by Ishaan Garg",
+    default: "Knowledge Groove | Podcast, Academy & Courses by Ishaan Garg",
     template: "%s | Knowledge Groove",
   },
   description:
-    "Knowledge Groove is an ecosystem for curious minds — a podcast on history, geopolitics, business, economics and science, hands-on workshops, and courses coming soon. Founded by Ishaan Garg.",
+    "Knowledge Groove is an ecosystem for curious minds: a podcast on history, geopolitics, business, economics and science, hands-on workshops, and courses coming soon. Founded by Ishaan Garg.",
   keywords: [
     "Knowledge Groove",
     "Ishaan Garg",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     "student founder",
   ],
   openGraph: {
-    title: "Knowledge Groove — Where curiosity meets insight",
+    title: "Knowledge Groove | Where curiosity meets insight",
     description:
-      "A podcast, academy, and (soon) courses — built by high schooler Ishaan Garg to make useful knowledge more accessible.",
+      "A podcast, academy, and (soon) courses, built by high schooler Ishaan Garg to make useful knowledge more accessible.",
     type: "website",
   },
 };

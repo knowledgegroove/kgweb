@@ -35,7 +35,7 @@ export const episodes: Episode[] = [
   {
     title: "The European Union Explained: War to Unity",
     description:
-      "After World War II, Europe lay in ruins. This episode explores how visionary leaders turned devastation into unity — from the Schuman Plan to the euro.",
+      "After World War II, Europe lay in ruins. This episode explores how visionary leaders turned devastation into unity, from the Schuman Plan to the euro.",
     date: "Nov 26, 2025",
     duration: "7 min 45 sec",
   },
@@ -49,21 +49,21 @@ export const episodes: Episode[] = [
   {
     title: "The U.S. Interstate System: America's Most Powerful Infrastructure",
     description:
-      "From a flawed 1919 Army convoy to Eisenhower's Cold War vision — how the interstate highway system reshaped travel, commerce, and communities.",
+      "From a flawed 1919 Army convoy to Eisenhower's Cold War vision, how the interstate highway system reshaped travel, commerce, and communities.",
     date: "Aug 23, 2025",
     duration: "7 min 8 sec",
   },
   {
     title: "The Vietnam War Explained: Politics, Protest, and Power",
     description:
-      "Our 50th episode. A Cold War effort to stop communism became one of history's most divisive conflicts — its roots, realities, and consequences.",
+      "Our 50th episode. A Cold War effort to stop communism became one of history's most divisive conflicts: its roots, realities, and consequences.",
     date: "Aug 4, 2025",
     duration: "7 min 5 sec",
   },
   {
     title: "The Great Fire of London: Flames That Changed Everything",
     description:
-      "In 1666, a small spark in a London bakery ignited one of the most devastating fires in the city's history — and reshaped it for good.",
+      "In 1666, a small spark in a London bakery ignited one of the most devastating fires in the city's history, and reshaped it for good.",
     date: "Jul 4, 2025",
     duration: "3 min 53 sec",
   },
@@ -80,7 +80,7 @@ export const workshops: Workshop[] = [
   {
     title: "AI Workshops",
     summary:
-      "Hands-on sessions that demystify artificial intelligence — from how large language models actually work to using AI tools responsibly and effectively.",
+      "Hands-on sessions that demystify artificial intelligence, from how large language models actually work to using AI tools responsibly and effectively.",
     points: [
       "Core AI & machine learning concepts, explained simply",
       "Live, hands-on practice with real AI tools",
@@ -91,7 +91,7 @@ export const workshops: Workshop[] = [
   {
     title: "English Proficiency Workshops",
     summary:
-      "Practical workshops focused on building confident communication — reading, writing, and speaking skills that translate directly to the classroom and beyond.",
+      "Practical workshops focused on building confident communication: reading, writing, and speaking skills that translate directly to the classroom and beyond.",
     points: [
       "Structured reading comprehension and vocabulary building",
       "Writing clarity: essays, summaries, and everyday communication",
@@ -113,7 +113,7 @@ export const projects: Project[] = [
   {
     name: "Stock Market Analyzer",
     description:
-      "A tool for exploring and analyzing stock market data — surfacing trends and metrics to help make sense of market movement at a glance.",
+      "A tool for exploring and analyzing stock market data, surfacing trends and metrics to help make sense of market movement at a glance.",
     tags: ["Finance", "Data Analysis"],
   },
   {
@@ -127,5 +127,5 @@ export const projects: Project[] = [
 export const about = {
   school: "Dougherty Valley High School",
   interests: ["Tennis", "Math", "Physics", "Community Service"],
-  bio: "Ishaan Garg is a high schooler at Dougherty Valley High School and the founder of Knowledge Groove. Outside of building, he plays competitive tennis and is drawn to the logic of math and physics — the same instinct for finding the underlying pattern that shapes how he approaches every project. He's also active in serving his local community, which is part of why Knowledge Groove exists: to make useful knowledge more accessible to the people around him.",
+  bio: "Ishaan Garg is a high schooler at Dougherty Valley High School and the founder of Knowledge Groove. Outside of building, he plays competitive tennis and is drawn to the logic of math and physics, the same instinct for finding the underlying pattern that shapes how he approaches every project. He's also active in serving his local community, which is part of why Knowledge Groove exists: to make useful knowledge more accessible to the people around him.",
 };

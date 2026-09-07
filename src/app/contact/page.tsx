@@ -3,6 +3,7 @@ import { EnvelopeSimple, SpotifyLogo, GraduationCap, ArrowUpRight } from "@phosp
 import { Container, Section } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { PageHero } from "@/components/PageHero";
+import { MailLink } from "@/components/MailLink";
 import { site } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ const cards = [
   {
     icon: EnvelopeSimple,
     title: "Email",
-    description: "The fastest way to reach me directly — questions, ideas, or collaborations all welcome.",
+    description: "The fastest way to reach me directly: questions, ideas, or collaborations all welcome.",
     href: `mailto:${site.email}`,
     label: site.email,
   },
@@ -41,20 +42,17 @@ export default function ContactPage() {
         eyebrow="Contact"
         index="VI"
         title="Let's find your groove."
-        description="Whether it's about the podcast, a workshop, a project, or just to say hello — I read every message myself."
+        description="Whether it's about the podcast, a workshop, a project, or just to say hello, I read every message myself."
       />
 
       <Section className="pt-14 pb-28 md:pt-16">
         <Container>
           <RevealGroup className="grid gap-px overflow-hidden border border-border-strong md:grid-cols-3">
-            {cards.map((card) => (
-              <Reveal key={card.title}>
-                <a
-                  href={card.href}
-                  target={card.href.startsWith("http") ? "_blank" : undefined}
-                  rel={card.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="focus-ring group flex h-full flex-col bg-surface p-8"
-                >
+            {cards.map((card) => {
+              const isMailto = card.href.startsWith("mailto:");
+              const cardClassName = "focus-ring group flex h-full flex-col bg-surface p-8";
+              const inner = (
+                <>
                   <card.icon size={24} weight="light" className="text-accent" />
                   <h2 className="mt-6 font-display text-xl text-foreground">{card.title}</h2>
                   <p className="mt-2.5 flex-1 text-sm leading-relaxed text-muted">{card.description}</p>
@@ -62,9 +60,23 @@ export default function ContactPage() {
                     {card.label}
                     <ArrowUpRight size={14} />
                   </span>
-                </a>
-              </Reveal>
-            ))}
+                </>
+              );
+
+              return (
+                <Reveal key={card.title}>
+                  {isMailto ? (
+                    <MailLink email={site.email} href={card.href} className={cardClassName}>
+                      {inner}
+                    </MailLink>
+                  ) : (
+                    <a href={card.href} target="_blank" rel="noopener noreferrer" className={cardClassName}>
+                      {inner}
+                    </a>
+                  )}
+                </Reveal>
+              );
+            })}
           </RevealGroup>
         </Container>
       </Section>

@@ -10,7 +10,7 @@ import { site, episodes } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Podcast",
   description:
-    "The Knowledge Groove Podcast — deep dives into history, geopolitics, business, economics and science. 50+ episodes and counting.",
+    "The Knowledge Groove Podcast: deep dives into history, geopolitics, business, economics and science. 50+ episodes and counting.",
 };
 
 export default function PodcastPage() {
@@ -20,7 +20,7 @@ export default function PodcastPage() {
         eyebrow="The Knowledge Groove Podcast"
         index="I"
         title="Curiosity, one episode at a time."
-        description={`"Education is the most powerful weapon we can use to change the world." Each episode explores history, geopolitics, business, economics, and science — built to deepen your understanding and spark curiosity about the world around you.`}
+        description={`"Education is the most powerful weapon we can use to change the world." Each episode explores history, geopolitics, business, economics, and science, built to deepen your understanding and spark curiosity about the world around you.`}
       >
         <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center">
           <Button href={site.spotifyShow} external>

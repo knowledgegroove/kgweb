@@ -9,7 +9,7 @@ import { workshops } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Academy",
   description:
-    "Hands-on AI and English proficiency workshops from Knowledge Groove Academy — built to build real, usable skill.",
+    "Hands-on AI and English proficiency workshops from Knowledge Groove Academy, built to build real, usable skill.",
 };
 
 const steps = [
@@ -26,7 +26,7 @@ const steps = [
   {
     n: "03",
     title: "Show up & practice",
-    description: "Every session is built around doing, not just watching — you leave with something usable.",
+    description: "Every session is built around doing, not just watching: you leave with something usable.",
   },
 ];
 
@@ -37,7 +37,7 @@ export default function AcademyPage() {
         eyebrow="Knowledge Groove Academy"
         index="II"
         title="Learn by doing, not just listening."
-        description="The Academy is where Knowledge Groove gets hands-on — live workshops built around the skills that matter most right now, taught in small, practical sessions."
+        description="The Academy is where Knowledge Groove gets hands-on: live workshops built around the skills that matter most right now, taught in small, practical sessions."
       >
         <Button href="/contact">
           Reserve a spot

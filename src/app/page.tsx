@@ -16,7 +16,7 @@ export default function Home() {
       n: "01",
       title: "Podcast",
       description:
-        "Deep, digestible episodes on history, geopolitics, business, economics and science — for the curious, not the credentialed.",
+        "Deep, digestible episodes on history, geopolitics, business, economics and science, for the curious, not the credentialed.",
       href: "/podcast",
       cta: "Browse episodes",
     },
@@ -24,7 +24,7 @@ export default function Home() {
       n: "02",
       title: "Academy",
       description:
-        "Live, hands-on workshops on AI literacy and English proficiency — built to build real, usable skill.",
+        "Live, hands-on workshops on AI literacy and English proficiency, built to build real, usable skill.",
       href: "/academy",
       cta: "See workshops",
     },
@@ -32,7 +32,7 @@ export default function Home() {
       n: "03",
       title: "Courses",
       description:
-        "Structured, self-paced courses are next on the roadmap — for going deeper on the topics that matter most.",
+        "Structured, self-paced courses are next on the roadmap, for going deeper on the topics that matter most.",
       href: "/courses",
       cta: "Coming soon",
     },
@@ -71,7 +71,7 @@ export default function Home() {
 
           <Reveal delay={0.24} className="flex flex-col justify-end">
             <p className="text-lg leading-relaxed text-muted">
-              A podcast, an academy, and courses on the way — built for people who want
+              A podcast, an academy, and courses on the way, built for people who want
               to actually understand the world, one idea at a time.
             </p>
             <dl className="mt-8 grid max-w-sm grid-cols-2 gap-x-8 gap-y-5 border-t border-border pt-6">
@@ -93,12 +93,12 @@ export default function Home() {
             <FounderPhoto className="max-w-xs" />
           </Reveal>
           <Reveal delay={0.1}>
-            <Kicker>The founder</Kicker>
+            <Kicker>About me</Kicker>
             <h2 className="mt-6 font-display text-3xl leading-tight text-foreground md:text-4xl">
               {site.founder}
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted">
-              Knowledge Groove is built by Ishaan Garg — still in high school, already
+              Knowledge Groove is built by Ishaan Garg, still in high school, already
               building the podcast, the academy, and this entire site himself.
             </p>
             <div className="mt-8">
@@ -184,7 +184,7 @@ export default function Home() {
               Skills worth practicing, taught hands-on.
             </h2>
             <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
-              The Academy runs live workshops on the skills that matter most right now —
+              The Academy runs live workshops on the skills that matter most right now,
               from understanding and using AI, to communicating with real confidence.
             </p>
             <div className="mt-8">

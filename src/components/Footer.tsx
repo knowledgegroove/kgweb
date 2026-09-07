@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SpotifyLogo, EnvelopeSimple, ArrowUpRight } from "@phosphor-icons/react/dist/ssr";
 import { Logo } from "./Logo";
 import { Container } from "./ui/Container";
+import { MailLink } from "./MailLink";
 import { site } from "@/lib/data";
 
 const explore = [
@@ -23,7 +24,7 @@ export function Footer() {
         <div className="max-w-sm">
           <Logo />
           <p className="mt-5 text-sm leading-relaxed text-muted">
-            An ecosystem for curious minds — a podcast, workshops, and (soon) courses,
+            An ecosystem for curious minds: a podcast, workshops, and (soon) courses,
             built by a high schooler who wanted knowledge to feel like a groove, not a grind.
           </p>
         </div>
@@ -33,13 +34,14 @@ export function Footer() {
 
         <div>
           <h3 className="kicker">Get in touch</h3>
-          <a
+          <MailLink
+            email={site.email}
             href={`mailto:${site.email}`}
             className="focus-ring link-underline mt-4 inline-flex items-center gap-1.5 text-sm text-foreground"
           >
             <EnvelopeSimple size={15} />
             {site.email}
-          </a>
+          </MailLink>
           <div className="mt-3">
             <a
               href={site.spotifyShow}
