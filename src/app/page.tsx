@@ -99,7 +99,7 @@ export default function Home() {
             </h2>
             <p className="mt-5 max-w-lg text-base leading-relaxed text-muted">
               Knowledge Groove is built by Ishaan Garg, still in high school, already
-              building the podcast, the academy, and this entire site himself.
+              building the podcast and the academy.
             </p>
             <div className="mt-8">
               <Link href="/about" className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
