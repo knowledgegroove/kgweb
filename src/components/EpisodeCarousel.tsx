@@ -34,7 +34,7 @@ export function EpisodeCarousel({ episodes, spotifyHref }: { episodes: Episode[]
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div className="relative h-[420px] sm:h-[480px] [perspective:1400px]">
+      <div className="relative h-[470px] sm:h-[540px] [perspective:1400px]">
         {episodes.map((ep, i) => {
           let offset = i - active;
           if (offset > count / 2) offset -= count;
@@ -73,7 +73,7 @@ export function EpisodeCarousel({ episodes, spotifyHref }: { episodes: Episode[]
                 aria-hidden={visible ? undefined : true}
                 tabIndex={visible ? undefined : -1}
                 className={clsx(
-                  "focus-ring group relative block aspect-[3/4] w-full overflow-hidden border",
+                  "focus-ring group relative block aspect-[3/4.6] w-full overflow-hidden border",
                   isActive
                     ? "cursor-pointer border-border-strong shadow-[0_32px_56px_-20px_rgba(26,23,18,0.4)]"
                     : "cursor-pointer border-transparent"
@@ -85,11 +85,11 @@ export function EpisodeCarousel({ episodes, spotifyHref }: { episodes: Episode[]
                   {cover.tag}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                  <h3 className="font-display text-lg leading-snug text-white sm:text-xl">{ep.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-white/75 sm:text-sm">
+                  <h3 className="font-display text-base leading-snug text-white sm:text-lg">{ep.title}</h3>
+                  <p className="mt-2 text-[10px] leading-relaxed text-white/75 sm:text-[11px]">
                     {ep.description}
                   </p>
-                  <div className="numeral mt-3 text-[11px] text-white/55">
+                  <div className="numeral mt-2.5 text-[10px] text-white/55">
                     {ep.date} &middot; {ep.duration}
                   </div>
                 </div>
@@ -103,7 +103,7 @@ export function EpisodeCarousel({ episodes, spotifyHref }: { episodes: Episode[]
         type="button"
         onClick={() => go(-1)}
         aria-label="Previous episode"
-        className="focus-ring absolute left-0 top-[210px] -translate-y-1/2 sm:top-[240px] inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
+        className="focus-ring absolute left-0 top-[235px] -translate-y-1/2 sm:top-[270px] inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
       >
         <CaretLeft size={16} weight="bold" />
       </button>
@@ -111,7 +111,7 @@ export function EpisodeCarousel({ episodes, spotifyHref }: { episodes: Episode[]
         type="button"
         onClick={() => go(1)}
         aria-label="Next episode"
-        className="focus-ring absolute right-0 top-[210px] -translate-y-1/2 sm:top-[240px] inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
+        className="focus-ring absolute right-0 top-[235px] -translate-y-1/2 sm:top-[270px] inline-flex h-10 w-10 items-center justify-center rounded-full border border-border-strong bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
       >
         <CaretRight size={16} weight="bold" />
       </button>
