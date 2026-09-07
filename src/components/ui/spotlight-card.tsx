@@ -51,35 +51,37 @@ export function GlowCard({ children, className, glowColor = "rust", customSize =
           "--spread": spread,
           "--radius": "4",
           "--border": "1",
-          "--spotlight-size": "420",
+          "--spotlight-size": "540",
           "--hue": "calc(var(--base) + (var(--xp, 0.5) * var(--spread)))",
         } as CSSProperties
       }
       className={clsx(
         "group/glow relative isolate overflow-hidden border border-border-strong bg-surface",
+        "shadow-[0_1px_3px_rgba(26,23,18,0.07)] transition-all duration-300 ease-out",
+        "hover:-translate-y-2 hover:border-accent/60 hover:shadow-[0_28px_48px_-18px_rgba(26,23,18,0.32)]",
         !customSize && "aspect-[4/3]",
         className
       )}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/glow:opacity-100"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/glow:opacity-100"
         style={{
           background: `radial-gradient(
             calc(var(--spotlight-size) * 1px) calc(var(--spotlight-size) * 1px) at
             calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
-            hsl(var(--hue, 16) 55% 46% / 0.1),
-            transparent 70%
+            hsl(var(--hue, 16) 62% 48% / 0.26),
+            transparent 72%
           )`,
         }}
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover/glow:opacity-100"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/glow:opacity-100"
         style={{
           background: `radial-gradient(
-            180px 180px at calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
-            hsl(var(--hue, 16) 60% 40% / 0.35),
+            260px 260px at calc(var(--x, 0) * 1px) calc(var(--y, 0) * 1px),
+            hsl(var(--hue, 16) 65% 42% / 0.5),
             transparent 100%
           )`,
           mixBlendMode: "multiply",
