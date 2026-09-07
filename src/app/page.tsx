@@ -44,7 +44,7 @@ export default function Home() {
         <Container className="relative z-10 grid gap-10 py-20 md:grid-cols-[1.5fr_1fr] md:gap-16 md:py-32">
           <div>
             <Reveal>
-              <Kicker>Knowledge Groove — an ecosystem</Kicker>
+              <Kicker>Founded by Ishaan Garg</Kicker>
             </Reveal>
             <Reveal delay={0.08}>
               <h1 className="mt-7 max-w-2xl text-5xl leading-[1.04] tracking-tight text-foreground md:text-7xl">
@@ -80,6 +80,39 @@ export default function Home() {
           </Reveal>
         </Container>
       </div>
+
+      {/* Founder */}
+      <Section className="border-b border-border">
+        <Container className="grid gap-10 md:grid-cols-[0.65fr_1.35fr] md:items-center">
+          <Reveal>
+            <div className="aspect-[4/5] w-full max-w-xs border border-border-strong bg-surface">
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="font-display text-6xl text-muted-dim">IG</span>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <Kicker>The founder</Kicker>
+            <h2 className="mt-6 font-display text-3xl leading-tight text-foreground md:text-4xl">
+              {site.founder}
+            </h2>
+            <blockquote className="mt-4 font-display text-2xl italic leading-snug text-foreground md:text-3xl">
+              &ldquo;Learning should be as engaging as anything else competing for your
+              attention.&rdquo;
+            </blockquote>
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
+              Knowledge Groove is built by Ishaan Garg — still in high school, already
+              building the podcast, the academy, and this entire site himself.
+            </p>
+            <div className="mt-8">
+              <Link href="/about" className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+                Read the full story
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
 
       {/* Ecosystem index */}
       <Section>
@@ -232,36 +265,6 @@ export default function Home() {
               </Reveal>
             ))}
           </RevealGroup>
-        </Container>
-      </Section>
-
-      {/* Founder pull-quote */}
-      <Section>
-        <Container className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:items-center">
-          <Reveal>
-            <div className="aspect-[4/5] w-full max-w-xs border border-border-strong bg-surface">
-              <div className="flex h-full w-full items-center justify-center">
-                <span className="font-display text-6xl text-muted-dim">IG</span>
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <Kicker>The founder</Kicker>
-            <blockquote className="mt-6 font-display text-2xl italic leading-snug text-foreground md:text-3xl">
-              &ldquo;Learning should be as engaging as anything else competing for your
-              attention.&rdquo;
-            </blockquote>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
-              Knowledge Groove is built by Ishaan Garg — still in high school, already
-              building the podcast, the academy, and this entire site himself.
-            </p>
-            <div className="mt-8">
-              <Link href="/about" className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
-                Read the full story
-                <ArrowRight size={15} />
-              </Link>
-            </div>
-          </Reveal>
         </Container>
       </Section>
 

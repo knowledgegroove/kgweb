@@ -182,7 +182,10 @@ export function renderLineTrail(canvas: HTMLCanvasElement, options: LineTrailOpt
   }
 
   function onPointerMove(e: PointerEvent) {
-    setPos(e.clientX, e.clientY);
+    const rect = canvas.getBoundingClientRect();
+    const inside =
+      e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+    if (inside) setPos(e.clientX, e.clientY);
   }
 
   function frame() {
@@ -208,7 +211,10 @@ export function renderLineTrail(canvas: HTMLCanvasElement, options: LineTrailOpt
 
   resize();
   window.addEventListener("resize", resize);
-  canvas.addEventListener("pointermove", onPointerMove);
+  // The canvas is pointer-events-none (so it never blocks clicks on the
+  // content above it), which also means it never receives pointer events
+  // itself — listen on window and hit-test against its rect instead.
+  window.addEventListener("pointermove", onPointerMove);
   frameId = window.requestAnimationFrame(frame);
 
   return function cleanup() {
@@ -216,6 +222,6 @@ export function renderLineTrail(canvas: HTMLCanvasElement, options: LineTrailOpt
     if (idleTimeout) clearTimeout(idleTimeout);
     window.cancelAnimationFrame(frameId);
     window.removeEventListener("resize", resize);
-    canvas.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointermove", onPointerMove);
   };
 }
