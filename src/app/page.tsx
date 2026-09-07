@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { CanvasTrail } from "@/components/ui/CanvasTrail";
 import { GlowCard } from "@/components/ui/spotlight-card";
 import { FounderPhoto } from "@/components/FounderPhoto";
-import { site, episodes, workshops, projects } from "@/lib/data";
+import { FactTicker } from "@/components/FactTicker";
+import { site, episodes, workshops, projects, facts } from "@/lib/data";
 
 export default function Home() {
   const featuredEpisodes = episodes.slice(0, 4);
@@ -74,11 +75,9 @@ export default function Home() {
               A podcast, an academy, and courses on the way — built for people who want
               to actually understand the world, one idea at a time.
             </p>
-            <dl className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-6">
-              <Stat value="50+" label="Episodes" />
-              <Stat value="5.0" label="Rating" />
-              <Stat value="6" label="Workshops held" />
-            </dl>
+            <div className="mt-8 max-w-[12rem] border-t border-border pt-6">
+              <FactTicker facts={facts} />
+            </div>
           </Reveal>
         </Container>
       </div>
@@ -166,7 +165,6 @@ export default function Home() {
                 <a href={site.spotifyShow} target="_blank" rel="noopener noreferrer" className="focus-ring block">
                   <GlowCard
                     customSize
-                    glowColor="rust"
                     className="group grid grid-cols-[2rem_1fr] items-start gap-5 p-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
                   >
                     <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
@@ -246,7 +244,7 @@ export default function Home() {
           <RevealGroup className="mt-12 grid gap-6 sm:grid-cols-2">
             {projects.map((p) => (
               <Reveal key={p.name}>
-                <GlowCard customSize glowColor="rust" className="flex h-full flex-col p-8">
+                <GlowCard customSize className="flex h-full flex-col p-8">
                   <h3 className="font-display text-2xl text-foreground">{p.name}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-muted">{p.description}</p>
                   <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
@@ -283,14 +281,5 @@ export default function Home() {
         </Container>
       </Section>
     </>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <div className="numeral text-2xl text-foreground">{value}</div>
-      <div className="kicker mt-1 !text-muted-dim">{label}</div>
-    </div>
   );
 }

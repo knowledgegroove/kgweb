@@ -48,7 +48,6 @@ export default function PodcastPage() {
                 <a href={site.spotifyShow} target="_blank" rel="noopener noreferrer" className="focus-ring block">
                   <GlowCard
                     customSize
-                    glowColor="rust"
                     className="group grid grid-cols-[2.5rem_1fr] gap-5 p-6 sm:grid-cols-[2.5rem_1fr_9rem_1.5rem] sm:items-start sm:gap-8 sm:p-7"
                   >
                     <span className="numeral pt-1 text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>

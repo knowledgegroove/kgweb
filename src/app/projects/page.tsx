@@ -27,7 +27,7 @@ export default function ProjectsPage() {
           <RevealGroup className="grid gap-6 md:grid-cols-2">
             {projects.map((p, i) => {
               const card = (
-                <GlowCard customSize glowColor="rust" className="flex h-full flex-col p-8">
+                <GlowCard customSize className="flex h-full flex-col p-8">
                   <span className="numeral text-sm text-navy">{String(i + 1).padStart(2, "0")}</span>
                   <h2 className="mt-4 font-display text-2xl text-foreground md:text-3xl">{p.name}</h2>
                   <p className="mt-3 flex-1 text-base leading-relaxed text-muted">{p.description}</p>

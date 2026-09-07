@@ -6,6 +6,17 @@ export const site = {
   spotifyShow: "https://open.spotify.com/show/5GgvbJT6WznJCmIX6OeEGy",
 };
 
+export type Fact = { value: string; label: string };
+
+export const facts: Fact[] = [
+  { value: "50+", label: "Episodes" },
+  { value: "5.0", label: "Rating" },
+  { value: "6", label: "Workshops held" },
+  { value: "300+", label: "Students reached" },
+  { value: "55+", label: "Country audience" },
+  { value: "10K", label: "Global plays" },
+];
+
 export type Episode = {
   title: string;
   description: string;
