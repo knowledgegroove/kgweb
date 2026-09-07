@@ -1,26 +1,156 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-background: #f7f2e7;
+  --color-background-alt: #efe6d3;
+  --color-surface: #fbf8f1;
+  --color-surface-raised: #ffffff;
+  --color-foreground: #1c1810;
+  --color-muted: #5b5344;
+  --color-muted-dim: #8a8171;
+
+  --color-accent: #b5482a;
+  --color-accent-deep: #8a3620;
+  --color-navy: #1f2e3a;
+
+  --color-border: #e0d5bd;
+  --color-border-strong: #cbbc98;
+
+  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-body: var(--font-work-sans), "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
+
+  --ease-editorial: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-background);
+  --color-background-alt: var(--color-background-alt);
+  --color-surface: var(--color-surface);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-foreground: var(--color-foreground);
+  --color-muted: var(--color-muted);
+  --color-muted-dim: var(--color-muted-dim);
+  --color-accent: var(--color-accent);
+  --color-accent-deep: var(--color-accent-deep);
+  --color-navy: var(--color-navy);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-surface);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border: 2px solid var(--color-background);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-dim);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-page {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Editorial kicker label */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+/* Underline link */
+.link-underline {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-image: linear-gradient(var(--color-foreground), var(--color-foreground));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 0.3s var(--ease-editorial);
+  padding-bottom: 2px;
+}
+.link-underline:hover {
+  background-size: 100% 1px;
+}
+
+.numeral {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }

@@ -1,69 +1,296 @@
-import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Microphone, SpotifyLogo } from "@phosphor-icons/react/dist/ssr";
+import { Container, Section, Kicker } from "@/components/ui/Container";
+import { Reveal, RevealGroup } from "@/components/ui/Reveal";
+import { Button } from "@/components/ui/Button";
+import { site, episodes, workshops, projects } from "@/lib/data";
 
 export default function Home() {
+  const featuredEpisodes = episodes.slice(0, 4);
+
+  const pillars = [
+    {
+      n: "01",
+      title: "Podcast",
+      description:
+        "Deep, digestible episodes on history, geopolitics, business, economics and science — for the curious, not the credentialed.",
+      href: "/podcast",
+      cta: "Browse episodes",
+    },
+    {
+      n: "02",
+      title: "Academy",
+      description:
+        "Live, hands-on workshops on AI literacy and English proficiency — built to build real, usable skill.",
+      href: "/academy",
+      cta: "See workshops",
+    },
+    {
+      n: "03",
+      title: "Courses",
+      description:
+        "Structured, self-paced courses are next on the roadmap — for going deeper on the topics that matter most.",
+      href: "/courses",
+      cta: "Coming soon",
+    },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <>
+      {/* Hero */}
+      <div className="border-b border-border">
+        <Container className="grid gap-10 py-20 md:grid-cols-[1.5fr_1fr] md:gap-16 md:py-32">
+          <div>
+            <Reveal>
+              <Kicker>Knowledge Groove — an ecosystem</Kicker>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <h1 className="mt-7 max-w-2xl text-5xl leading-[1.04] tracking-tight text-foreground md:text-7xl">
+                Knowledge should feel like a{" "}
+                <em className="italic text-accent">groove</em>, not a grind.
+              </h1>
+            </Reveal>
+            <Reveal delay={0.18} className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+              <Button href={site.spotifyShow} external>
+                <Microphone size={16} weight="fill" />
+                Listen to the podcast
+              </Button>
+              <Link
+                href="/academy"
+                className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground"
+              >
+                Explore the Academy
+                <ArrowRight size={15} />
+              </Link>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.24} className="flex flex-col justify-end">
+            <p className="text-lg leading-relaxed text-muted">
+              A podcast, an academy, and courses on the way — built for people who want
+              to actually understand the world, one idea at a time.
+            </p>
+            <dl className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-6">
+              <Stat value="50+" label="Episodes" />
+              <Stat value="5.0" label="Rating" />
+              <Stat value="2" label="Workshops" />
+            </dl>
+          </Reveal>
+        </Container>
+      </div>
+
+      {/* Ecosystem index */}
+      <Section>
+        <Container>
+          <Reveal>
+            <Kicker>The ecosystem</Kicker>
+            <h2 className="mt-6 max-w-xl text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+              One mission, three ways in.
+            </h2>
+          </Reveal>
+
+          <RevealGroup className="mt-14 border-t border-border">
+            {pillars.map((pillar) => (
+              <Reveal key={pillar.n}>
+                <Link
+                  href={pillar.href}
+                  className="focus-ring group grid grid-cols-[auto_1fr] items-start gap-6 border-b border-border py-8 transition-colors sm:grid-cols-[3rem_1fr_auto] sm:items-center sm:gap-10"
+                >
+                  <span className="numeral text-sm text-muted-dim">{pillar.n}</span>
+                  <div className="min-w-0">
+                    <h3 className="font-display text-2xl text-foreground transition-colors group-hover:text-accent md:text-3xl">
+                      {pillar.title}
+                    </h3>
+                    <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted md:text-base">
+                      {pillar.description}
+                    </p>
+                  </div>
+                  <span className="col-span-2 mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-foreground sm:col-span-1 sm:mt-0">
+                    {pillar.cta}
+                    <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </RevealGroup>
+        </Container>
+      </Section>
+
+      {/* Featured episodes */}
+      <Section className="border-y border-border bg-background-alt">
+        <Container>
+          <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <Kicker>The podcast</Kicker>
+              <h2 className="mt-6 text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+                Latest episodes
+              </h2>
+            </div>
+            <Link href="/podcast" className="focus-ring link-underline hidden text-sm font-medium text-foreground sm:inline-flex">
+              View all episodes
+            </Link>
+          </Reveal>
+
+          <RevealGroup className="mt-12 border-t border-border-strong">
+            {featuredEpisodes.map((ep, i) => (
+              <Reveal key={ep.title}>
+                <a
+                  href={site.spotifyShow}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring group grid grid-cols-[2rem_1fr] items-start gap-5 border-b border-border-strong py-6 sm:grid-cols-[2.5rem_1fr_auto_auto] sm:items-center sm:gap-8"
+                >
+                  <span className="numeral text-sm text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="font-display text-lg leading-snug text-foreground transition-colors group-hover:text-accent md:text-xl">
+                    {ep.title}
+                  </h3>
+                  <span className="numeral col-span-2 text-xs text-muted-dim sm:col-span-1">
+                    {ep.date} &middot; {ep.duration}
+                  </span>
+                  <ArrowUpRight
+                    size={16}
+                    className="hidden text-muted-dim transition-colors group-hover:text-accent sm:block"
+                  />
+                </a>
+              </Reveal>
+            ))}
+          </RevealGroup>
+
+          <Reveal className="mt-8 sm:hidden">
+            <Link href="/podcast" className="focus-ring link-underline text-sm font-medium text-foreground">
+              View all episodes
+            </Link>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* Academy teaser */}
+      <Section>
+        <Container className="grid gap-12 md:grid-cols-2">
+          <Reveal>
+            <Kicker>The academy</Kicker>
+            <h2 className="mt-6 text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+              Skills worth practicing, taught hands-on.
+            </h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-muted">
+              The Academy runs live workshops on the skills that matter most right now —
+              from understanding and using AI, to communicating with real confidence.
+            </p>
+            <div className="mt-8">
+              <Link href="/academy" className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+                Explore workshops
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </Reveal>
+
+          <RevealGroup className="border-t border-border">
+            {workshops.map((w, i) => (
+              <Reveal key={w.title}>
+                <div className="border-b border-border py-6">
+                  <span className="numeral text-xs text-muted-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <h3 className="mt-2 font-display text-xl text-foreground">{w.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">{w.summary}</p>
+                </div>
+              </Reveal>
+            ))}
+          </RevealGroup>
+        </Container>
+      </Section>
+
+      {/* Projects teaser */}
+      <Section className="border-y border-border bg-background-alt">
+        <Container>
+          <Reveal className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <Kicker>Beyond knowledge groove</Kicker>
+              <h2 className="mt-6 text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+                Other things I&apos;ve built
+              </h2>
+            </div>
+            <Link href="/projects" className="focus-ring link-underline hidden text-sm font-medium text-foreground sm:inline-flex">
+              View all projects
+            </Link>
+          </Reveal>
+
+          <RevealGroup className="mt-12 grid gap-px overflow-hidden border border-border-strong sm:grid-cols-2">
+            {projects.map((p) => (
+              <Reveal key={p.name}>
+                <div className="h-full bg-surface p-8">
+                  <h3 className="font-display text-2xl text-foreground">{p.name}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted">{p.description}</p>
+                  <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2">
+                    {p.tags.map((tag) => (
+                      <span key={tag} className="kicker !text-muted-dim">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </RevealGroup>
+        </Container>
+      </Section>
+
+      {/* Founder pull-quote */}
+      <Section>
+        <Container className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+          <Reveal>
+            <div className="aspect-[4/5] w-full max-w-xs border border-border-strong bg-surface">
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="font-display text-6xl text-muted-dim">IG</span>
+              </div>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <Kicker>The founder</Kicker>
+            <blockquote className="mt-6 font-display text-2xl italic leading-snug text-foreground md:text-3xl">
+              &ldquo;Learning should be as engaging as anything else competing for your
+              attention.&rdquo;
+            </blockquote>
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-muted">
+              Knowledge Groove is built by Ishaan Garg — still in high school, already
+              building the podcast, the academy, and this entire site himself.
+            </p>
+            <div className="mt-8">
+              <Link href="/about" className="focus-ring link-underline inline-flex items-center gap-1.5 text-sm font-medium text-foreground">
+                Read the full story
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* Final CTA */}
+      <Section className="border-t border-border pb-28">
+        <Container>
+          <Reveal className="flex flex-col items-start justify-between gap-8 border border-border-strong p-10 md:flex-row md:items-center md:p-14">
+            <h2 className="max-w-lg text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+              Curious? Let&apos;s find your groove.
+            </h2>
+            <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+              <Button href={site.spotifyShow} external>
+                <SpotifyLogo size={16} weight="fill" />
+                Listen now
+              </Button>
+              <Button href="/contact" variant="secondary">
+                Get in touch
+              </Button>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
+    </>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div className="numeral text-2xl text-foreground">{value}</div>
+      <div className="kicker mt-1 !text-muted-dim">{label}</div>
     </div>
   );
 }
