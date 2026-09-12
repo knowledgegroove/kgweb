@@ -4,7 +4,8 @@ import { Container, Section, Kicker } from "@/components/ui/Container";
 import { Reveal, RevealGroup } from "@/components/ui/Reveal";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/Button";
-import { workshops } from "@/lib/data";
+import { Gallery } from "@/components/Gallery";
+import { workshops, galleryPhotos } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Academy",
@@ -96,6 +97,24 @@ export default function AcademyPage() {
               </Reveal>
             ))}
           </RevealGroup>
+        </Container>
+      </Section>
+
+      <Section className="border-t border-border pb-28">
+        <Container>
+          <Reveal className="max-w-xl">
+            <Kicker>Gallery</Kicker>
+            <h2 className="mt-6 text-3xl leading-tight tracking-tight text-foreground md:text-4xl">
+              From the workshops themselves.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-muted">
+              A look inside recent Academy sessions. Click any photo to see it larger.
+            </p>
+          </Reveal>
+
+          <div className="mt-12">
+            <Gallery photos={galleryPhotos} />
+          </div>
         </Container>
       </Section>
     </>

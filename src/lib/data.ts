@@ -101,6 +101,46 @@ export const workshops: Workshop[] = [
   },
 ];
 
+export type GalleryPhoto = {
+  /** Path under /public — drop the matching file in public/images/gallery/. */
+  src: string;
+  alt: string;
+  caption: string;
+};
+
+export const galleryPhotos: GalleryPhoto[] = [
+  {
+    src: "/images/gallery/workshop-1.jpg",
+    alt: "Students working together during an AI Workshop session",
+    caption: "AI Workshop, hands-on session",
+  },
+  {
+    src: "/images/gallery/workshop-2.jpg",
+    alt: "Ishaan leading an English Proficiency Workshop",
+    caption: "English Proficiency Workshop",
+  },
+  {
+    src: "/images/gallery/workshop-3.jpg",
+    alt: "A whiteboard from an AI Workshop planning session",
+    caption: "Planning an AI Workshop",
+  },
+  {
+    src: "/images/gallery/workshop-4.jpg",
+    alt: "Students practicing speaking skills in a small group",
+    caption: "Speaking practice, small group",
+  },
+  {
+    src: "/images/gallery/workshop-5.jpg",
+    alt: "A workshop participant presenting their project",
+    caption: "Presenting a workshop project",
+  },
+  {
+    src: "/images/gallery/workshop-6.jpg",
+    alt: "The Knowledge Groove Academy in session",
+    caption: "Knowledge Groove Academy in session",
+  },
+];
+
 export type Project = {
   name: string;
   description: string;
