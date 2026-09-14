@@ -22,6 +22,21 @@
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", monospace;
 
   --ease-editorial: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- Academic Leadership portal (/ALportal) — scoped, additive tokens --- */
+  --alp-bg: #f5f8fd;
+  --alp-ink: #101828;
+
+  --alp-brand-50: #eef4fc;
+  --alp-brand-100: #dbe9f8;
+  --alp-brand-200: #b9d4f0;
+  --alp-brand-300: #8fb9e6;
+  --alp-brand-400: #5f97d6;
+  --alp-brand-500: #3f78bf;
+  --alp-brand-600: #2f5fa0;
+  --alp-brand-700: #274c82;
+  --alp-brand-800: #223f69;
+  --alp-brand-900: #1f3557;
 }
 
 @theme inline {
@@ -41,6 +56,47 @@
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-mono: var(--font-mono);
+
+  /* --- Academic Leadership portal (/ALportal) --- */
+  --color-alp-bg: var(--alp-bg);
+  --color-alp-ink: var(--alp-ink);
+  --color-alp-brand-50: var(--alp-brand-50);
+  --color-alp-brand-100: var(--alp-brand-100);
+  --color-alp-brand-200: var(--alp-brand-200);
+  --color-alp-brand-300: var(--alp-brand-300);
+  --color-alp-brand-400: var(--alp-brand-400);
+  --color-alp-brand-500: var(--alp-brand-500);
+  --color-alp-brand-600: var(--alp-brand-600);
+  --color-alp-brand-700: var(--alp-brand-700);
+  --color-alp-brand-800: var(--alp-brand-800);
+  --color-alp-brand-900: var(--alp-brand-900);
+  --font-alp-sans: var(--font-alp-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-alp-display: var(--font-alp-display), Georgia, serif;
+  --font-alp-logo: var(--font-alp-logo), "Comic Sans MS", cursive;
+}
+
+/*
+ * The AL portal (/ALportal) is a self-contained embedded app with its own
+ * component styles. Two rules above win over it unconditionally regardless of
+ * specificity (unlayered CSS beats Tailwind's layered utilities): the `*`
+ * border-color reset and the bare heading font/weight rule. These two
+ * declarations opt the portal's subtree back out of both, so its own
+ * Tailwind classes behave normally there without touching the rules above.
+ */
+.al-portal,
+.al-portal * {
+  border-color: revert-layer;
+}
+
+.al-portal h1,
+.al-portal h2,
+.al-portal h3,
+.al-portal h4,
+.al-portal h5,
+.al-portal h6 {
+  font-family: revert-layer;
+  letter-spacing: revert-layer;
+  font-weight: revert-layer;
 }
 
 * {
