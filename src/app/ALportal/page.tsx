@@ -34,6 +34,7 @@ const ROLES: {
     icon: Users,
     bullets: [
       "See your assigned sessions this week",
+      "Schedule online sessions",
       "Track your monthly hours and sessions",
       "Answer async follow-up questions",
     ],
@@ -47,6 +48,7 @@ const ROLES: {
     bullets: [
       "Browse tutors by subject & period",
       "Get routed to Infinite Campus to book",
+      "Join supervised sessions",
       "Post a question to the Q&A board",
     ],
   },
