@@ -86,7 +86,7 @@ function SignInCard() {
             </button>
           </form>
           <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
-            Guest access is for the trial only. Don&apos;t enter real student information.
+            Guest access is for the trial only.
           </p>
         </>
       )}
