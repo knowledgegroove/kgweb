@@ -100,7 +100,7 @@ export default function Home() {
               href="/ALportal/signin"
               className="rounded-lg bg-alp-brand-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-alp-brand-700"
             >
-              Sign in with Google
+              Sign in
             </Link>
           </div>
         )}
