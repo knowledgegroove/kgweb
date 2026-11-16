@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { useAppData } from "./_lib/store";
 import { Role } from "./_lib/types";
 import { Logo } from "./_components/Logo";
+import AccountBadge from "./_components/AccountBadge";
 
 const ROLES: {
   role: Role;
@@ -69,6 +70,14 @@ export default function Home() {
         aria-hidden
         className="pointer-events-none absolute -top-10 right-0 h-64 w-64 rounded-full bg-alp-brand-300/30 blur-3xl"
       />
+
+      {status === "authenticated" && (
+        <div className="relative z-10 flex justify-end px-4 pt-4 sm:px-6">
+          <div className="rounded-xl border border-slate-200/80 bg-white/90 py-1.5 pl-2 pr-1 shadow-sm backdrop-blur">
+            <AccountBadge />
+          </div>
+        </div>
+      )}
 
       <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24">
         <div className="text-center">

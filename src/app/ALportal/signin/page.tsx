@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { Suspense, useEffect, useState } from "react";
+import { getProviders, signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { Logo } from "../_components/Logo";
 
 function SignInCard() {
@@ -12,9 +11,17 @@ function SignInCard() {
   const router = useRouter();
   const error = params.get("error");
 
+  const [guestAvailable, setGuestAvailable] = useState(false);
+  const [guestName, setGuestName] = useState("");
+  const [guestLoading, setGuestLoading] = useState(false);
+
   useEffect(() => {
     if (status === "authenticated") router.replace("/ALportal");
   }, [status, router]);
+
+  useEffect(() => {
+    getProviders().then((p) => setGuestAvailable(Boolean(p?.guest)));
+  }, []);
 
   return (
     <div className="w-full max-w-sm rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-sm">
@@ -42,6 +49,47 @@ function SignInCard() {
         </svg>
         Continue with Google
       </button>
+
+      {guestAvailable && (
+        <>
+          <div className="my-6 flex items-center gap-3 text-xs text-slate-400">
+            <span className="h-px flex-1 bg-slate-200" />
+            or
+            <span className="h-px flex-1 bg-slate-200" />
+          </div>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setGuestLoading(true);
+              signIn("guest", { name: guestName, callbackUrl: "/ALportal" });
+            }}
+            className="text-left"
+          >
+            <label htmlFor="guest-name" className="block text-xs font-medium text-slate-600">
+              Your name <span className="font-normal text-slate-400">(optional, shown in the top corner)</span>
+            </label>
+            <input
+              id="guest-name"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              maxLength={40}
+              autoComplete="off"
+              placeholder="e.g. Priya (student role-play)"
+              className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-alp-brand-400 focus:outline-none focus:ring-2 focus:ring-alp-brand-200"
+            />
+            <button
+              type="submit"
+              disabled={guestLoading}
+              className="mt-3 w-full cursor-pointer rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-900 disabled:opacity-60"
+            >
+              {guestLoading ? "Signing in…" : "Continue as guest"}
+            </button>
+          </form>
+          <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            Guest access is for the trial only. Don&apos;t enter real student information.
+          </p>
+        </>
+      )}
     </div>
   );
 }
