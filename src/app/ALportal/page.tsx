@@ -89,8 +89,8 @@ export default function Home() {
             <span className="block text-alp-brand-600">Online Portal</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600">
-            A coordination layer on top of Infinite Campus sign-ups and teacher requests —
-            built to help match tutors to students and give the program a real-time view of coverage.
+            A coordination layer on top of Infinite Campus sign-ups and teacher requests. 
+            Built to help match tutors to students and give the program a real-time view of coverage.
           </p>
         </div>
 
