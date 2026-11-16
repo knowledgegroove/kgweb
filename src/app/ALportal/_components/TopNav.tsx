@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAppData } from "../_lib/store";
 import { Role } from "../_lib/types";
 import { Logo } from "./Logo";
+import { signOut, useSession } from "next-auth/react";
 
 const ROLE_LABELS: Record<Role, string> = {
   coordinator: "Coordinator",
@@ -34,8 +35,9 @@ export default function TopNav() {
   const { role, setRole } = useAppData();
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
 
-  if (pathname === "/ALportal") return null;
+  if (pathname === "/ALportal" || pathname === "/ALportal/signin") return null;
 
   const handleRoleChange = (r: Role) => {
     setRole(r);
@@ -91,6 +93,19 @@ export default function TopNav() {
               </button>
             ))}
           </div>
+          {session?.user && (
+            <div className="ml-1 flex items-center gap-2 border-l border-slate-200 pl-3">
+              <span className="hidden max-w-[10rem] truncate text-xs text-slate-500 lg:inline" title={session.user.email ?? ""}>
+                {session.user.email}
+              </span>
+              <button
+                onClick={() => signOut({ callbackUrl: "/ALportal" })}
+                className="cursor-pointer rounded-md px-2 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+              >
+                Sign out
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <nav className="flex items-center gap-1 overflow-x-auto border-t border-slate-100 px-4 py-1.5 md:hidden">

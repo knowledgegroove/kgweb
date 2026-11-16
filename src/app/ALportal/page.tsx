@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight, LayoutDashboard, GraduationCap, Users } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useAppData } from "./_lib/store";
 import { Role } from "./_lib/types";
 import { Logo } from "./_components/Logo";
@@ -56,6 +57,7 @@ const ROLES: {
 
 export default function Home() {
   const { setRole } = useAppData();
+  const { status } = useSession();
 
   return (
     <div className="relative min-h-full overflow-hidden bg-app">
@@ -83,7 +85,18 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-3">
+        {status === "unauthenticated" && (
+          <div className="mt-12 flex justify-center">
+            <Link
+              href="/ALportal/signin"
+              className="rounded-lg bg-alp-brand-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-colors hover:bg-alp-brand-700"
+            >
+              Sign in with Google
+            </Link>
+          </div>
+        )}
+
+        <div className={`mt-14 grid gap-5 sm:grid-cols-3 ${status === "authenticated" ? "" : "hidden"}`}>
           {ROLES.map((r) => {
             const Icon = r.icon;
             return (
