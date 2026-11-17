@@ -17,8 +17,15 @@ export interface ConfirmationDetails {
   notes: string | null;
 }
 
+/** Tolerates pasted values: trims the address and drops the spaces Google shows in app passwords. */
+function gmailCredentials() {
+  const user = (process.env.GMAIL_USER ?? "").trim();
+  const pass = (process.env.GMAIL_APP_PASSWORD ?? "").replace(/\s+/g, "");
+  return user && pass ? { user, pass } : null;
+}
+
 export function emailConfigured() {
-  return Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
+  return gmailCredentials() !== null;
 }
 
 function formatWhen(start: Date, end: Date) {
@@ -97,9 +104,12 @@ function buildIcs(d: ConfirmationDetails, organizer: string, end: Date) {
 }
 
 export async function sendSessionConfirmation(d: ConfirmationDetails): Promise<EmailStatus> {
-  const user = process.env.GMAIL_USER;
-  const pass = process.env.GMAIL_APP_PASSWORD;
-  if (!user || !pass) return "skipped";
+  const creds = gmailCredentials();
+  if (!creds) {
+    console.warn("[ALportal] confirmation email skipped: GMAIL_USER / GMAIL_APP_PASSWORD not set");
+    return "skipped";
+  }
+  const { user, pass } = creds;
 
   const end = new Date(d.startsAt.getTime() + d.durationMin * 60_000);
   const when = formatWhen(d.startsAt, end);
