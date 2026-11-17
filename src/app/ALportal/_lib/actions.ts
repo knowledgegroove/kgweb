@@ -5,6 +5,14 @@ import { query } from "./db";
 import { devTestRoles, getViewer } from "./portal";
 import { sendSessionConfirmation, type EmailStatus } from "./email";
 import { SUBJECT_SET } from "./subjects";
+import {
+  SESSION_DURATIONS,
+  WINDOW_LABEL,
+  isValidDuration,
+  isValidStart,
+  schoolTimeToUtc,
+  timeToMinutes,
+} from "./schedule";
 import type { ActionResult, Viewer } from "./types";
 
 const fail = (error: string) => ({ ok: false as const, error });
@@ -82,7 +90,10 @@ export async function requestSubjects(subjectsInput: string[]): Promise<ActionRe
 
 export async function createSession(input: {
   subject: string;
-  startsAt: string;
+  /** Pacific date, "YYYY-MM-DD". */
+  date: string;
+  /** Pacific start time, "HH:MM" (24h). */
+  startTime: string;
   durationMin: number;
   capacity: number;
   meetLink: string;
@@ -97,13 +108,17 @@ export async function createSession(input: {
   );
   if (approved.length === 0) return fail("You can only schedule sessions for subjects the coordinator approved.");
 
-  const start = new Date(input.startsAt);
-  if (Number.isNaN(start.getTime())) return fail("Pick a date and start time.");
+  const durationMin = Number(input.durationMin);
+  if (!isValidDuration(durationMin)) return fail(`Length must be ${SESSION_DURATIONS.join(", ")} minutes.`);
+  const startMin = timeToMinutes(String(input.startTime));
+  if (startMin === null || !isValidStart(startMin, durationMin)) {
+    return fail(`Sessions must start and end between ${WINDOW_LABEL}.`);
+  }
+  const start = schoolTimeToUtc(String(input.date), startMin);
+  if (!start || Number.isNaN(start.getTime())) return fail("Pick a date.");
   if (start.getTime() < Date.now() - 5 * 60_000) return fail("That time is in the past.");
   if (start.getTime() > Date.now() + 90 * 86_400_000) return fail("Sessions can be scheduled up to 90 days ahead.");
 
-  const durationMin = Math.round(Number(input.durationMin));
-  if (!(durationMin >= 15 && durationMin <= 180)) return fail("Duration must be 15–180 minutes.");
   const capacity = Math.round(Number(input.capacity));
   if (!(capacity >= 1 && capacity <= 50)) return fail("Capacity must be 1–50 students.");
 

@@ -18,6 +18,14 @@ import type { PortalSession, TutorSubject } from "../_lib/types";
 import { RoleGate } from "../_components/RoleGate";
 import { Avatar, Card, EmptyState, PageHeader, StatCard, SubjectPill } from "../_components/ui";
 import { formatSessionTime, isUpcoming } from "../_lib/format";
+import {
+  SESSION_DURATIONS,
+  WINDOW_LABEL,
+  formatClock,
+  minutesToTime,
+  nowInSchoolZone,
+  startSlots,
+} from "../_lib/schedule";
 
 const inputClass =
   "w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-alp-brand-400 focus:outline-none focus:ring-2 focus:ring-alp-brand-100";
@@ -175,22 +183,28 @@ function SubjectsCard({ approved, pending }: { approved: string[]; pending: stri
 function ScheduleForm({ approved }: { approved: string[] }) {
   const { refresh } = usePortal();
   const [subject, setSubject] = useState("");
-  const [startsAt, setStartsAt] = useState("");
-  const [duration, setDuration] = useState(45);
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [duration, setDuration] = useState<number>(45);
   const [capacity, setCapacity] = useState(5);
   const [meetLink, setMeetLink] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ text: string; ok: boolean } | null>(null);
 
-  const ready = subject && startsAt && meetLink.trim() && !saving;
+  const today = nowInSchoolZone();
+  // Start times that fit 4–9 PM for this length; on today's date, hide times that have already passed.
+  const slots = startSlots(duration).filter((m) => date !== today.date || m > today.minutes);
+  const slotValues = slots.map(minutesToTime);
+  const ready = subject && date && slotValues.includes(startTime) && meetLink.trim() && !saving;
 
   const submit = async () => {
     setSaving(true);
     setMessage(null);
     const res = await createSession({
       subject,
-      startsAt: new Date(startsAt).toISOString(),
+      date,
+      startTime,
       durationMin: duration,
       capacity,
       meetLink,
@@ -203,7 +217,7 @@ function ScheduleForm({ approved }: { approved: string[] }) {
     }
     setMessage({ text: "Session posted. Students can see it now.", ok: true });
     setSubject("");
-    setStartsAt("");
+    setStartTime("");
     setMeetLink("");
     setNotes("");
     await refresh();
@@ -215,7 +229,9 @@ function ScheduleForm({ approved }: { approved: string[] }) {
         <CalendarPlus className="h-4 w-4 text-alp-brand-600" aria-hidden />
         <h2 className="text-base font-semibold text-slate-900">Schedule a session</h2>
       </div>
-      <p className="mt-1 text-sm text-slate-500">Only subjects the coordinator approved for you are listed.</p>
+      <p className="mt-1 text-sm text-slate-500">
+        Only subjects the coordinator approved for you are listed. Sessions run between {WINDOW_LABEL} (Pacific).
+      </p>
 
       {approved.length === 0 ? (
         <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-800">
@@ -235,12 +251,16 @@ function ScheduleForm({ approved }: { approved: string[] }) {
               </select>
             </div>
             <div>
-              <label htmlFor="starts" className="mb-1 block text-xs font-medium text-slate-500">Date &amp; start time</label>
+              <label htmlFor="date" className="mb-1 block text-xs font-medium text-slate-500">Date</label>
               <input
-                id="starts"
-                type="datetime-local"
-                value={startsAt}
-                onChange={(e) => setStartsAt(e.target.value)}
+                id="date"
+                type="date"
+                min={today.date}
+                value={date}
+                onChange={(e) => {
+                  setDate(e.target.value);
+                  setStartTime("");
+                }}
                 className={inputClass}
               />
             </div>
@@ -249,11 +269,34 @@ function ScheduleForm({ approved }: { approved: string[] }) {
               <select
                 id="duration"
                 value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
+                onChange={(e) => {
+                  const d = Number(e.target.value);
+                  setDuration(d);
+                  if (startTime && !startSlots(d).map(minutesToTime).includes(startTime)) setStartTime("");
+                }}
                 className={inputClass}
               >
-                {[30, 45, 60, 90].map((m) => (
+                {SESSION_DURATIONS.map((m) => (
                   <option key={m} value={m}>{m} minutes</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="start" className="mb-1 block text-xs font-medium text-slate-500">Start time</label>
+              <select
+                id="start"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                disabled={!date || slots.length === 0}
+                className={`${inputClass} disabled:bg-slate-50 disabled:text-slate-400`}
+              >
+                <option value="">
+                  {!date ? "Pick a date first" : slots.length === 0 ? "No times left today" : "Choose…"}
+                </option>
+                {slots.map((m) => (
+                  <option key={m} value={minutesToTime(m)}>
+                    {formatClock(m)} – {formatClock(m + duration)}
+                  </option>
                 ))}
               </select>
             </div>
