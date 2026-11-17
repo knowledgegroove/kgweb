@@ -1,70 +1,70 @@
-export type Period =
-  | "Access Period"
-  | "B-Period (Commons)"
-  | "Lunch (Commons)"
-  | "After School";
+export type Role = "coordinator" | "tutor" | "student";
 
-export type RequestSource = "Infinite Campus" | "Teacher Google Form" | "Portal";
-
-export type RequestStatus = "open" | "assigned" | "completed";
-
-export interface Tutor {
+export interface Viewer {
   id: string;
+  email: string | null;
   name: string;
-  grade: 10 | 11 | 12;
-  subjects: string[];
-  /** Subset of `subjects` the coordinator has vetted this tutor to hold sessions for. */
-  approvedSubjects: string[];
-  periods: Period[];
-  bio: string;
-  sessionsThisMonth: number;
-  hoursThisMonth: number;
-  rating: number; // out of 5
-  active: boolean;
+  isGuest: boolean;
+  /** null = signed in but hasn't finished account setup yet. */
+  role: Role | null;
 }
 
-export interface TutoringRequest {
-  id: string;
-  requesterName: string;
-  requesterType: "Student" | "Teacher";
+export type SubjectStatus = "pending" | "approved";
+
+export interface TutorSubject {
   subject: string;
-  period: Period;
-  source: RequestSource;
-  notes: string;
-  status: RequestStatus;
-  assignedTutorId?: string;
-  createdAt: string; // ISO date
+  status: SubjectStatus;
 }
 
-export interface QAReply {
-  id: string;
-  authorName: string;
-  authorType: "Tutor" | "Coordinator";
-  text: string;
-  createdAt: string;
+export interface SessionSignup {
+  studentId: string;
+  name: string;
+  email: string;
+  joinedAt: string;
 }
 
-export interface QAPost {
-  id: string;
-  subject: string;
-  authorName: string;
-  question: string;
-  createdAt: string;
-  replies: QAReply[];
-  resolved: boolean;
-}
-
-export interface ScheduledSession {
+export interface PortalSession {
   id: string;
   tutorId: string;
+  tutorName: string;
   subject: string;
-  period: Period;
-  date: string; // ISO date, day only (e.g. "2026-09-16")
-  location: string;
+  startsAt: string; // ISO
+  durationMin: number;
   capacity: number;
-  joinedStudents: string[];
-  notes?: string;
-  createdAt: string;
+  /** Only sent to the tutor, the coordinator, and students who joined. */
+  meetLink: string | null;
+  notes: string | null;
+  cancelled: boolean;
+  signupCount: number;
+  /** Student view: whether the viewer has joined. */
+  joined?: boolean;
+  /** Tutor/coordinator view: who signed up. */
+  signups?: SessionSignup[];
 }
 
-export type Role = "coordinator" | "tutor" | "student";
+export interface TutorInfo {
+  id: string;
+  name: string;
+  email: string | null;
+  subjects: TutorSubject[];
+  joinedAt: string;
+}
+
+export type PortalData =
+  | { viewer: Viewer & { role: null }; canRegisterAsTutor: boolean }
+  | { viewer: Viewer & { role: "student" }; sessions: PortalSession[] }
+  | { viewer: Viewer & { role: "tutor" }; subjects: TutorSubject[]; sessions: PortalSession[] }
+  | {
+      viewer: Viewer & { role: "coordinator" };
+      tutors: TutorInfo[];
+      sessions: PortalSession[];
+      studentCount: number;
+    };
+
+export type ActionResult<T = object> = ({ ok: true } & T) | { ok: false; error: string };
+
+export const ROLE_HOME: Record<Role, string> = {
+  coordinator: "/ALportal/coordinator",
+  tutor: "/ALportal/tutor",
+  student: "/ALportal/student",
+};

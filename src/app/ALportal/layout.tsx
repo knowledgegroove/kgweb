@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Calistoga, Baloo_2 } from "next/font/google";
-import { AppDataProvider } from "./_lib/store";
+import { PortalProvider } from "./_lib/portal-client";
 import TopNav from "./_components/TopNav";
 import AuthGate from "./_components/AuthGate";
 import { SessionProvider } from "next-auth/react";
@@ -40,12 +40,12 @@ export default function ALPortalLayout({ children }: { children: React.ReactNode
       className={`al-portal ${inter.variable} ${calistoga.variable} ${baloo.variable} flex min-h-screen flex-col bg-alp-bg font-alp-sans text-alp-ink antialiased`}
     >
       <SessionProvider basePath={AUTH_BASE_PATH}>
-        <AppDataProvider>
+        <PortalProvider>
           <TopNav />
           <main className="flex-1">
             <AuthGate>{children}</AuthGate>
           </main>
-        </AppDataProvider>
+        </PortalProvider>
       </SessionProvider>
     </div>
   );

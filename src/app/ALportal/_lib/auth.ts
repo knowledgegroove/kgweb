@@ -50,11 +50,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const domain = profile.email.split("@")[1]?.toLowerCase();
       return Boolean(domain && allowedDomains.includes(domain));
     },
-    jwt({ token, account }) {
-      if (account) token.isGuest = account.provider === "guest";
+    jwt({ token, account, user }) {
+      if (account) {
+        token.isGuest = account.provider === "guest";
+        // Stable per-person id: Google's account id (Auth.js randomizes user.id without a DB adapter).
+        token.uid = account.provider === "google" ? `google:${account.providerAccountId}` : user?.id;
+      }
       return token;
     },
     session({ session, token }) {
+      if (typeof token.uid === "string") session.user.id = token.uid;
       (session.user as { isGuest?: boolean }).isGuest = Boolean(token.isGuest);
       return session;
     },

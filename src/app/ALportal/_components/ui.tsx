@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-import { RequestSource, RequestStatus } from "../_lib/types";
 
 export function PageHeader({
   title,
@@ -70,40 +69,6 @@ export function StatCard({
       <p className={`mt-1.5 text-3xl font-semibold tabular-nums ${t.text}`}>{value}</p>
       {sublabel && <p className="mt-1 text-xs text-slate-400">{sublabel}</p>}
     </Card>
-  );
-}
-
-const STATUS_STYLES: Record<RequestStatus, string> = {
-  open: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
-  assigned: "bg-alp-brand-50 text-alp-brand-700 ring-1 ring-inset ring-alp-brand-200",
-  completed: "bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200",
-};
-
-const STATUS_LABELS: Record<RequestStatus, string> = {
-  open: "Open",
-  assigned: "Assigned",
-  completed: "Completed",
-};
-
-export function StatusBadge({ status }: { status: RequestStatus }) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[status]}`}>
-      {STATUS_LABELS[status]}
-    </span>
-  );
-}
-
-const SOURCE_STYLES: Record<RequestSource, string> = {
-  "Infinite Campus": "bg-violet-50 text-violet-700 ring-1 ring-inset ring-violet-200",
-  "Teacher Google Form": "bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-200",
-  Portal: "bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200",
-};
-
-export function SourceBadge({ source }: { source: RequestSource }) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${SOURCE_STYLES[source]}`}>
-      {source}
-    </span>
   );
 }
 

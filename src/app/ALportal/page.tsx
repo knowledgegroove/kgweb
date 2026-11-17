@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { ArrowRight, LayoutDashboard, GraduationCap, Users } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useAppData } from "./_lib/store";
-import { Role } from "./_lib/types";
+import { usePortal } from "./_lib/portal-client";
+import type { Role } from "./_lib/types";
 import { Logo } from "./_components/Logo";
 import AccountBadge from "./_components/AccountBadge";
 
@@ -20,45 +20,46 @@ const ROLES: {
     role: "coordinator",
     href: "/ALportal/coordinator",
     title: "Coordinator",
-    description: "Coverage, matching, and program-wide stats in one place.",
+    description: "Program oversight: approvals, sessions, and sign-ups in one place.",
     icon: LayoutDashboard,
     bullets: [
-      "Match incoming requests to available tutors",
-      "See subject coverage gaps at a glance",
-      "Track sessions and hours across the program",
+      "Approve the subjects each tutor can teach",
+      "See every session and sign-up live",
+      "Cancel or follow up on any session",
     ],
   },
   {
     role: "tutor",
     href: "/ALportal/tutor",
     title: "Tutor",
-    description: "For AL students — your schedule, sessions, and Q&A replies.",
+    description: "For AL members: schedule sessions and see who's coming.",
     icon: Users,
     bullets: [
-      "See your assigned sessions this week",
       "Schedule online sessions",
-      "Track your monthly hours and sessions",
-      "Answer async follow-up questions",
+      "Only in subjects the coordinator approved",
+      "See sign-ups as they happen",
     ],
   },
   {
     role: "student",
     href: "/ALportal/student",
     title: "Student",
-    description: "Find a tutor by subject and ask follow-up questions anytime.",
+    description: "Find an online tutoring session and grab a seat.",
     icon: GraduationCap,
     bullets: [
-      "Browse tutors by subject & period",
-      "Get routed to Infinite Campus to book",
+      "Browse upcoming sessions by subject",
       "Join supervised sessions",
-      "Post a question to the Q&A board",
+      "Get a confirmation email with the Meet link",
     ],
   },
 ];
 
 export default function Home() {
-  const { setRole } = useAppData();
   const { status } = useSession();
+  const { data, error } = usePortal();
+  const myRole = data?.viewer.role ?? null;
+  const needsSetup = data !== null && myRole === null;
+  const cards = myRole ? ROLES.filter((r) => r.role === myRole) : [];
 
   return (
     <div className="relative min-h-full overflow-hidden bg-app">
@@ -105,22 +106,39 @@ export default function Home() {
           </div>
         )}
 
-        <div className={`mt-14 grid gap-5 sm:grid-cols-3 ${status === "authenticated" ? "" : "hidden"}`}>
-          {ROLES.map((r) => {
+        {needsSetup && (
+          <div className="mx-auto mt-12 max-w-md rounded-2xl border border-alp-brand-200 bg-white/90 p-6 text-center shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">Welcome! One quick step.</h2>
+            <p className="mt-1.5 text-sm text-slate-500">Tell us whether you&apos;re a tutor or a student.</p>
+            <Link
+              href="/ALportal/welcome"
+              className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-alp-brand-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-alp-brand-700"
+            >
+              Set up my account
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+          </div>
+        )}
+
+        {status === "authenticated" && !data && (
+          <p className="mt-12 text-center text-sm text-slate-400">
+            {error === "network" ? "Having trouble connecting. Retrying…" : "Loading your account…"}
+          </p>
+        )}
+
+        <div className="mx-auto mt-12 max-w-sm">
+          {cards.map((r) => {
             const Icon = r.icon;
             return (
               <Link
                 key={r.role}
                 href={r.href}
-                onClick={() => setRole(r.role)}
                 className="group relative flex flex-col rounded-2xl border border-slate-200/80 bg-white/90 p-6 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_8px_24px_-12px_rgba(31,53,87,0.15)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-alp-brand-300 hover:shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_40px_-16px_rgba(47,95,160,0.35)]"
               >
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-alp-brand-50 text-alp-brand-600 transition-colors group-hover:bg-alp-brand-600 group-hover:text-white">
                   <Icon className="h-5 w-5" strokeWidth={2} aria-hidden />
                 </div>
-                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  Enter as
-                </p>
+                <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Signed in as</p>
                 <h2 className="mt-0.5 text-xl font-semibold text-slate-900">{r.title}</h2>
                 <p className="mt-2 text-sm text-slate-500">{r.description}</p>
                 <ul className="mt-4 space-y-1.5 text-sm text-slate-600">
@@ -132,7 +150,7 @@ export default function Home() {
                   ))}
                 </ul>
                 <span className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-alp-brand-600">
-                  Continue
+                  Go to my dashboard
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden />
                 </span>
               </Link>
@@ -141,8 +159,7 @@ export default function Home() {
         </div>
 
         <p className="mt-10 text-center text-xs text-slate-400">
-          Prototype for review — sign-ups still happen in Infinite Campus, in-class requests still come via the
-          teacher Google Form. This portal sits on top to coordinate what happens next.
+          Pilot program: accounts, sessions, and sign-ups here are part of a trial run.
         </p>
       </div>
     </div>
