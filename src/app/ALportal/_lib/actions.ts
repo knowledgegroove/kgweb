@@ -3,7 +3,7 @@
 // Every mutation re-checks who is signed in and what their role allows. Never trust the client.
 import { query } from "./db";
 import { devTestRoles, getViewer } from "./portal";
-import { sendSessionConfirmation, type EmailStatus } from "./email";
+import { sendSessionCancellation, sendSessionConfirmation, type EmailStatus } from "./email";
 import { SUBJECT_SET } from "./subjects";
 import {
   SESSION_DURATIONS,
@@ -141,15 +141,55 @@ export async function createSession(input: {
   return { ok: true, id };
 }
 
-export async function cancelSession(sessionId: string): Promise<ActionResult> {
+export async function cancelSession(
+  sessionId: string,
+): Promise<ActionResult<{ notified: number; failed: number }>> {
   const viewer = await getViewer();
   if (!viewer || (viewer.role !== "tutor" && viewer.role !== "coordinator")) return fail("Not allowed.");
-  const rows = await query(
+  const rows = await query<{
+    subject: string;
+    starts_at: string | Date;
+    duration_min: number;
+    meet_link: string;
+    notes: string | null;
+    tutor_id: string;
+  }>(
     `UPDATE alp_sessions SET cancelled_at = now()
-     WHERE id = $1 AND cancelled_at IS NULL AND ($2 OR tutor_id = $3) RETURNING id`,
+     WHERE id = $1 AND cancelled_at IS NULL AND ($2 OR tutor_id = $3)
+     RETURNING subject, starts_at, duration_min, meet_link, notes, tutor_id`,
     [sessionId, viewer.role === "coordinator", viewer.id],
   );
-  return rows.length ? { ok: true } : fail("Session not found or already cancelled.");
+  if (rows.length === 0) return fail("Session not found or already cancelled.");
+  const s = rows[0];
+
+  // Let everyone who joined know, and remove the event from their calendars. Past sessions don't need it.
+  const startsAt = new Date(s.starts_at);
+  if (startsAt.getTime() + s.duration_min * 60_000 < Date.now()) return { ok: true, notified: 0, failed: 0 };
+  const [tutor] = await query<{ name: string }>("SELECT name FROM alp_users WHERE id = $1", [s.tutor_id]);
+  const signups = await query<{ student_name: string; student_email: string }>(
+    "SELECT student_name, student_email FROM alp_signups WHERE session_id = $1",
+    [sessionId],
+  );
+  const results = await Promise.all(
+    signups.map((p) =>
+      sendSessionCancellation({
+        sessionId,
+        to: p.student_email,
+        studentName: p.student_name,
+        tutorName: tutor?.name ?? "your tutor",
+        subject: s.subject,
+        startsAt,
+        durationMin: s.duration_min,
+        meetLink: s.meet_link,
+        notes: s.notes,
+      }),
+    ),
+  );
+  return {
+    ok: true,
+    notified: results.filter((r) => r === "sent").length,
+    failed: results.filter((r) => r !== "sent").length,
+  };
 }
 
 // ---------- Student ----------
@@ -246,5 +286,14 @@ export async function setSubjectApproval(
       decision === "approve" ? "approved" : "pending",
     ]);
   }
+  return { ok: true };
+}
+
+/** Wipes every account, session, and sign-up. The coordinator role comes from COORDINATOR_EMAILS and stays. */
+export async function resetPilotData(confirmation: string): Promise<ActionResult> {
+  const { viewer, error } = await requireRole("coordinator");
+  if (!viewer) return fail(error);
+  if (confirmation !== "RESET") return fail("Type RESET to confirm.");
+  await query("TRUNCATE alp_signups, alp_sessions, alp_tutor_subjects, alp_users");
   return { ok: true };
 }

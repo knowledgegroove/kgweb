@@ -371,9 +371,9 @@ function TutorSessionCard({ session: s, readOnly = false }: { session: PortalSes
   const signups = s.signups ?? [];
 
   const cancel = async () => {
-    if (!confirm(`Cancel your ${s.subject} session? Students who joined will see it as cancelled.`)) return;
+    if (!confirm(cancelPrompt(s.subject, "your", s.signupCount))) return;
     setBusy(true);
-    await cancelSession(s.id);
+    reportCancel(await cancelSession(s.id));
     await refresh();
     setBusy(false);
   };
@@ -430,4 +430,18 @@ function TutorSessionCard({ session: s, readOnly = false }: { session: PortalSes
       </div>
     </Card>
   );
+}
+
+function cancelPrompt(subject: string, who: string, signupCount: number) {
+  const notice =
+    signupCount === 0
+      ? "No students have joined yet."
+      : `The ${signupCount} student${signupCount === 1 ? "" : "s"} who joined will get a cancellation email, and it will be removed from their calendar.`;
+  return `Cancel ${who} ${subject} session?\n\n${notice}`;
+}
+
+function reportCancel(res: Awaited<ReturnType<typeof cancelSession>>) {
+  if (!res.ok) alert(res.error);
+  else if (res.failed > 0)
+    alert(`Session cancelled, but ${res.failed} cancellation email${res.failed === 1 ? "" : "s"} didn't send. Let those students know directly.`);
 }

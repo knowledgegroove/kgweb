@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CalendarCheck, Check, GraduationCap, ShieldAlert, Users, Video, X } from "lucide-react";
 import { usePortal } from "../_lib/portal-client";
-import { cancelSession, setSubjectApproval } from "../_lib/actions";
+import { cancelSession, resetPilotData, setSubjectApproval } from "../_lib/actions";
 import type { PortalSession, TutorInfo } from "../_lib/types";
 import { RoleGate } from "../_components/RoleGate";
 import { Avatar, Card, EmptyState, PageHeader, StatCard, SubjectPill } from "../_components/ui";
@@ -108,6 +108,8 @@ function CoordinatorDashboard({
           )}
         </section>
       </div>
+
+      <ResetPilotCard />
     </div>
   );
 }
@@ -198,8 +200,8 @@ function SessionRow({ session: s, readOnly = false }: { session: PortalSession; 
   const { refresh } = usePortal();
   const signups = s.signups ?? [];
   const cancel = async () => {
-    if (!confirm(`Cancel ${s.tutorName}'s ${s.subject} session?`)) return;
-    await cancelSession(s.id);
+    if (!confirm(cancelPrompt(s.subject, `${s.tutorName}'s`, s.signupCount))) return;
+    reportCancel(await cancelSession(s.id));
     await refresh();
   };
   return (
@@ -255,6 +257,69 @@ function SessionRow({ session: s, readOnly = false }: { session: PortalSession; 
           ))}
         </ul>
       )}
+    </Card>
+  );
+}
+
+function cancelPrompt(subject: string, who: string, signupCount: number) {
+  const notice =
+    signupCount === 0
+      ? "No students have joined yet."
+      : `The ${signupCount} student${signupCount === 1 ? "" : "s"} who joined will get a cancellation email, and it will be removed from their calendar.`;
+  return `Cancel ${who} ${subject} session?\n\n${notice}`;
+}
+
+function reportCancel(res: Awaited<ReturnType<typeof cancelSession>>) {
+  if (!res.ok) alert(res.error);
+  else if (res.failed > 0)
+    alert(`Session cancelled, but ${res.failed} cancellation email${res.failed === 1 ? "" : "s"} didn't send. Let those students know directly.`);
+}
+
+function ResetPilotCard() {
+  const { refresh } = usePortal();
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const reset = async () => {
+    const typed = prompt(
+      "This permanently deletes ALL tutor and student accounts, subject approvals, sessions, and sign-ups. " +
+        "It can't be undone. Your coordinator access stays.\n\nType RESET to confirm:",
+    );
+    if (typed === null) return;
+    if (typed.trim() !== "RESET") {
+      alert("Nothing was deleted. You need to type RESET exactly.");
+      return;
+    }
+    setBusy(true);
+    const res = await resetPilotData("RESET");
+    setBusy(false);
+    if (!res.ok) {
+      alert(res.error);
+      return;
+    }
+    setDone(true);
+    await refresh();
+  };
+
+  return (
+    <Card className="mt-10 border-rose-200 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="max-w-xl">
+          <h2 className="text-sm font-semibold text-rose-700">Reset pilot data</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Clears every account, subject approval, session, and sign-up so the next trial run starts fresh. Use it
+            after a rehearsal. No emails are sent.
+          </p>
+          {done && <p className="mt-2 text-sm font-medium text-emerald-600">Done. Everything has been cleared.</p>}
+        </div>
+        <button
+          onClick={reset}
+          disabled={busy}
+          className="cursor-pointer rounded-lg border border-rose-300 bg-white px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-50 disabled:opacity-50"
+        >
+          {busy ? "Resetting…" : "Reset pilot data"}
+        </button>
+      </div>
     </Card>
   );
 }
