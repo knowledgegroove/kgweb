@@ -10,6 +10,7 @@ import {
   WINDOW_LABEL,
   isValidDuration,
   isValidStart,
+  normalizeMeetLink,
   schoolTimeToUtc,
   timeToMinutes,
 } from "./schedule";
@@ -122,13 +123,11 @@ export async function createSession(input: {
   const capacity = Math.round(Number(input.capacity));
   if (!(capacity >= 1 && capacity <= 50)) return fail("Capacity must be 1–50 students.");
 
-  let meetLink: string;
-  try {
-    const url = new URL(input.meetLink.trim());
-    if (url.protocol !== "https:") throw new Error();
-    meetLink = url.toString();
-  } catch {
-    return fail("Paste a full Google Meet link, e.g. https://meet.google.com/abc-defg-hij");
+  const meetLink = normalizeMeetLink(String(input.meetLink ?? ""));
+  if (!meetLink) {
+    return fail(
+      "That isn't a Google Meet meeting link. Open meet.new, wait until the meeting loads, then copy the link that looks like https://meet.google.com/abc-defg-hij",
+    );
   }
 
   const notes = typeof input.notes === "string" ? input.notes.trim().slice(0, 500) || null : null;

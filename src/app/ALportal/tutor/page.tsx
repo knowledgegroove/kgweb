@@ -23,6 +23,7 @@ import {
   WINDOW_LABEL,
   formatClock,
   minutesToTime,
+  normalizeMeetLink,
   nowInSchoolZone,
   startSlots,
 } from "../_lib/schedule";
@@ -196,7 +197,9 @@ function ScheduleForm({ approved }: { approved: string[] }) {
   // Start times that fit 4–9 PM for this length; on today's date, hide times that have already passed.
   const slots = startSlots(duration).filter((m) => date !== today.date || m > today.minutes);
   const slotValues = slots.map(minutesToTime);
-  const ready = subject && date && slotValues.includes(startTime) && meetLink.trim() && !saving;
+  const meetNormalized = normalizeMeetLink(meetLink);
+  const meetInvalid = meetLink.trim() !== "" && meetNormalized === null;
+  const ready = subject && date && slotValues.includes(startTime) && meetNormalized && !saving;
 
   const submit = async () => {
     setSaving(true);
@@ -327,12 +330,23 @@ function ScheduleForm({ approved }: { approved: string[] }) {
             </div>
             <input
               id="meet"
-              type="url"
+              type="text"
+              inputMode="url"
+              autoComplete="off"
               value={meetLink}
               onChange={(e) => setMeetLink(e.target.value)}
               placeholder="https://meet.google.com/abc-defg-hij"
-              className={inputClass}
+              aria-invalid={meetInvalid}
+              aria-describedby="meet-help"
+              className={`${inputClass} ${meetInvalid ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100" : ""}`}
             />
+            <p id="meet-help" className={`mt-1 text-xs ${meetInvalid ? "text-rose-600" : "text-slate-400"}`}>
+              {meetInvalid
+                ? "That's not a meeting link. On meet.new, wait for the meeting to open, then copy the link ending in a code like abc-defg-hij."
+                : meetNormalized
+                  ? `Students will get: ${meetNormalized}`
+                  : "Must end in a meeting code like abc-defg-hij. A link ending in /new won't work."}
+            </p>
           </div>
           <div>
             <label htmlFor="notes" className="mb-1 block text-xs font-medium text-slate-500">Notes (optional)</label>

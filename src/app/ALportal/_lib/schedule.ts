@@ -82,3 +82,15 @@ export function schoolTimeToUtc(date: string, minuteOfDay: number): Date | null 
   utc = naive - zoneOffsetMs(utc); // second pass settles DST edges
   return new Date(utc);
 }
+
+/**
+ * Finds a real Google Meet meeting code in what the tutor pasted (a bare link, or a phone's whole
+ * "share joining info" text) and returns the canonical link, https://meet.google.com/abc-defg-hij.
+ * Drops extras like ?authuser=0 that can open the wrong account. Returns null for meet.google.com/new
+ * (which starts a NEW meeting for whoever clicks it), the Meet home page, or anything without a code.
+ * The result is always built from the code alone, so no other site can slip through.
+ */
+export function normalizeMeetLink(input: string): string | null {
+  const match = /(?:^|[^a-z0-9.-])meet\.google\.com\/([a-z]{3}-[a-z]{4}-[a-z]{3})(?![a-z0-9-])/i.exec(input);
+  return match ? `https://meet.google.com/${match[1].toLowerCase()}` : null;
+}
